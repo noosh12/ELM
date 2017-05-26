@@ -3,7 +3,7 @@ package elm;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+//import java.util.Objects;
 
 public class FileFunctions
 {
@@ -13,6 +13,8 @@ public class FileFunctions
     	int totalQuantity=0, count=0;
     	int[] GMD = new int[54];
     	String[] GMDname = new String[54];
+    	String details;
+    	ArrayList<String> deliveries = new ArrayList<String>();
     	
     	
         // create ArrayList to store the order objects
@@ -24,14 +26,14 @@ public class FileFunctions
         try
         {       	
         	// create a Buffered Reader object instance with a FileReader
-            BufferedReader br = new BufferedReader(new FileReader("orders_export-103.csv"));
+            BufferedReader input = new BufferedReader(new FileReader("orders_export-103.csv"));
             System.out.println("file loaded");
             System.out.println("building objects...");
 
             // read the first line from the text file
-            String fileRead = br.readLine();
+            String fileRead = input.readLine();
             //2nd line is 1st true line
-            fileRead = br.readLine();
+            fileRead = input.readLine();
 
             // loop until all lines are read
             while (fileRead != null)
@@ -57,12 +59,18 @@ public class FileFunctions
                 // and load with relevant data values
                 Order tempObj = new Order(discountCode, shippingMethod, lineItemQuantity, lineItemName, lineItemSKU, shippingName, shippingAddress1, shippingCity, notes);
 
-                // add to array list
+                // add to object Arraylist
                 orderItem.add(tempObj);
+                
+                //building deliveries arraylist
+                if(shippingMethod.equals("Monday Delivery")){
+                	details = shippingMethod+","+shippingName+","+shippingAddress1+" "+shippingCity+","+notes;
+                	deliveries.add(details);
+                }
 
                 // read next line before looping
                 // if end of file reached 
-                fileRead = br.readLine();
+                fileRead = input.readLine();
                 
                 count+=1;
 //                System.out.print("built object ");
@@ -70,7 +78,7 @@ public class FileFunctions
             }
 
             // close file stream
-            br.close();
+            input.close();
             System.out.println(count+" objects built");
         }
         // handle exceptions
@@ -111,22 +119,42 @@ public class FileFunctions
         
         CalcIngredients(GMD,GMDname); //Calculate the ingredients required
         
+        PrintDeliveries(deliveries);
+        
 
 
     }
     
     public static void PrintTotals(int[] quantityArray, String[] nameArray, int totalQuantity){
-        //Printing Total Meals Ordered
-        System.out.println();
-        System.out.print("Total Meals = ");
-        System.out.println(totalQuantity);
-        
-        //Printing Individual Meal Totals
-        System.out.println();
-        System.out.println("Meal Totals");
-        for(int i=0; i<quantityArray.length; i++){
-        	System.out.println("GMD-"+(i+1)+": "+quantityArray[i]+" - "+nameArray[i]);
+             
+        try
+        {
+            // create Bufferedwriter instance with a FileWriter
+            // the flag set to 'true' tells it to append a file if file exists
+            BufferedWriter totals = new BufferedWriter(new FileWriter("totals.csv", false));
+
+            // write the text string to the file
+            totals.write("TOTAL MEALS:"+","+totalQuantity);
+
+            // write a `newline` to the file
+            totals.newLine();
+            totals.newLine();
+            totals.write("Meal"+","+"Total"+","+"Name");
+            totals.newLine();
+            
+            for(int i=0; i<quantityArray.length; i++){           	
+            	totals.write("GMD-"+(i+1)+","+quantityArray[i]+","+nameArray[i]);
+            	totals.newLine();
+            }
+
+            // close the file
+            totals.close();
         }
+        // handle exceptions
+        catch (IOException ioe)
+        {
+            ioe.printStackTrace();
+        } 
     }
     
     
@@ -163,16 +191,70 @@ public class FileFunctions
         	}	
         }
         
-        //Printing Ingredient Quantities
-        System.out.println();
-        System.out.println("Ingredient Totals");
-        System.out.println("Beef: "+(float)beef/1000+" kg");
-        System.out.println("Chicken: "+(float)chicken/1000+" kg");
-        System.out.println("Rice: "+(float)rice/1000+" kg");
-        System.out.println("Sweet Potato: "+(float)potato/1000+" kg");
-        System.out.println("Veg: "+(float)veg/1000+" kg");
+        //Writing ingredient quantities to file
+        try
+        {
+            // create Bufferedwriter instance with a FileWriter
+            // the flag set to 'true' tells it to append a file if file exists
+            BufferedWriter ingredients = new BufferedWriter(new FileWriter("ingredients.csv", false));
+
+            // write a `newline` to the file
+            ingredients.newLine();
+            
+            ingredients.write("Ingredient Totals"+","+"kg");
+            ingredients.newLine();
+            ingredients.write("Beef"+","+(float)beef/1000);
+            ingredients.newLine();
+            ingredients.write("Chicken"+","+(float)chicken/1000);
+            ingredients.newLine();
+            ingredients.write("Rice"+","+(float)rice/1000);
+            ingredients.newLine();
+            ingredients.write("Sweet Potato"+","+(float)potato/1000);
+            ingredients.newLine();
+            ingredients.write("Veg"+","+(float)veg/1000);
+
+            // close the file
+            ingredients.close();
+        }
+        // handle exceptions
+        catch (IOException ioe)
+        {
+            ioe.printStackTrace();
+        }
+        
     	
     }
 
 
+    public static void PrintDeliveries(ArrayList<String> deliv){
+    	
+    	try
+        {
+            // create Bufferedwriter instance with a FileWriter
+            // the flag set to 'true' tells it to append a file if file exists
+            BufferedWriter deliveries = new BufferedWriter(new FileWriter("deliveries.csv", false));
+
+            // write the text string to the file
+            deliveries.write("TOTAL DELIVERIES:"+","+deliv.size());
+
+            // write a `newline` to the file
+            deliveries.newLine();
+            deliveries.newLine();
+            deliveries.write("Type"+","+"Name"+","+"Address"+","+"Notes");
+            deliveries.newLine();
+            
+            for(int i=0; i<deliv.size(); i++){
+            	deliveries.newLine();
+            	deliveries.write(deliv.get(i));
+            }
+
+            // close the file
+            deliveries.close();
+        }
+        // handle exceptions
+        catch (IOException ioe)
+        {
+            ioe.printStackTrace();
+        } 
+    }
 }
