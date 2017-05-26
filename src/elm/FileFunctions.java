@@ -10,13 +10,9 @@ public class FileFunctions
 
     public static void main( String [] args )
     {
-    	int countGMD1=0,countGMD2=0, countGMD3=0,countGMD4=0,countGMD5=0,countGMD6=0,countGMD7=0,countGMD8=0,countGMD9=0,countGMD10=0;
-    	int countGMD11=0,countGMD12=0, countGMD13=0,countGMD14=0,countGMD15=0,countGMD16=0,countGMD17=0,countGMD18=0,countGMD19=0,countGMD20=0;
-    	int countGMD21=0,countGMD22=0, countGMD23=0,countGMD24=0,countGMD25=0,countGMD26=0,countGMD27=0,countGMD28=0,countGMD29=0,countGMD30=0;
-    	int countGMD31=0,countGMD32=0, countGMD33=0,countGMD34=0,countGMD35=0,countGMD36=0,countGMD37=0,countGMD38=0,countGMD39=0,countGMD40=0;
-    	int countGMD41=0,countGMD42=0, countGMD43=0,countGMD44=0,countGMD45=0,countGMD46=0,countGMD47=0,countGMD48=0,countGMD49=0,countGMD50=0;
-    	int countGMD51=0,countGMD52=0, countGMD53=0,countGMD54=0;
-    	int totalQuantity=0, count=1;
+    	int totalQuantity=0, count=0;
+    	int[] GMD = new int[54];
+    	String[] GMDname = new String[54];
     	
     	
         // create ArrayList to store the order objects
@@ -26,8 +22,7 @@ public class FileFunctions
         System.out.println("loading file orders_export_103.csv ...");
         
         try
-        {
-        	
+        {       	
         	// create a Buffered Reader object instance with a FileReader
             BufferedReader br = new BufferedReader(new FileReader("orders_export-103.csv"));
             System.out.println("file loaded");
@@ -46,10 +41,9 @@ public class FileFunctions
                 String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
                 // assume file is made correctly
-                // and make temporary variables for the three types of data
+                // and make temporary variables for the types of data
                 String discountCode = tokenize[12];                
-                String shippingMethod = tokenize[14];
-                                          
+                String shippingMethod = tokenize[14];                           
             	int lineItemQuantity = Integer.parseInt(tokenize[16]);
                 String lineItemName = tokenize[17];
                 String lineItemSKU = tokenize[20];
@@ -57,8 +51,7 @@ public class FileFunctions
                 String shippingAddress1 = tokenize[36];
                 String shippingCity = tokenize[39];
                 String notes=tokenize[44];
-                //System.out.println(tokenize[17]);
-            
+       
 
                 // create temporary instance of Order object
                 // and load with relevant data values
@@ -78,38 +71,108 @@ public class FileFunctions
 
             // close file stream
             br.close();
-            System.out.println("objects built");
+            System.out.println(count+" objects built");
         }
-
         // handle exceptions
         catch (FileNotFoundException fnfe)
         {
             System.out.println("error: file not found!");
         }
-
         catch (IOException ioe)
         {
             ioe.printStackTrace();
         }
 
-        // calculations and operations
+        // calculations and operations with our objects
         for (Order each : orderItem)
         {
+        	String tempSKU, tempName;
+        	int SKU;
         	
-        	totalQuantity +=each.getLineItemQuantity();
+        	//Simple total meals ordered counter
+        	totalQuantity +=each.getLineItemQuantity(); 
         	
+        	//Resolving SKU string into an integer variable
+        	tempSKU=each.getLineItemSKU();
+        	SKU = Integer.parseInt(tempSKU.replaceAll("[\\D]", ""));
         	
+        	//Totaling quantity of each item
+        	GMD[SKU-1]=GMD[SKU-1]+1;
         	
-//            System.out.println("====================");
-//            System.out.println(each);
-//            System.out.println();
-//            System.out.printf("Total value = %8.2f %n", each.getTotal());
+        	//Building GMD Name String Array
+        	tempName=GMDname[SKU-1]; //Getting existing Name stored
+        	
+        	if (!(tempName != null && !tempName.isEmpty())) {//if no name already stored
+        		GMDname[SKU-1]=each.getLineItemName(); //storing name
+    		}
         }
         
-        System.out.println();
-        System.out.print("Total Quantity = ");
-        System.out.println(totalQuantity);
+        PrintTotals(GMD,GMDname,totalQuantity); //Prints the totals of each meal
+        
+        CalcIngredients(GMD,GMDname); //Calculate the ingredients required
+        
+
 
     }
+    
+    public static void PrintTotals(int[] quantityArray, String[] nameArray, int totalQuantity){
+        //Printing Total Meals Ordered
+        System.out.println();
+        System.out.print("Total Meals = ");
+        System.out.println(totalQuantity);
+        
+        //Printing Individual Meal Totals
+        System.out.println();
+        System.out.println("Meal Totals");
+        for(int i=0; i<quantityArray.length; i++){
+        	System.out.println("GMD-"+(i+1)+": "+quantityArray[i]+" - "+nameArray[i]);
+        }
+    }
+    
+    
+    public static void CalcIngredients(int[] quantityArray, String[] nameArray){
+    	int chicken=0, beef=0, potato=0, rice=0,veg=0;
+    	
+        //Determining Ingredient Quantities
+        for(int i=0; i<quantityArray.length; i++){
+        	String tempName = nameArray[i].toLowerCase(); //Storing current item name
+
+        	if(tempName.contains("large")){
+        		if(tempName.contains("chicken"))
+            		chicken+=200*quantityArray[i];        		
+        		if(tempName.contains("steak"))
+            		beef+=200*quantityArray[i];        		
+        		if(tempName.contains("potato"))
+            		potato+=200*quantityArray[i];       		
+        		if(tempName.contains("rice"))
+            		rice+=200*quantityArray[i];        		
+        		if(tempName.contains("veg"))
+            		veg+=180*quantityArray[i];
+        	}
+        	if(tempName.contains("small")){
+        		if(tempName.contains("chicken"))
+            		chicken+=150*quantityArray[i];        		
+        		if(tempName.contains("steak"))
+            		beef+=150*quantityArray[i];       		
+        		if(tempName.contains("potato"))
+            		potato+=120*quantityArray[i];       		
+        		if(tempName.contains("rice"))
+            		rice+=120*quantityArray[i];     		
+        		if(tempName.contains("veg"))
+            		veg+=100*quantityArray[i];
+        	}	
+        }
+        
+        //Printing Ingredient Quantities
+        System.out.println();
+        System.out.println("Ingredient Totals");
+        System.out.println("Beef: "+(float)beef/1000+" kg");
+        System.out.println("Chicken: "+(float)chicken/1000+" kg");
+        System.out.println("Rice: "+(float)rice/1000+" kg");
+        System.out.println("Sweet Potato: "+(float)potato/1000+" kg");
+        System.out.println("Veg: "+(float)veg/1000+" kg");
+    	
+    }
+
 
 }

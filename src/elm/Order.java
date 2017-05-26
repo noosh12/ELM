@@ -36,6 +36,10 @@ public class Order {
 		return lineItemQuantity;
 	}
 	
+	public String getLineItemName(){
+		return lineItemName;
+	}
+	
 	public String getLineItemSKU(){
 		return lineItemSKU;
 	}
