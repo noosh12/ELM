@@ -11,14 +11,16 @@ public class FileFunctions
     public static void main( String [] args )
     {
     	int totalQuantity=0, count=0;
-    	int[] GMD = new int[54];
-    	String[] GMDname = new String[54];
+    	ArrayList<String> GMDNames = new ArrayList<String>();
+    	ArrayList<Integer> GMDQuantities = new ArrayList<Integer>();
     	String details;
     	ArrayList<String> deliveries = new ArrayList<String>();
+
     	
     	
         // create ArrayList to store the order objects
         List<Order> orderItem = new ArrayList<>();
+        // printing intro lines
         System.out.println("GYM MEALS DIRECT");
         System.out.println();
         System.out.print("loading file orders_export_103.csv ...");
@@ -97,7 +99,7 @@ public class FileFunctions
         // calculations and operations with our objects
         for (Order each : orderItem)
         {
-        	String tempSKU, tempName;
+        	String tempSKU;
         	int SKU;
         	
         	//Simple total meals ordered counter
@@ -107,49 +109,57 @@ public class FileFunctions
         	tempSKU=each.getLineItemSKU();
         	SKU = Integer.parseInt(tempSKU.replaceAll("[\\D]", ""));
         	
-        	//Totaling quantity of each item
-        	GMD[SKU-1]=GMD[SKU-1]+each.getLineItemQuantity();
-        	
-        	//Building GMD Name String Array
-        	tempName=GMDname[SKU-1]; //Getting existing Name stored
-        	
-        	if (!(tempName != null && !tempName.isEmpty())) {//if no name already stored
-        		GMDname[SKU-1]=each.getLineItemName(); //storing name
-    		}
+        	        	
+        	if(SKU-1<GMDQuantities.size()){		//on condition that arraylist already has that index
+        		GMDQuantities.set(SKU-1, GMDQuantities.get(SKU-1)+each.getLineItemQuantity());
+        		
+        		if(GMDNames.get(SKU-1).equals("N/A"))
+        			GMDNames.set(SKU-1, each.getLineItemName());
+        	}
+        	else if(SKU-1==GMDQuantities.size()){		//on condition that arraylist is up to that index
+        		GMDQuantities.add(each.getLineItemQuantity());
+        		GMDNames.add(each.getLineItemName());
+        	}
+        	else{		//on condition that arraylist does not have that and is not up to that index yet
+        		for(int i=GMDQuantities.size();i<SKU;i++){	//looping through creating values of 0 or null until we reach desired index
+        			GMDQuantities.add(0);
+        			GMDNames.add("N/A");
+        		}
+        		GMDQuantities.set(SKU-1, each.getLineItemQuantity());	//adding quantity to index
+        		GMDNames.set(SKU-1,each.getLineItemName()); //adding name to index
+        	}
         }
         System.out.print("Calculating meal totals...");
-        PrintTotals(GMD,GMDname,totalQuantity); //Prints the totals of each meal
+        PrintMealTotals(GMDQuantities,GMDNames,totalQuantity);//Prints the totals of each meal
+        
         System.out.print("Calculating ingredient totals...");
-        CalcIngredients(GMD,GMDname); //Calculate the ingredients required
-        System.out.print("Printing sorted delivery methods...");
-        PrintDeliveries(deliveries);
+        CalcIngredients(GMDQuantities,GMDNames); //Calculate the ingredients required
+//        
+//        System.out.print("Printing sorted delivery methods...");
+//        PrintDeliveries(deliveries);
 
     }
     
-    public static void PrintTotals(int[] quantityArray, String[] nameArray, int totalQuantity){
+    public static void PrintMealTotals(ArrayList<Integer> quantities, ArrayList<String> names, int total){
              
         try
         {
             // create Bufferedwriter instance with a FileWriter
             // the flag set to 'true' tells it to append a file if file exists
-            BufferedWriter totals = new BufferedWriter(new FileWriter("totals.csv", false));
+            BufferedWriter totals = new BufferedWriter(new FileWriter("meal_totals.csv", false));
 
-            // write the text string to the file
-            totals.write("TOTAL MEALS:"+","+totalQuantity);
+            totals.write("TOTAL MEALS:"+","+total);
 
-            // write a `newline` to the file
             totals.newLine();
             totals.newLine();
             totals.write("NAME"+","+"TOTAL"+","+"MEAL");
             totals.newLine();
             
-            for(int i=0; i<quantityArray.length; i++){           	
-            	//totals.write("GMD-"+(i+1)+","+quantityArray[i]+","+nameArray[i]);
-            	totals.write(nameArray[i]+","+quantityArray[i]+","+"GMD-"+(i+1));
+            for(int i=0; i<quantities.size(); i++){           	
+            	totals.write(names.get(i)+","+quantities.get(i)+","+"GMD-"+(i+1));
             	totals.newLine();
             }
 
-            // close the file
             totals.close();
             System.out.println(" Done!");
         }
@@ -160,37 +170,36 @@ public class FileFunctions
         } 
     }
     
-    
-    public static void CalcIngredients(int[] quantityArray, String[] nameArray){
+    public static void CalcIngredients(ArrayList<Integer> quantities, ArrayList<String> names){
     	int chicken=0, beef=0, potato=0, rice=0,veg=0;
     	
         //Determining Ingredient Quantities
-        for(int i=0; i<quantityArray.length; i++){
-        	String tempName = nameArray[i].toLowerCase(); //Storing current item name
+        for(int i=0; i<quantities.size(); i++){
+        	String tempName = names.get(i).toLowerCase(); //Storing current item name
 
         	if(tempName.contains("large")){
         		if(tempName.contains("chicken"))
-            		chicken+=200*quantityArray[i];        		
+            		chicken+=200*quantities.get(i);        		
         		if(tempName.contains("steak"))
-            		beef+=200*quantityArray[i];        		
+            		beef+=200*quantities.get(i);            		
         		if(tempName.contains("potato"))
-            		potato+=200*quantityArray[i];       		
+            		potato+=200*quantities.get(i);            		
         		if(tempName.contains("rice"))
-            		rice+=200*quantityArray[i];        		
+            		rice+=200*quantities.get(i);            		
         		if(tempName.contains("veg"))
-            		veg+=180*quantityArray[i];
+            		veg+=180*quantities.get(i);     
         	}
         	if(tempName.contains("small")){
         		if(tempName.contains("chicken"))
-            		chicken+=150*quantityArray[i];        		
+            		chicken+=150*quantities.get(i);           		
         		if(tempName.contains("steak"))
-            		beef+=150*quantityArray[i];       		
+            		beef+=150*quantities.get(i);           		
         		if(tempName.contains("potato"))
-            		potato+=120*quantityArray[i];       		
+            		potato+=120*quantities.get(i);           		
         		if(tempName.contains("rice"))
-            		rice+=120*quantityArray[i];     		
+            		rice+=120*quantities.get(i);         		
         		if(tempName.contains("veg"))
-            		veg+=100*quantityArray[i];
+            		veg+=100*quantities.get(i);     
         	}
 //        	System.out.println();
 //        	System.out.println(tempName+": "+quantityArray[i]+"    Chicken: "+chicken);
