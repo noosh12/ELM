@@ -21,14 +21,14 @@ public class FileFunctions
         List<Order> orderItem = new ArrayList<>();
         System.out.println("GYM MEALS DIRECT");
         System.out.println();
-        System.out.println("loading file orders_export_103.csv ...");
+        System.out.print("loading file orders_export_103.csv ...");
         
         try
         {       	
         	// create a Buffered Reader object instance with a FileReader
-            BufferedReader input = new BufferedReader(new FileReader("orders_export-103.csv"));
-            System.out.println("file loaded");
-            System.out.println("building objects...");
+            BufferedReader input = new BufferedReader(new FileReader("GMD.csv"));
+            System.out.println(" file loaded");
+            System.out.print("building objects...");
 
             // read the first line from the text file
             String fileRead = input.readLine();
@@ -58,11 +58,13 @@ public class FileFunctions
                 // create temporary instance of Order object
                 // and load with relevant data values
                 Order tempObj = new Order(discountCode, shippingMethod, lineItemQuantity, lineItemName, lineItemSKU, shippingName, shippingAddress1, shippingCity, notes);
-
+                //System.out.println(lineItemName+": "+lineItemQuantity);
+                
                 // add to object Arraylist
                 orderItem.add(tempObj);
                 
-                //building deliveries arraylist
+                //building deliveries arraylists
+                
                 if(shippingMethod.equals("Monday Delivery")){
                 	details = shippingMethod+","+shippingName+","+shippingAddress1+" "+shippingCity+","+notes;
                 	deliveries.add(details);
@@ -79,7 +81,8 @@ public class FileFunctions
 
             // close file stream
             input.close();
-            System.out.println(count+" objects built");
+            System.out.println(" "+count+" objects built");
+            System.out.println();
         }
         // handle exceptions
         catch (FileNotFoundException fnfe)
@@ -105,7 +108,7 @@ public class FileFunctions
         	SKU = Integer.parseInt(tempSKU.replaceAll("[\\D]", ""));
         	
         	//Totaling quantity of each item
-        	GMD[SKU-1]=GMD[SKU-1]+1;
+        	GMD[SKU-1]=GMD[SKU-1]+each.getLineItemQuantity();
         	
         	//Building GMD Name String Array
         	tempName=GMDname[SKU-1]; //Getting existing Name stored
@@ -114,14 +117,12 @@ public class FileFunctions
         		GMDname[SKU-1]=each.getLineItemName(); //storing name
     		}
         }
-        
+        System.out.print("Calculating meal totals...");
         PrintTotals(GMD,GMDname,totalQuantity); //Prints the totals of each meal
-        
+        System.out.print("Calculating ingredient totals...");
         CalcIngredients(GMD,GMDname); //Calculate the ingredients required
-        
+        System.out.print("Printing sorted delivery methods...");
         PrintDeliveries(deliveries);
-        
-
 
     }
     
@@ -139,16 +140,18 @@ public class FileFunctions
             // write a `newline` to the file
             totals.newLine();
             totals.newLine();
-            totals.write("Meal"+","+"Total"+","+"Name");
+            totals.write("NAME"+","+"TOTAL"+","+"MEAL");
             totals.newLine();
             
             for(int i=0; i<quantityArray.length; i++){           	
-            	totals.write("GMD-"+(i+1)+","+quantityArray[i]+","+nameArray[i]);
+            	//totals.write("GMD-"+(i+1)+","+quantityArray[i]+","+nameArray[i]);
+            	totals.write(nameArray[i]+","+quantityArray[i]+","+"GMD-"+(i+1));
             	totals.newLine();
             }
 
             // close the file
             totals.close();
+            System.out.println(" Done!");
         }
         // handle exceptions
         catch (IOException ioe)
@@ -188,7 +191,9 @@ public class FileFunctions
             		rice+=120*quantityArray[i];     		
         		if(tempName.contains("veg"))
             		veg+=100*quantityArray[i];
-        	}	
+        	}
+//        	System.out.println();
+//        	System.out.println(tempName+": "+quantityArray[i]+"    Chicken: "+chicken);
         }
         
         //Writing ingredient quantities to file
@@ -215,6 +220,7 @@ public class FileFunctions
 
             // close the file
             ingredients.close();
+            System.out.println(" Done!");
         }
         // handle exceptions
         catch (IOException ioe)
@@ -236,12 +242,8 @@ public class FileFunctions
 
             // write the text string to the file
             deliveries.write("TOTAL DELIVERIES:"+","+deliv.size());
-
-            // write a `newline` to the file
-            deliveries.newLine();
             deliveries.newLine();
             deliveries.write("Type"+","+"Name"+","+"Address"+","+"Notes");
-            deliveries.newLine();
             
             for(int i=0; i<deliv.size(); i++){
             	deliveries.newLine();
@@ -250,6 +252,7 @@ public class FileFunctions
 
             // close the file
             deliveries.close();
+            System.out.println(" Done!");
         }
         // handle exceptions
         catch (IOException ioe)
