@@ -15,6 +15,8 @@ public class FileFunctions
     	ArrayList<Integer> GMDQuantities = new ArrayList<Integer>();
     	String details;
     	ArrayList<String> deliveries = new ArrayList<String>();
+    	
+    	
 
     	
     	
@@ -133,10 +135,19 @@ public class FileFunctions
         PrintMealTotals(GMDQuantities,GMDNames,totalQuantity);//Prints the totals of each meal
         
         System.out.print("Calculating ingredient totals...");
-        CalcIngredients(GMDQuantities,GMDNames); //Calculate the ingredients required
+        CalcPrintIngredients(GMDQuantities,GMDNames); //Calculate the ingredients required
+        
+        System.out.print("Printing sorted delivery methods...");
+        PrintDeliveries(deliveries);
+        
+        
+//        List<Ingredient> ingredients = new ArrayList<>();
+//        ingredients=CalcPrintIngredients(GMDQuantities,GMDNames);
 //        
-//        System.out.print("Printing sorted delivery methods...");
-//        PrintDeliveries(deliveries);
+//        for(int i=0; i<ingredients.size(); i++){
+//        	System.out.println(ingredients.get(i));
+//        }
+        
 
     }
     
@@ -170,65 +181,78 @@ public class FileFunctions
         } 
     }
     
-    public static void CalcIngredients(ArrayList<Integer> quantities, ArrayList<String> names){
-    	int chicken=0, beef=0, potato=0, rice=0,veg=0;
-    	
+    
+    public static void CalcPrintIngredients(ArrayList<Integer> quantities, ArrayList<String> names){
+                
+        Ingredient chicken = new Ingredient("Chicken");// create temporary instance of Ingredient object        
+        Ingredient beef = new Ingredient("Beef");        
+        Ingredient sPotato = new Ingredient("Sweet Potato");        
+        Ingredient rice = new Ingredient("Rice");        
+        Ingredient veg = new Ingredient("Veg");
+        
+        List<Ingredient> ingredients = new ArrayList<>();
+        ingredients.add(chicken);// add to ingredients Arraylist
+        ingredients.add(beef);
+        ingredients.add(sPotato);
+        ingredients.add(rice);
+        ingredients.add(veg);
+        
+
         //Determining Ingredient Quantities
         for(int i=0; i<quantities.size(); i++){
         	String tempName = names.get(i).toLowerCase(); //Storing current item name
 
         	if(tempName.contains("large")){
         		if(tempName.contains("chicken"))
-            		chicken+=200*quantities.get(i);        		
+            		chicken.addQuantity(quantities.get(i), 200);       		
         		if(tempName.contains("steak"))
-            		beef+=200*quantities.get(i);            		
+            		beef.addQuantity(quantities.get(i), 200);            		
         		if(tempName.contains("potato"))
-            		potato+=200*quantities.get(i);            		
+            		sPotato.addQuantity(quantities.get(i), 200);            		
         		if(tempName.contains("rice"))
-            		rice+=200*quantities.get(i);            		
+            		rice.addQuantity(quantities.get(i), 200);            		
         		if(tempName.contains("veg"))
-            		veg+=180*quantities.get(i);     
+            		veg.addQuantity(quantities.get(i), 180);     
         	}
         	if(tempName.contains("small")){
         		if(tempName.contains("chicken"))
-            		chicken+=150*quantities.get(i);           		
+            		chicken.addQuantity(quantities.get(i), 150);           		
         		if(tempName.contains("steak"))
-            		beef+=150*quantities.get(i);           		
+            		beef.addQuantity(quantities.get(i), 150);          		
         		if(tempName.contains("potato"))
-            		potato+=120*quantities.get(i);           		
+            		sPotato.addQuantity(quantities.get(i), 120);          		
         		if(tempName.contains("rice"))
-            		rice+=120*quantities.get(i);         		
+            		rice.addQuantity(quantities.get(i), 120);           		
         		if(tempName.contains("veg"))
-            		veg+=100*quantities.get(i);     
+            		veg.addQuantity(quantities.get(i), 100);     
         	}
-//        	System.out.println();
-//        	System.out.println(tempName+": "+quantityArray[i]+"    Chicken: "+chicken);
         }
-        
+          
+
         //Writing ingredient quantities to file
         try
         {
             // create Bufferedwriter instance with a FileWriter
             // the flag set to 'true' tells it to append a file if file exists
-            BufferedWriter ingredients = new BufferedWriter(new FileWriter("ingredients.csv", false));
+            BufferedWriter ingredientsFile = new BufferedWriter(new FileWriter("ingredients.csv", false));
 
             // write a `newline` to the file
-            ingredients.newLine();
+            ingredientsFile.newLine();
             
-            ingredients.write("Ingredient Totals"+","+"kg");
-            ingredients.newLine();
-            ingredients.write("Beef"+","+(float)beef/1000);
-            ingredients.newLine();
-            ingredients.write("Chicken"+","+(float)chicken/1000);
-            ingredients.newLine();
-            ingredients.write("Rice"+","+(float)rice/1000);
-            ingredients.newLine();
-            ingredients.write("Sweet Potato"+","+(float)potato/1000);
-            ingredients.newLine();
-            ingredients.write("Veg"+","+(float)veg/1000);
+            ingredientsFile.write("Ingredient Totals"+","+"kg");
+            ingredientsFile.newLine();
+            ingredientsFile.write(chicken.getName()+","+(float)chicken.getQuantity()/1000);
+            ingredientsFile.newLine();
+            ingredientsFile.write(beef.getName()+","+(float)beef.getQuantity()/1000);
+            ingredientsFile.newLine();
+            ingredientsFile.write(rice.getName()+","+(float)rice.getQuantity()/1000);
+            ingredientsFile.newLine();
+            ingredientsFile.write(sPotato.getName()+","+(float)sPotato.getQuantity()/1000);
+            ingredientsFile.newLine();
+            ingredientsFile.write(veg.getName()+","+(float)veg.getQuantity()/1000);
 
             // close the file
-            ingredients.close();
+            ingredientsFile.close();
             System.out.println(" Done!");
         }
         // handle exceptions
@@ -237,7 +261,7 @@ public class FileFunctions
             ioe.printStackTrace();
         }
         
-    	
+        //return ingredients;
     }
 
 
