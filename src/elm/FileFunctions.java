@@ -14,7 +14,7 @@ public class FileFunctions
     	ArrayList<String> GMDNames = new ArrayList<String>();
     	ArrayList<Integer> GMDQuantities = new ArrayList<Integer>();
     	String details;
-    	ArrayList<String> deliveries = new ArrayList<String>();
+    	ArrayList<String> shipping = new ArrayList<String>();
     	
     	
 
@@ -71,7 +71,7 @@ public class FileFunctions
                 
                 if(shippingMethod.equals("Monday Delivery")){
                 	details = shippingMethod+","+shippingName+","+shippingAddress1+" "+shippingCity+","+notes;
-                	deliveries.add(details);
+                	shipping.add(details);
                 }
 
                 // read next line before looping
@@ -131,6 +131,9 @@ public class FileFunctions
         		GMDNames.set(SKU-1,each.getLineItemName()); //adding name to index
         	}
         }
+        
+        
+        
         System.out.print("Calculating meal totals...");
         PrintMealTotals(GMDQuantities,GMDNames,totalQuantity);//Prints the totals of each meal
         
@@ -138,7 +141,7 @@ public class FileFunctions
         CalcPrintIngredients(GMDQuantities,GMDNames); //Calculate the ingredients required
         
         System.out.print("Printing sorted delivery methods...");
-        PrintDeliveries(deliveries);
+        PrintShipping(shipping);
         
         
 //        List<Ingredient> ingredients = new ArrayList<>();
@@ -157,7 +160,7 @@ public class FileFunctions
         {
             // create Bufferedwriter instance with a FileWriter
             // the flag set to 'true' tells it to append a file if file exists
-            BufferedWriter totals = new BufferedWriter(new FileWriter("meal_totals.csv", false));
+            BufferedWriter totals = new BufferedWriter(new FileWriter("_meal_totals.csv", false));
 
             totals.write("TOTAL MEALS:"+","+total);
 
@@ -234,7 +237,7 @@ public class FileFunctions
         {
             // create Bufferedwriter instance with a FileWriter
             // the flag set to 'true' tells it to append a file if file exists
-            BufferedWriter ingredientsFile = new BufferedWriter(new FileWriter("ingredients.csv", false));
+            BufferedWriter ingredientsFile = new BufferedWriter(new FileWriter("_ingredients.csv", false));
 
             // write a `newline` to the file
             ingredientsFile.newLine();
@@ -265,26 +268,26 @@ public class FileFunctions
     }
 
 
-    public static void PrintDeliveries(ArrayList<String> deliv){
+    public static void PrintShipping(ArrayList<String> method){
     	
     	try
         {
             // create Bufferedwriter instance with a FileWriter
             // the flag set to 'true' tells it to append a file if file exists
-            BufferedWriter deliveries = new BufferedWriter(new FileWriter("deliveries.csv", false));
+            BufferedWriter shipping = new BufferedWriter(new FileWriter("_shipping.csv", false));
 
             // write the text string to the file
-            deliveries.write("TOTAL DELIVERIES:"+","+deliv.size());
-            deliveries.newLine();
-            deliveries.write("Type"+","+"Name"+","+"Address"+","+"Notes");
+            shipping.write("TOTAL DELIVERIES:"+","+method.size());
+            shipping.newLine();
+            shipping.write("Type"+","+"Name"+","+"Address"+","+"Notes");
             
-            for(int i=0; i<deliv.size(); i++){
-            	deliveries.newLine();
-            	deliveries.write(deliv.get(i));
+            for(int i=0; i<method.size(); i++){
+            	shipping.newLine();
+            	shipping.write(method.get(i));
             }
 
             // close the file
-            deliveries.close();
+            shipping.close();
             System.out.println(" Done!");
         }
         // handle exceptions
