@@ -13,12 +13,12 @@ public class FileFunctions
     	int totalQuantity=0, count=0;
     	ArrayList<String> GMDNames = new ArrayList<String>();
     	ArrayList<Integer> GMDQuantities = new ArrayList<Integer>();
-    	String details;
-    	ArrayList<String> shipping = new ArrayList<String>();
+    	
+    	List<List<String>> methods = new ArrayList<List<String>>();
+    	List<String> methodList = new ArrayList<String>();
     	
     	
-
-    	
+    	int methodListIndex;
     	
         // create ArrayList to store the order objects
         List<Order> orderItem = new ArrayList<>();
@@ -49,7 +49,7 @@ public class FileFunctions
                 // assume file is made correctly
                 // and make temporary variables for the types of data
                 String discountCode = tokenize[12];                
-                String shippingMethod = tokenize[14];                           
+                String shippingMethod = tokenize[14];                         
             	int lineItemQuantity = Integer.parseInt(tokenize[16]);
                 String lineItemName = tokenize[17];
                 String lineItemSKU = tokenize[20];
@@ -67,12 +67,7 @@ public class FileFunctions
                 // add to object Arraylist
                 orderItem.add(tempObj);
                 
-                //building deliveries arraylists
-                
-                if(shippingMethod.equals("Monday Delivery")){
-                	details = shippingMethod+","+shippingName+","+shippingAddress1+" "+shippingCity+","+notes;
-                	shipping.add(details);
-                }
+                //building deliveries arraylists              
 
                 // read next line before looping
                 // if end of file reached 
@@ -98,6 +93,8 @@ public class FileFunctions
             ioe.printStackTrace();
         }
 
+        
+        
         // calculations and operations with our objects
         for (Order each : orderItem)
         {
@@ -130,9 +127,26 @@ public class FileFunctions
         		GMDQuantities.set(SKU-1, each.getLineItemQuantity());	//adding quantity to index
         		GMDNames.set(SKU-1,each.getLineItemName()); //adding name to index
         	}
+        	
+
+        	String shippingMethod=each.getShippingMethod().toLowerCase();
+
+        	if (shippingMethod != null && !shippingMethod.isEmpty()) {
+            	methodListIndex=methodList.indexOf(shippingMethod);
+            	
+                if(methodListIndex==-1){
+                	methods.add(new ArrayList<String>());
+                	methodList.add(shippingMethod);
+                	
+                	methodListIndex=methodList.indexOf(shippingMethod);
+                	methods.get(methodListIndex).add(shippingMethod+","+each.getShippingName()+","+each.getShippingAddress()+","+each.getNotes());               	
+                }
+                else{
+                	methods.get(methodListIndex).add(shippingMethod+","+each.getShippingName()+","+each.getShippingAddress()+","+each.getNotes());               	
+                } 
+        	}
         }
-        
-        
+                
         
         System.out.print("Calculating meal totals...");
         PrintMealTotals(GMDQuantities,GMDNames,totalQuantity);//Prints the totals of each meal
@@ -141,15 +155,8 @@ public class FileFunctions
         CalcPrintIngredients(GMDQuantities,GMDNames); //Calculate the ingredients required
         
         System.out.print("Printing sorted delivery methods...");
-        PrintShipping(shipping);
+        PrintShipping(methodList, methods);
         
-        
-//        List<Ingredient> ingredients = new ArrayList<>();
-//        ingredients=CalcPrintIngredients(GMDQuantities,GMDNames);
-//        
-//        for(int i=0; i<ingredients.size(); i++){
-//        	System.out.println(ingredients.get(i));
-//        }
         
 
     }
@@ -163,7 +170,7 @@ public class FileFunctions
             BufferedWriter totals = new BufferedWriter(new FileWriter("_meal_totals.csv", false));
 
             totals.write("TOTAL MEALS:"+","+total);
-
+            totals.newLine();
             totals.newLine();
             totals.newLine();
             totals.write("NAME"+","+"TOTAL"+","+"MEAL");
@@ -239,14 +246,16 @@ public class FileFunctions
             // the flag set to 'true' tells it to append a file if file exists
             BufferedWriter ingredientsFile = new BufferedWriter(new FileWriter("_ingredients.csv", false));
 
-            // write a `newline` to the file
-            ingredientsFile.newLine();
             
-            ingredientsFile.write("Ingredient Totals"+","+"kg");
+            ingredientsFile.write("INGREDIENT"+","+"kg");
+            ingredientsFile.newLine();
+            ingredientsFile.newLine();
             ingredientsFile.newLine();
             ingredientsFile.write(chicken.getName()+","+(float)chicken.getQuantity()/1000);
             ingredientsFile.newLine();
             ingredientsFile.write(beef.getName()+","+(float)beef.getQuantity()/1000);
+            ingredientsFile.newLine();
+            ingredientsFile.newLine();
             ingredientsFile.newLine();
             ingredientsFile.write(rice.getName()+","+(float)rice.getQuantity()/1000);
             ingredientsFile.newLine();
@@ -268,7 +277,7 @@ public class FileFunctions
     }
 
 
-    public static void PrintShipping(ArrayList<String> method){
+    public static void PrintShipping(List<String> methodList, List<List<String>> methods){
     	
     	try
         {
@@ -276,15 +285,22 @@ public class FileFunctions
             // the flag set to 'true' tells it to append a file if file exists
             BufferedWriter shipping = new BufferedWriter(new FileWriter("_shipping.csv", false));
 
-            // write the text string to the file
-            shipping.write("TOTAL DELIVERIES:"+","+method.size());
-            shipping.newLine();
-            shipping.write("Type"+","+"Name"+","+"Address"+","+"Notes");
             
-            for(int i=0; i<method.size(); i++){
+            shipping.write("SHIPPING METHODS: "+methods.size());
+        	shipping.newLine();
+        	shipping.newLine();
+            
+            for(int i=0; i<methods.size(); i++){
+            	
+            	for(int j=0; j<methods.get(i).size(); j++){
+            		shipping.newLine();
+            		shipping.write(methods.get(i).get(j));	
+            	}
             	shipping.newLine();
-            	shipping.write(method.get(i));
-            }
+            	shipping.write("TOTAL: "+methods.get(i).size());
+            	shipping.newLine();
+            	shipping.newLine();
+            }     
 
             // close the file
             shipping.close();
