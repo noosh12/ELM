@@ -229,7 +229,7 @@ public class FileFunctions
         /*
          * Totalling Ingredient Quantities
          * This is accomplished by searching the menu item name for keywords like large, chicken, rice, etc
-         * i.e 'Pepperberry Steak - Large/Rice' would add 200g to the beef and vegetable quantities
+         * i.e 'Pepperberry Steak - Large/Rice' would add 200g to the beef and rice quantities
          */
         for(int i=0; i<quantities.size(); i++){
         	String tempName = names.get(i).toLowerCase(); //Storing current item name
