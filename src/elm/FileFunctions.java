@@ -33,13 +33,19 @@ public class FileFunctions
 			String savedShippingName = "";
 			String savedShippingAddress = "";
 			String savedShippingCity = "";
+			
+
 			while (fileRead != null)
 			{
 				// split input line on commas, except those between quotes ("")
 				String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+				while(tokenize.length==1){
+					fileRead = fileRead + input.readLine();
+					tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+				}
+				System.out.println("line size = "+tokenize.length);
 
-				// TODO: Make these column indicies constants
-				String orderID = tokenize[1];							//OrderID
+				String orderID = tokenize[0];							//OrderID
 				String discountCode = tokenize[12];						//coupon that was used
 				String shippingMethod = tokenize[14];					//shipping method that was used
 				int lineItemQuantity = Integer.parseInt(tokenize[16]);	//quantity of current item
@@ -67,8 +73,15 @@ public class FileFunctions
 					new OrderItem(discountCode, shippingMethod, lineItemQuantity, lineItemName,
 						lineItemSKU, shippingName, shippingAddress1, shippingCity, notes)
 				);
+				
+				System.out.println("Built Order "+count);
+				
+				
+				
+				System.out.print("reading in new line from file... ");
 				fileRead = input.readLine();
 				count+=1;
+				System.out.println("line read");
 			}
 
 			input.close();
@@ -90,15 +103,33 @@ public class FileFunctions
 		for (OrderItem order : orderLine)
 		{
 			String sku;
+			String name;
+			int extraSku;
 			totalQuantity += order.getLineItemQuantity();
 			sku = order.getLineItemSKU();
 			// Tally order quantities in a HashMap on SKU
-			if (gmdQuantities.containsKey(sku)){
-				gmdQuantities.put(sku, gmdQuantities.get(sku) + order.getLineItemQuantity());
+			if (gmdQuantities.containsKey(sku)){	//if item already exists in hashMap
+				name = order.getLineItemName();
+				if (name.equals(gmdNames.get(sku))){ //if name matches sku value
+					gmdQuantities.put(sku, gmdQuantities.get(sku) + order.getLineItemQuantity());
+				}
+				else{ //if name does not match sku value (very rare)
+					extraSku = Integer.parseInt(sku.replaceAll("[\\D]", ""));
+					sku = "ZZZ-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> ZZZ-12
+					if(gmdQuantities.containsKey(sku)){
+						gmdQuantities.put(sku, gmdQuantities.get(sku) + order.getLineItemQuantity());
+					}
+					else{
+						gmdQuantities.put(sku, order.getLineItemQuantity());
+						gmdNames.put(sku, order.getLineItemName());
+					}					
+				}
+				
 			} else {
 				gmdQuantities.put(sku, order.getLineItemQuantity());
+				gmdNames.put(sku, order.getLineItemName());
 			}
-			gmdNames.put(sku, order.getLineItemName());
+			
 
 			// Storing the different shipping methods and the different orders to each shipping method
 			String shippingMethod = order.getShippingMethod().toLowerCase();
@@ -138,7 +169,7 @@ public class FileFunctions
 
 			// Write the quantities of each meal to file
 			for(String sku : quantities.keySet()){
-				totals.write(sku + "," + names.get(sku) + "," + quantities.get(sku));
+				totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
 				totals.newLine();
 			}
 
