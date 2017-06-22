@@ -39,11 +39,12 @@ public class FileFunctions
 			{
 				// split input line on commas, except those between quotes ("")
 				String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+				System.out.println("line size = "+tokenize.length);
 				while(tokenize.length==1){
 					fileRead = fileRead + input.readLine();
 					tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-				}
-				System.out.println("line size = "+tokenize.length);
+					System.out.println("line size = "+tokenize.length);
+				}		
 
 				String orderID = tokenize[0];							//OrderID
 				String discountCode = tokenize[12];						//coupon that was used
