@@ -16,13 +16,13 @@ public class FileFunctions
 		HashMap<String, String> gmdNames= new HashMap<String,String>();			//meal names
 		HashMap<String, ArrayList<OrderItem>> ordersByShippingMethod = new HashMap<String, ArrayList<OrderItem>> (); // Orders by shipping method
 
-		System.out.println("GYM MEALS DIRECT");
+		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
 		System.out.println();
-		System.out.print("loading file GMD.csv ...");
+		System.out.print("loading file input.csv ...");
 
 		try
 		{
-			BufferedReader input = new BufferedReader(new FileReader("GMD.csv"));//Buffered Reader object instance with FileReader
+			BufferedReader input = new BufferedReader(new FileReader("input.csv"));//Buffered Reader object instance with FileReader
 			System.out.print("Reading...");
 			String fileRead = input.readLine(); // Headers
 			fileRead = input.readLine();
