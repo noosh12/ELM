@@ -11,7 +11,6 @@ public class FileFunctions
 	{
 		int totalQuantity = 0;
 		int count = 0;
-		int methodListIndex;
 		List<OrderItem> orderLine = new ArrayList<>();							//stores the OrderItem objects
 		HashMap<String, Integer> gmdQuantities= new HashMap<String,Integer>();	//meal quantities
 		HashMap<String, String> gmdNames= new HashMap<String,String>();			//meal names
@@ -40,7 +39,7 @@ public class FileFunctions
 				// split input line on commas, except those between quotes ("")
 				String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 				//System.out.println("line size = "+tokenize.length);
-				while(tokenize.length==1){
+				while(tokenize.length<56){
 					fileRead = fileRead + input.readLine();
 					tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 					//System.out.println("line size = "+tokenize.length);
