@@ -312,7 +312,9 @@ public class FileFunctions
 				String lastShippingString = "NOTAREALSHIPPINGSTRING";
 				for(OrderItem order : ordersByShippingMethod.get(shippingMethod)){
 					String shippingString = order.getShippingMethod() + "," + order.getShippingName() + "," + order.getShippingAddress() + "," + order.getNotes();
+					System.out.println(shippingString);
 					if (!shippingString.equals(lastShippingString)){ // skip duplicate shipping strings
+						System.out.println("end");
 						shipping.write(shippingString);
 						shipping.newLine();
 						totalMealsForMethod++;
