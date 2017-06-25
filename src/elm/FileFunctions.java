@@ -101,7 +101,7 @@ public class FileFunctions
 				}
 				else{ //if name does not match sku value (very rare)
 					extraSku = Integer.parseInt(sku.replaceAll("[\\D]", ""));
-					sku = "ZZZ-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> ZZZ-12
+					sku = "OLD-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> ZZZ-12
 					if(gmdQuantities.containsKey(sku)){
 						gmdQuantities.put(sku, gmdQuantities.get(sku) + order.getLineItemQuantity());
 					}
