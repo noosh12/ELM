@@ -45,14 +45,19 @@ public class FileFunctions
 				int lineItemQuantity = Integer.parseInt(tokenize[16]);	//quantity of current item
 				String lineItemName = tokenize[17];						//product name of current item
 				String lineItemSKU = tokenize[20];						//SKU of current item (i.e. GMD-12)
+				String billingName = tokenize[24];	
 				String shippingName = tokenize[34];						//Shipping Name provided by customer
 				String shippingAddress1 = tokenize[36];					//Shipping Address provided
 				String shippingCity = tokenize[39];						//Shipping city provided (suburb)
 				String notes=tokenize[44];								//notes provided by customer regarding shipping
+				
+				if(shippingName != null && !shippingName.isEmpty()){
+					shippingName = billingName;
+				}
 
 				orderLine.add(
 					new OrderItem(orderID, discountCode, shippingMethod, lineItemQuantity, lineItemName,
-						lineItemSKU, shippingName, shippingAddress1, shippingCity, notes)
+						lineItemSKU, billingName, shippingAddress1, shippingCity, notes)
 				);
 				
 				System.out.println("Built Order "+count);
