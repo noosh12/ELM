@@ -18,7 +18,7 @@ public class FileFunctions
 
 		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
 		System.out.println();
-		System.out.print("loading file input.csv ...");
+		System.out.println("loading file input.csv ...");
 
 		try
 		{
@@ -26,23 +26,17 @@ public class FileFunctions
 			System.out.print("Reading...");
 			String fileRead = input.readLine(); // Headers
 			fileRead = input.readLine();
-
-			String oldOrderID = "NOTAREALID";
-			String savedShippingMethod = "";
-			String savedShippingName = "";
-			String savedShippingAddress = "";
-			String savedShippingCity = "";
 			
 
 			while (fileRead != null)
 			{
 				// split input line on commas, except those between quotes ("")
 				String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-				//System.out.println("line size = "+tokenize.length);
+				System.out.print("line size = "+tokenize.length+"   ");
 				while(tokenize.length<56){
 					fileRead = fileRead + input.readLine();
 					tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-					//System.out.println("line size = "+tokenize.length);
+					System.out.println("line size = "+tokenize.length);
 				}		
 
 				String orderID = tokenize[0];							//OrderID
@@ -56,27 +50,12 @@ public class FileFunctions
 				String shippingCity = tokenize[39];						//Shipping city provided (suburb)
 				String notes=tokenize[44];								//notes provided by customer regarding shipping
 
-				if (orderID.equals(oldOrderID)){
-					shippingMethod = savedShippingMethod;
-					shippingName = savedShippingName;
-					shippingAddress1 = savedShippingAddress;
-					shippingCity = savedShippingCity;
-				} else {
-					savedShippingMethod = shippingMethod;
-					savedShippingName = shippingName;
-					savedShippingAddress = shippingAddress1;
-					savedShippingCity = shippingCity;
-					oldOrderID = orderID;
-				}
-
 				orderLine.add(
-					new OrderItem(discountCode, shippingMethod, lineItemQuantity, lineItemName,
+					new OrderItem(orderID, discountCode, shippingMethod, lineItemQuantity, lineItemName,
 						lineItemSKU, shippingName, shippingAddress1, shippingCity, notes)
 				);
 				
 				System.out.println("Built Order "+count);
-				
-				
 				
 				System.out.print("reading in new line from file... ");
 				fileRead = input.readLine();
@@ -99,11 +78,13 @@ public class FileFunctions
 			System.exit(1);
 		}
 
+		String oldOrderID = "NOTAREALID";
 		// Here we loop through all of our order objects to obtain useful info out of them
 		for (OrderItem order : orderLine)
 		{
 			String sku;
 			String name;
+			
 			int extraSku;
 			totalQuantity += order.getLineItemQuantity();
 			sku = order.getLineItemSKU();
@@ -132,11 +113,14 @@ public class FileFunctions
 			
 
 			// Storing the different shipping methods and the different orders to each shipping method
-			String shippingMethod = order.getShippingMethod().toLowerCase();
-			if (!ordersByShippingMethod.containsKey(shippingMethod)){
-				ordersByShippingMethod.put(shippingMethod, new ArrayList<OrderItem>());
+			if (!(order.getOrderID().equals(oldOrderID))){
+				String shippingMethod = order.getShippingMethod().toLowerCase();
+				if (!ordersByShippingMethod.containsKey(shippingMethod)){
+					ordersByShippingMethod.put(shippingMethod, new ArrayList<OrderItem>());		
+				}
+				ordersByShippingMethod.get(shippingMethod).add(order);
+				oldOrderID=order.getOrderID();
 			}
-			ordersByShippingMethod.get(shippingMethod).add(order);
 		}
 
 		System.out.print("Calculating meal totals...");
@@ -309,17 +293,12 @@ public class FileFunctions
 			//Looping through all shipping methods and within that, looping through all orders while printing
 			for(String shippingMethod : ordersByShippingMethod.keySet()){
 				int totalMealsForMethod = 0;
-				String lastShippingString = "NOTAREALSHIPPINGSTRING";
+
 				for(OrderItem order : ordersByShippingMethod.get(shippingMethod)){
-					String shippingString = order.getShippingMethod() + "," + order.getShippingName() + "," + order.getShippingAddress() + "," + order.getNotes();
-					System.out.println(shippingString);
-					if (!shippingString.equals(lastShippingString)){ // skip duplicate shipping strings
-						System.out.println("end");
-						shipping.write(shippingString);
-						shipping.newLine();
-						totalMealsForMethod++;
-					}
-					lastShippingString = shippingString;
+					String shippingString = order.getShippingMethod() + "," + order.getShippingName() + "," + order.getShippingAddress() + "," + order.getNotes()+","+order.getOrderID();			
+					shipping.write(shippingString);
+					shipping.newLine();
+					totalMealsForMethod++;
 				}
 				shipping.write("TOTAL: " + totalMealsForMethod);
 				shipping.newLine();

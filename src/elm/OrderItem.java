@@ -1,6 +1,7 @@
 package elm;
 
 public class OrderItem {
+	private String orderID;
 	private String discountCode;
 	private String shippingMethod;
 	private int lineItemQuantity;
@@ -11,8 +12,9 @@ public class OrderItem {
 	private String shippingCity;
 	private String notes;
 	
-	public OrderItem(String discountCode, String shippingMethod, int lineItemQuantity, String lineItemName, String lineItemSKU, String shippingName, String shippingAddress1, String shippingCity, String notes){
+	public OrderItem(String orderID, String discountCode, String shippingMethod, int lineItemQuantity, String lineItemName, String lineItemSKU, String shippingName, String shippingAddress1, String shippingCity, String notes){
 		
+		this.orderID=orderID;
 		this.discountCode=discountCode;
 		this.shippingMethod=shippingMethod;
 		this.lineItemQuantity=lineItemQuantity;
@@ -54,6 +56,10 @@ public class OrderItem {
 	
 	public String getNotes(){
 		return notes;
+	}
+	
+	public String getOrderID(){
+		return orderID;
 	}
 
 }
