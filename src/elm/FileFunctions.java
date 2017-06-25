@@ -159,6 +159,8 @@ public class FileFunctions
 			// creating a BufferedWriter instance with FileWriter
 			// the flag set to 'true' tells it to append a file if file exists. 'false' creates/recreates the file
 			BufferedWriter totals = new BufferedWriter(new FileWriter("_meal_totals.csv", false));
+			String mealName;
+			int typeTotals[] = new int[6];
 
 			totals.write("TOTAL MEALS: "+total);
 			totals.newLine();
@@ -171,8 +173,40 @@ public class FileFunctions
 			for(String sku : quantities.keySet()){
 				totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
 				totals.newLine();
+				
+				//Totaling the totals for each meal type
+				mealName = names.get(sku).toLowerCase(); 				
+				if(mealName.contains("rice")){
+					if(mealName.contains("large"))
+						typeTotals[0]+=quantities.get(sku);
+					if(mealName.contains("small"))
+						typeTotals[1]+=quantities.get(sku);
+				}
+				if(mealName.contains("potato")){
+					if(mealName.contains("large"))
+						typeTotals[2]+=quantities.get(sku);
+					if(mealName.contains("small"))
+						typeTotals[3]+=quantities.get(sku);
+				}
+				if(mealName.contains("veg")){
+					if(mealName.contains("large"))
+						typeTotals[4]+=quantities.get(sku);
+					if(mealName.contains("small"))
+						typeTotals[5]+=quantities.get(sku);
+				}
 			}
-
+			
+			//Writing the totals for each meal type
+			totals.newLine();
+			totals.newLine();
+			totals.write("TYPE TOTALS"+","+"Large"+","+"Small");
+			totals.newLine();
+			totals.write("Rice"+","+typeTotals[0]+","+typeTotals[1]);
+			totals.newLine();
+			totals.write("Sweet Potato"+","+typeTotals[2]+","+typeTotals[3]);
+			totals.newLine();
+			totals.write("Vege"+","+typeTotals[4]+","+typeTotals[5]);
+			
 			totals.close();
 			System.out.println(" Done!");
 		}
