@@ -109,13 +109,11 @@ public class FileFunctions
 						gmdQuantities.put(sku, order.getLineItemQuantity());
 						gmdNames.put(sku, order.getLineItemName());
 					}					
-				}
-				
+				}				
 			} else {
 				gmdQuantities.put(sku, order.getLineItemQuantity());
 				gmdNames.put(sku, order.getLineItemName());
-			}
-			
+			}		
 
 			// Storing the different shipping methods and the different orders to each shipping method
 			if (!(order.getOrderID().equals(oldOrderID))){
@@ -294,18 +292,21 @@ public class FileFunctions
 			shipping.write("SHIPPING METHODS: " + ordersByShippingMethod.keySet().size());
 			shipping.newLine();
 			shipping.newLine();
+			shipping.newLine();
+			shipping.newLine();
+			shipping.newLine();
 
 			//Looping through all shipping methods and within that, looping through all orders while printing
 			for(String shippingMethod : ordersByShippingMethod.keySet()){
-				int totalMealsForMethod = 0;
-
+				shipping.write("     METHOD,     NAME,     ADDRESS,     NOTES,     ORDER ID");
+				shipping.newLine();
 				for(OrderItem order : ordersByShippingMethod.get(shippingMethod)){
 					String shippingString = order.getShippingMethod() + "," + order.getShippingName() + "," + order.getShippingAddress() + "," + order.getNotes()+","+order.getOrderID();			
 					shipping.write(shippingString);
 					shipping.newLine();
-					totalMealsForMethod++;
 				}
-				shipping.write("TOTAL: " + totalMealsForMethod);
+				shipping.write("     TOTAL: " + ordersByShippingMethod.get(shippingMethod).size());
+				shipping.newLine();
 				shipping.newLine();
 				shipping.newLine();
 			}
