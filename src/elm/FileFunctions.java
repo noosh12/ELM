@@ -147,7 +147,11 @@ public class FileFunctions
 			// the flag set to 'true' tells it to append a file if file exists. 'false' creates/recreates the file
 			BufferedWriter totals = new BufferedWriter(new FileWriter("_meal_totals.csv", false));
 			String mealName;
-			int typeTotals[] = new int[6];
+			String sauceName;
+			
+			
+			int[] typeTotals = new int[6];
+			HashMap<String, Integer> sauceTotals = new HashMap<String,Integer>();	//sauce totals
 
 			totals.write("TOTAL MEALS: "+total);
 			totals.newLine();
@@ -161,39 +165,65 @@ public class FileFunctions
 				totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
 				totals.newLine();
 				
-				//Totaling the totals for each meal type
-				mealName = names.get(sku).toLowerCase(); 				
-				if(mealName.contains("rice")){
-					if(mealName.contains("large"))
-						typeTotals[0]+=quantities.get(sku);
-					if(mealName.contains("small"))
-						typeTotals[1]+=quantities.get(sku);
-				}
-				if(mealName.contains("potato")){
-					if(mealName.contains("large"))
-						typeTotals[2]+=quantities.get(sku);
-					if(mealName.contains("small"))
-						typeTotals[3]+=quantities.get(sku);
-				}
-				if(mealName.contains("veg")){
-					if(mealName.contains("large"))
-						typeTotals[4]+=quantities.get(sku);
-					if(mealName.contains("small"))
-						typeTotals[5]+=quantities.get(sku);
+				if (sku.contains("GMD")||sku.contains("OLD")){
+					//Totalling the totals for each meal type
+					mealName = names.get(sku).toLowerCase(); 				
+					if(mealName.contains("rice")){
+						if(mealName.contains("large"))
+							typeTotals[0]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[1]+=quantities.get(sku);
+					}
+					if(mealName.contains("potato")){
+						if(mealName.contains("large"))
+							typeTotals[2]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[3]+=quantities.get(sku);
+					}
+					if(mealName.contains("veg")){
+						if(mealName.contains("large"))
+							typeTotals[4]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[5]+=quantities.get(sku);
+					}
+					
+					String[] mealNameSplit = names.get(sku).split(" - ");
+					sauceName = mealNameSplit[0];
+					
+					if (sauceTotals.containsKey(sauceName)){ //if item already exists in hashMap
+						sauceTotals.put(sauceName, sauceTotals.get(sauceName)+quantities.get(sku));					
+					}
+					else {
+						sauceTotals.put(sauceName, quantities.get(sku));
+					}
 				}
 			}
 			
-			//Writing the totals for each meal type
-			totals.newLine();
-			totals.newLine();
-			totals.write("TYPE TOTALS"+","+"Large"+","+"Small");
-			totals.newLine();
-			totals.write("Rice"+","+typeTotals[0]+","+typeTotals[1]);
-			totals.newLine();
-			totals.write("Sweet Potato"+","+typeTotals[2]+","+typeTotals[3]);
-			totals.newLine();
-			totals.write("Vege"+","+typeTotals[4]+","+typeTotals[5]);
-			
+			if (!sauceTotals.isEmpty()){
+				//Writing the totals for each meal type
+				totals.newLine();
+				totals.newLine();
+				totals.write("TYPE TOTALS"+","+"LARGE"+","+"SMALL");
+				totals.newLine();
+				totals.write("Rice"+","+typeTotals[0]+","+typeTotals[1]);
+				totals.newLine();
+				totals.write("Sweet Potato"+","+typeTotals[2]+","+typeTotals[3]);
+				totals.newLine();
+				totals.write("Vege"+","+typeTotals[4]+","+typeTotals[5]);
+							
+				//Writing the totals for each sauce type
+				totals.newLine();
+				totals.newLine();
+				totals.newLine();
+				totals.newLine();
+				totals.write("SAUCE TOTALS"+","+"TOTAL");
+				
+				for (String sauce : sauceTotals.keySet()){
+					totals.newLine();
+					totals.write(sauce +","+sauceTotals.get(sauce));
+				}
+			}
+				
 			totals.close();
 			System.out.println(" Done!");
 		}
