@@ -2,6 +2,7 @@ package elm;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.HashMap;
 
@@ -15,7 +16,8 @@ public class FileFunctions
 		HashMap<String, Integer> gmdQuantities= new HashMap<String,Integer>();	//meal quantities
 		HashMap<String, String> gmdNames= new HashMap<String,String>();			//meal names
 		HashMap<String, ArrayList<OrderItem>> ordersByShippingMethod = new HashMap<String, ArrayList<OrderItem>> (); // Orders by shipping method
-
+		ArrayList<String> skus = new ArrayList<String>();
+		
 		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
 		System.out.println();
 		System.out.println("loading file input.csv ...");
@@ -101,18 +103,24 @@ public class FileFunctions
 				}
 				else{ //if name does not match sku value (very rare)
 					extraSku = Integer.parseInt(sku.replaceAll("[\\D]", ""));
-					sku = "OLD-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> ZZZ-12
+					if(extraSku<10)
+						sku = "OLD-0"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> ZZZ-12
+					else
+						sku = "OLD-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> ZZZ-12
+					
 					if(gmdQuantities.containsKey(sku)){
 						gmdQuantities.put(sku, gmdQuantities.get(sku) + order.getLineItemQuantity());
 					}
 					else{
 						gmdQuantities.put(sku, order.getLineItemQuantity());
 						gmdNames.put(sku, order.getLineItemName());
+						skus.add(sku);
 					}					
 				}				
 			} else {
 				gmdQuantities.put(sku, order.getLineItemQuantity());
 				gmdNames.put(sku, order.getLineItemName());
+				skus.add(sku);
 			}		
 
 			// Storing the different shipping methods and the different orders to each shipping method
@@ -125,9 +133,19 @@ public class FileFunctions
 				oldOrderID=order.getOrderID();
 			}
 		}
+		
+		System.out.println("UNSORTED");
+		for (String sku : skus){
+			System.out.println(sku);
+		}
+		Collections.sort(skus);
+		System.out.println("SORTED");
+		for (String sku : skus){
+			System.out.println(sku);
+		}
 
 		System.out.print("Calculating meal totals...");
-		PrintMealTotals(gmdQuantities,gmdNames,totalQuantity);//Prints the totals of each meal
+		PrintMealTotals(gmdQuantities,gmdNames,totalQuantity, skus);//Prints the totals of each meal
 
 		System.out.print("Calculating ingredient totals...");
 		CalcPrintIngredients(gmdQuantities,gmdNames); //Calculate the ingredients required
@@ -140,7 +158,7 @@ public class FileFunctions
 	 *   Writes the total sold quantities of each menu item
 	 *   to file '_meal_totals.csv'
 	 */
-	public static void PrintMealTotals(HashMap<String, Integer> quantities, HashMap<String, String> names, int total){
+	public static void PrintMealTotals(HashMap<String, Integer> quantities, HashMap<String, String> names, int total, ArrayList<String> skus){
 		try
 		{
 			// creating a BufferedWriter instance with FileWriter
@@ -161,9 +179,9 @@ public class FileFunctions
 			totals.newLine();
 
 			// Write the quantities of each meal to file
-			for(String sku : quantities.keySet()){
-				totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
-				totals.newLine();
+			for(String sku : skus){
+				//totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
+				//totals.newLine();
 				
 				if (sku.contains("GMD")||sku.contains("OLD")){
 					//Totalling the totals for each meal type
@@ -198,6 +216,67 @@ public class FileFunctions
 					}
 				}
 			}
+			
+//			
+//			String tempsku;
+//			String skuNo;
+//			int skuno;
+//			int max = quantities.size();
+//			int old=0;
+//			
+//			
+//
+//			for(int i=1; i<max+1; i++){
+//				for(String sku : quantities.keySet()){
+//					//totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
+//					//totals.newLine();
+//					tempsku = sku.replaceAll("[^A-Za-z]+", "");
+//					//System.out.println(tempsku);
+//					if(!tempsku.equals("OLD")){
+//						skuNo=sku.replaceAll("\\D+","");					
+//						skuno= Integer.parseInt(skuNo);
+//						//System.out.println(skuno);
+//						
+//						if(i==skuno){
+//							totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
+//							totals.newLine();
+//						}
+//					}
+//					else{
+//						old++;
+//					}
+//					
+//				}
+//	
+//			}
+//			for(int i=1; i<max+1; i++){
+//				for(String sku : quantities.keySet()){
+//					//totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
+//					//totals.newLine();
+//					tempsku = sku.replaceAll("[^A-Za-z]+", "");
+//					//System.out.println(tempsku);
+//					if(tempsku.equals("OLD")){
+//						skuNo=sku.replaceAll("\\D+","");					
+//						skuno= Integer.parseInt(skuNo);
+//						//System.out.println(skuno);
+//						
+//						if(i==skuno){
+//							totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
+//							totals.newLine();
+//						}
+//					}
+//					else{
+//						old++;
+//					}
+//					
+//				}
+//	
+//			}
+			
+			
+			
+			
+			
 			
 			if (!sauceTotals.isEmpty()){
 				//Writing the totals for each meal type
