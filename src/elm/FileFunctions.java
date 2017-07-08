@@ -134,15 +134,8 @@ public class FileFunctions
 			}
 		}
 		
-		System.out.println("UNSORTED");
-		for (String sku : skus){
-			System.out.println(sku);
-		}
 		Collections.sort(skus);
-		System.out.println("SORTED");
-		for (String sku : skus){
-			System.out.println(sku);
-		}
+
 
 		System.out.print("Calculating meal totals...");
 		PrintMealTotals(gmdQuantities,gmdNames,totalQuantity, skus);//Prints the totals of each meal
@@ -180,8 +173,8 @@ public class FileFunctions
 
 			// Write the quantities of each meal to file
 			for(String sku : skus){
-				//totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
-				//totals.newLine();
+				totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
+				totals.newLine();
 				
 				if (sku.contains("GMD")||sku.contains("OLD")){
 					//Totalling the totals for each meal type
@@ -217,67 +210,7 @@ public class FileFunctions
 				}
 			}
 			
-//			
-//			String tempsku;
-//			String skuNo;
-//			int skuno;
-//			int max = quantities.size();
-//			int old=0;
-//			
-//			
-//
-//			for(int i=1; i<max+1; i++){
-//				for(String sku : quantities.keySet()){
-//					//totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
-//					//totals.newLine();
-//					tempsku = sku.replaceAll("[^A-Za-z]+", "");
-//					//System.out.println(tempsku);
-//					if(!tempsku.equals("OLD")){
-//						skuNo=sku.replaceAll("\\D+","");					
-//						skuno= Integer.parseInt(skuNo);
-//						//System.out.println(skuno);
-//						
-//						if(i==skuno){
-//							totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
-//							totals.newLine();
-//						}
-//					}
-//					else{
-//						old++;
-//					}
-//					
-//				}
-//	
-//			}
-//			for(int i=1; i<max+1; i++){
-//				for(String sku : quantities.keySet()){
-//					//totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
-//					//totals.newLine();
-//					tempsku = sku.replaceAll("[^A-Za-z]+", "");
-//					//System.out.println(tempsku);
-//					if(tempsku.equals("OLD")){
-//						skuNo=sku.replaceAll("\\D+","");					
-//						skuno= Integer.parseInt(skuNo);
-//						//System.out.println(skuno);
-//						
-//						if(i==skuno){
-//							totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
-//							totals.newLine();
-//						}
-//					}
-//					else{
-//						old++;
-//					}
-//					
-//				}
-//	
-//			}
-			
-			
-			
-			
-			
-			
+					
 			if (!sauceTotals.isEmpty()){
 				//Writing the totals for each meal type
 				totals.newLine();
