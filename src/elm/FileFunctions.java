@@ -16,7 +16,11 @@ public class FileFunctions
 		HashMap<String, Integer> gmdQuantities= new HashMap<String,Integer>();	//meal quantities
 		HashMap<String, String> gmdNames= new HashMap<String,String>();			//meal names
 		HashMap<String, ArrayList<OrderItem>> ordersByShippingMethod = new HashMap<String, ArrayList<OrderItem>> (); // Orders by shipping method
+		
 		ArrayList<String> skus = new ArrayList<String>();
+		ArrayList<String> names = new ArrayList<String>();
+		HashMap<String, String> Names= new HashMap<String,String>();
+		
 		ArrayList<String> orderedOld = new ArrayList<String>();
 		
 		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
@@ -92,8 +96,7 @@ public class FileFunctions
 		{
 			String sku;
 			String name;
-			String newNote;
-			
+
 			int extraSku;
 			totalQuantity += order.getLineItemQuantity();
 			sku = order.getLineItemSKU();
@@ -117,6 +120,7 @@ public class FileFunctions
 						gmdQuantities.put(sku, order.getLineItemQuantity());
 						gmdNames.put(sku, order.getLineItemName());
 						skus.add(sku);
+						
 					}
 					orderedOld.add(order.getOrderID());
 				}				
@@ -137,7 +141,17 @@ public class FileFunctions
 			}		
 		}
 		
-		Collections.sort(skus);
+		System.out.print("Sorting Meal Names...");
+		for(String currentSku: skus){
+			Names.put(gmdNames.get(currentSku), currentSku);
+			names.add(gmdNames.get(currentSku));			
+		}
+		Collections.sort(names);
+		skus.clear();
+		for(String currentName : names){
+			skus.add(Names.get(currentName));
+		}
+		System.out.println(" Done!");
 
 
 		System.out.print("Calculating meal totals...");
@@ -227,7 +241,6 @@ public class FileFunctions
 				totals.write("Vege"+","+typeTotals[4]+","+typeTotals[5]);
 							
 				//Writing the totals for each sauce type
-				totals.newLine();
 				totals.newLine();
 				totals.newLine();
 				totals.newLine();
