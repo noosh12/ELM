@@ -17,6 +17,7 @@ public class FileFunctions
 		HashMap<String, String> gmdNames= new HashMap<String,String>();			//meal names
 		HashMap<String, ArrayList<OrderItem>> ordersByShippingMethod = new HashMap<String, ArrayList<OrderItem>> (); // Orders by shipping method
 		ArrayList<String> skus = new ArrayList<String>();
+		ArrayList<String> orderedOld = new ArrayList<String>();
 		
 		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
 		System.out.println();
@@ -91,6 +92,7 @@ public class FileFunctions
 		{
 			String sku;
 			String name;
+			String newNote;
 			
 			int extraSku;
 			totalQuantity += order.getLineItemQuantity();
@@ -115,7 +117,8 @@ public class FileFunctions
 						gmdQuantities.put(sku, order.getLineItemQuantity());
 						gmdNames.put(sku, order.getLineItemName());
 						skus.add(sku);
-					}					
+					}
+					orderedOld.add(order.getOrderID());
 				}				
 			} else {
 				gmdQuantities.put(sku, order.getLineItemQuantity());
@@ -131,7 +134,7 @@ public class FileFunctions
 				}
 				ordersByShippingMethod.get(shippingMethod).add(order);
 				oldOrderID=order.getOrderID();
-			}
+			}		
 		}
 		
 		Collections.sort(skus);
@@ -144,7 +147,7 @@ public class FileFunctions
 		CalcPrintIngredients(gmdQuantities,gmdNames); //Calculate the ingredients required
 
 		System.out.print("Printing sorted delivery methods...");
-		PrintShipping(ordersByShippingMethod); //Print the shipping details of each order of each method
+		PrintShipping(ordersByShippingMethod, orderedOld); //Print the shipping details of each order of each method
 	}
 
 	/*
@@ -324,7 +327,7 @@ public class FileFunctions
 	/*
 	 * Prints the orders of each shipping method
 	 */
-	public static void PrintShipping(HashMap<String, ArrayList<OrderItem>> ordersByShippingMethod){
+	public static void PrintShipping(HashMap<String, ArrayList<OrderItem>> ordersByShippingMethod, ArrayList <String> old){
 
 		try
 		{
@@ -343,7 +346,12 @@ public class FileFunctions
 				shipping.write("     METHOD,     NAME,     ADDRESS,     NOTES,     ORDER ID");
 				shipping.newLine();
 				for(OrderItem order : ordersByShippingMethod.get(shippingMethod)){
-					String shippingString = order.getShippingMethod() + "," + order.getShippingName() + "," + order.getShippingAddress() + "," + order.getNotes()+","+order.getOrderID();			
+					String shippingString = order.getShippingMethod() + "," + order.getShippingName() + "," + order.getShippingAddress() + ",";
+					if(old.contains(order.getOrderID()))
+						shippingString = shippingString + "**CONTAINS OLD** "+order.getNotes()+","+order.getOrderID();
+					else
+						shippingString = shippingString+order.getNotes()+","+order.getOrderID();
+								
 					shipping.write(shippingString);
 					shipping.newLine();
 				}

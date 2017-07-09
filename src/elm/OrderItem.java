@@ -61,5 +61,9 @@ public class OrderItem {
 	public String getOrderID(){
 		return orderID;
 	}
+	
+	public void setNotes(String newNotes){
+		notes=newNotes;
+	}
 
 }
