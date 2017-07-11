@@ -180,6 +180,7 @@ public class FileFunctions
 			
 			int[] typeTotals = new int[6];
 			HashMap<String, Integer> sauceTotals = new HashMap<String,Integer>();	//sauce totals
+			ArrayList<String> sauces = new ArrayList<String>();
 
 			totals.write("TOTAL MEALS: "+total);
 			totals.newLine();
@@ -223,6 +224,7 @@ public class FileFunctions
 					}
 					else {
 						sauceTotals.put(sauceName, quantities.get(sku));
+						sauces.add(sauceName);
 					}
 				}
 			}
@@ -244,9 +246,8 @@ public class FileFunctions
 				totals.newLine();
 				totals.newLine();
 				totals.newLine();
-				totals.write("SAUCE TOTALS"+","+"TOTAL");
-				
-				for (String sauce : sauceTotals.keySet()){
+				totals.write("SAUCE TOTALS"+","+"TOTAL");				
+				for (String sauce : sauces){
 					totals.newLine();
 					totals.write(sauce +","+sauceTotals.get(sauce));
 				}
