@@ -276,10 +276,10 @@ public class FileFunctions
 				totals.newLine();
 				totals.newLine();
 				totals.newLine();
-				totals.write("SAUCE TOTALS"+","+"TOTAL");				
+				totals.write("SAUCE TOTALS"+","+"TOTAL"+","+"LITRES");				
 				for (String sauce : sauces){
 					totals.newLine();
-					totals.write(sauce +","+sauceTotals.get(sauce));
+					totals.write(sauce +","+sauceTotals.get(sauce)+","+String.format("%1$,.2f", sauceTotals.get(sauce)*0.12)+" L");
 				}
 			}
 				
