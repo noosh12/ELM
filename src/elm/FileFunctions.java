@@ -22,6 +22,7 @@ public class FileFunctions
 		HashMap<String, String> Names= new HashMap<String,String>();
 		
 		ArrayList<String> orderedOld = new ArrayList<String>();
+		ArrayList<Integer> gmdOld = new ArrayList<Integer>();
 		
 		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
 		System.out.println();
@@ -109,9 +110,13 @@ public class FileFunctions
 				else{ //if name does not match sku value (very rare)
 					extraSku = Integer.parseInt(sku.replaceAll("[\\D]", ""));
 					if(extraSku<10)
+					{
 						sku = "OLD-0"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> ZZZ-12
-					else
+					}
+					else{
 						sku = "OLD-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> ZZZ-12
+					}
+					gmdOld.add(extraSku);	
 					
 					if(gmdQuantities.containsKey(sku)){
 						gmdQuantities.put(sku, gmdQuantities.get(sku) + order.getLineItemQuantity());
@@ -140,6 +145,54 @@ public class FileFunctions
 				oldOrderID=order.getOrderID();
 			}		
 		}
+		
+		
+		if (!gmdOld.isEmpty()){
+			System.out.print("Contains OLD meals! Resolving...");
+			for (Integer sku : gmdOld){
+				String gmdSku="", oldSku="";
+				
+				if(sku<10)
+				{
+					gmdSku="GMD-0"+sku;
+					oldSku="OLD-0"+sku;
+				}
+				else{
+					gmdSku="GMD-"+sku;
+					oldSku="OLD-"+sku;
+				}
+				
+				int gmdQuantity = gmdQuantities.get(gmdSku);
+				int oldQuantity = gmdQuantities.get(oldSku);
+				String gmdName = gmdNames.get(gmdSku);
+				String oldName = gmdNames.get(oldSku);
+//				System.out.println("current");
+//				System.out.println(gmdSku+": "+gmdName+" - "+gmdQuantity);
+//				System.out.println(oldSku+": "+oldName+" - "+oldQuantity);						
+				
+				if (gmdQuantity<oldQuantity){ //Old is the real gmd
+					gmdQuantities.remove(gmdSku);
+					gmdNames.remove(gmdSku);
+					gmdQuantities.remove(oldSku);
+					gmdNames.remove(oldSku);
+
+					gmdQuantities.put(gmdSku, oldQuantity);//making old the real gmd
+					gmdNames.put(gmdSku, oldName);
+					
+					gmdQuantities.put(oldSku, gmdQuantity);//making gmd the real old
+					gmdNames.put(oldSku, gmdName);
+//					System.out.println("new");
+//					System.out.println(gmdSku+": "+oldName+" - "+oldQuantity);
+//					System.out.println(oldSku+": "+gmdName+" - "+gmdQuantity);				
+					
+				}	
+			}
+			System.out.println(" Done!");
+		}
+		
+
+		
+		
 		
 		System.out.print("Sorting Meal Names...");
 		for(String currentSku: skus){
