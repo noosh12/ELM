@@ -47,6 +47,7 @@ public class FileFunctions
 				}		
 
 				String orderID = tokenize[0];							//OrderID
+				String email = tokenize[1];
 				String discountCode = tokenize[12];						//coupon that was used
 				String shippingMethod = tokenize[14];					//shipping method that was used
 				int lineItemQuantity = Integer.parseInt(tokenize[16]);	//quantity of current item
@@ -56,6 +57,7 @@ public class FileFunctions
 				String shippingName = tokenize[34];						//Shipping Name provided by customer
 				String shippingAddress1 = tokenize[36];					//Shipping Address provided
 				String shippingCity = tokenize[39];						//Shipping city provided (suburb)
+				String shippingPhone = tokenize[43];
 				String notes=tokenize[44];								//notes provided by customer regarding shipping
 				
 				if(shippingName != null && !shippingName.isEmpty()){
@@ -64,7 +66,7 @@ public class FileFunctions
 
 				orderLine.add(
 					new OrderItem(orderID, discountCode, shippingMethod, lineItemQuantity, lineItemName,
-						lineItemSKU, billingName, shippingAddress1, shippingCity, notes)
+						lineItemSKU, billingName, shippingAddress1, shippingCity, notes, shippingPhone, email)
 				);
 				
 				System.out.println("Built Order "+count);
@@ -378,12 +380,20 @@ public class FileFunctions
 			// creating a BufferedWriter instance with FileWriter
 			// the flag set to 'true' tells it to append a file if file exists. 'false' creates/recreates the file
 			BufferedWriter shipping = new BufferedWriter(new FileWriter("_shipping.csv", false));
+			BufferedWriter notes = new BufferedWriter(new FileWriter("_delivery_notes.csv", false));
 			shipping.write("SHIPPING METHODS: " + ordersByShippingMethod.keySet().size());
 			shipping.newLine();
 			shipping.newLine();
 			shipping.newLine();
 			shipping.newLine();
 			shipping.newLine();
+			notes.write("NAME,ADDRESS,PHONE");
+			notes.newLine();
+			notes.write("EMAIL,NOTE,METHOD");
+			notes.newLine();
+			notes.newLine();
+			notes.newLine();
+
 
 			//Looping through all shipping methods and within that, looping through all orders while printing
 			for(String shippingMethod : ordersByShippingMethod.keySet()){
@@ -398,7 +408,19 @@ public class FileFunctions
 								
 					shipping.write(shippingString);
 					shipping.newLine();
+					
+					if(shippingMethod.toLowerCase().contains("delivery")){
+						if(order.getNotes() != null && !order.getNotes().isEmpty()){
+							notes.write(order.getShippingName()+","+order.getShippingAddress()+","+order.getShippingPhone());
+							notes.newLine();
+							notes.write(order.getEmail()+","+order.getNotes()+","+shippingMethod);
+							notes.newLine();
+							notes.newLine();
+							notes.newLine();
+						}
+					}					
 				}
+				
 				shipping.write("     TOTAL: " + ordersByShippingMethod.get(shippingMethod).size());
 				shipping.newLine();
 				shipping.newLine();
@@ -406,6 +428,7 @@ public class FileFunctions
 			}
 
 			shipping.close();
+			notes.close();
 			System.out.println(" Done!");
 		}
 		catch (IOException ioe)
@@ -413,5 +436,6 @@ public class FileFunctions
 			ioe.printStackTrace();
 			System.exit(0);
 		}
+
 	}
 }
