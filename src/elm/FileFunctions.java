@@ -40,7 +40,7 @@ public class FileFunctions
 			{
 				// split input line on commas, except those between quotes ("")
 				String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-				System.out.print("line size = "+tokenize.length+"   ");
+				// System.out.print("line size = "+tokenize.length+"   ");
 				while(tokenize.length<56){
 					fileRead = fileRead + input.readLine();
 					tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
@@ -68,12 +68,11 @@ public class FileFunctions
 						lineItemSKU, billingName, shippingAddress1, shippingCity, notes)
 				);
 				
-				System.out.println("Built Order "+count);
-				
-				System.out.print("reading in new line from file... ");
+				//System.out.println("Built Order "+count);
+				//System.out.print("reading in new line from file... ");
 				fileRead = input.readLine();
 				count+=1;
-				System.out.println("line read");
+				//System.out.println("line read");
 			}
 
 			input.close();
@@ -90,17 +89,24 @@ public class FileFunctions
 			ioe.printStackTrace();
 			System.exit(1);
 		}
-
+		
+		int giftCardCount=0, orderCount=0;
 		String oldOrderID = "NOTAREALID";
 		// Here we loop through all of our order objects to obtain useful info out of them
 		for (OrderItem order : orderLine)
 		{
 			String sku;
 			String name;
-
 			int extraSku;
 			totalQuantity += order.getLineItemQuantity();
 			sku = order.getLineItemSKU();
+
+			if(order.getLineItemName().toLowerCase().contains("gift card")){
+				giftCardCount++;
+				continue;
+			}
+			orderCount++;
+		
 			// Tally order quantities in a HashMap on SKU
 			if (gmdQuantities.containsKey(sku)){	//if item already exists in hashMap
 				name = order.getLineItemName();
@@ -108,6 +114,7 @@ public class FileFunctions
 					gmdQuantities.put(sku, gmdQuantities.get(sku) + order.getLineItemQuantity());
 				}
 				else{ //if name does not match sku value (very rare)
+					
 					extraSku = Integer.parseInt(sku.replaceAll("[\\D]", ""));
 					if(extraSku<10)
 					{
@@ -145,6 +152,9 @@ public class FileFunctions
 				oldOrderID=order.getOrderID();
 			}		
 		}
+		System.out.println("Gift Cards Count: "+giftCardCount);
+		System.out.println(orderCount+"/"+count+" orders processed");
+		System.out.println();
 		
 		
 		if (!gmdOld.isEmpty()){
@@ -189,9 +199,6 @@ public class FileFunctions
 			}
 			System.out.println(" Done!");
 		}
-		
-
-		
 		
 		
 		System.out.print("Sorting Meal Names...");
