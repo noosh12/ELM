@@ -100,6 +100,8 @@ public class FileFunctions
 			int extraSku;
 			totalQuantity += order.getLineItemQuantity();
 			sku = order.getLineItemSKU();
+//			System.out.println(order.getOrderID());
+//			System.out.println(order.getLineItemSKU());
 
 			if(order.getLineItemName().toLowerCase().contains("gift card")){
 				giftCardCount++;
@@ -155,6 +157,12 @@ public class FileFunctions
 		System.out.println("Gift Cards Count: "+giftCardCount);
 		System.out.println(orderCount+"/"+count+" orders processed");
 		System.out.println();
+		
+//		System.out.println();
+//		for(String sku : skus){
+//			System.out.println(gmdNames.get(sku)+" - "+gmdQuantities.get(sku));
+//		}
+//		System.out.println();
 		
 		
 		if (!gmdOld.isEmpty()){
@@ -238,7 +246,7 @@ public class FileFunctions
 			String sauceName;
 			
 			
-			int[] typeTotals = new int[12];
+			int[] typeTotals = new int[16];
 			HashMap<String, Integer> sauceTotals = new HashMap<String,Integer>();	//sauce totals
 			ArrayList<String> sauces = new ArrayList<String>();
 
@@ -258,19 +266,25 @@ public class FileFunctions
 					//Totalling the totals for each meal type
 					mealName = names.get(sku).toLowerCase();
 					if (mealName.contains("steak")){
-						if(mealName.contains("rice")){
+						if((mealName.contains("rice"))&&(mealName.contains("veg"))){
+							if(mealName.contains("large"))
+								typeTotals[12]+=quantities.get(sku);
+							if(mealName.contains("small"))
+								typeTotals[13]+=quantities.get(sku);
+						}
+						else if(mealName.contains("rice")){
 							if(mealName.contains("large"))
 								typeTotals[0]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[1]+=quantities.get(sku);
 						}
-						if(mealName.contains("potato")){
+						else if(mealName.contains("potato")){
 							if(mealName.contains("large"))
 								typeTotals[2]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[3]+=quantities.get(sku);
 						}
-						if(mealName.contains("veg")){
+						else if(mealName.contains("veg")){
 							if(mealName.contains("large"))
 								typeTotals[4]+=quantities.get(sku);
 							if(mealName.contains("small"))
@@ -278,19 +292,25 @@ public class FileFunctions
 						}
 					}
 					if (mealName.contains("chicken")){
-						if(mealName.contains("rice")){
+						if((mealName.contains("rice"))&&(mealName.contains("veg"))){
+							if(mealName.contains("large"))
+								typeTotals[14]+=quantities.get(sku);
+							if(mealName.contains("small"))
+								typeTotals[15]+=quantities.get(sku);
+						}
+						else if(mealName.contains("rice")){
 							if(mealName.contains("large"))
 								typeTotals[6]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[7]+=quantities.get(sku);
 						}
-						if(mealName.contains("potato")){
+						else if(mealName.contains("potato")){
 							if(mealName.contains("large"))
 								typeTotals[8]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[9]+=quantities.get(sku);
 						}
-						if(mealName.contains("veg")){
+						else if(mealName.contains("veg")){
 							if(mealName.contains("large"))
 								typeTotals[10]+=quantities.get(sku);
 							if(mealName.contains("small"))
@@ -326,11 +346,15 @@ public class FileFunctions
 				totals.newLine();
 				totals.write("Beef + Vege"+","+typeTotals[4]+","+typeTotals[5]);
 				totals.newLine();
+				totals.write("Beef + Rice&Vege"+","+typeTotals[12]+","+typeTotals[13]);
+				totals.newLine();
 				totals.write("Chicken + Rice"+","+typeTotals[6]+","+typeTotals[7]);
 				totals.newLine();
 				totals.write("Chicken + Sweet Potato"+","+typeTotals[8]+","+typeTotals[9]);
 				totals.newLine();
 				totals.write("Chicken + Vege"+","+typeTotals[10]+","+typeTotals[11]);
+				totals.newLine();
+				totals.write("Chicken + Rice&Vege"+","+typeTotals[14]+","+typeTotals[15]);
 							
 				//Writing the totals for each sauce type
 				totals.newLine();
@@ -380,9 +404,13 @@ public class FileFunctions
 					beef.addQuantity(quantities.get(sku), 200);
 				if(tempName.contains("potato"))
 					sPotato.addQuantity(quantities.get(sku), 200);
-				if(tempName.contains("rice"))
+				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
+					rice.addQuantity(quantities.get(sku), 100);
+					veg.addQuantity(quantities.get(sku), 100);
+				}		
+				else if(tempName.contains("rice"))
 					rice.addQuantity(quantities.get(sku), 200);
-				if(tempName.contains("veg"))
+				else if(tempName.contains("veg"))
 					veg.addQuantity(quantities.get(sku), 180);
 			}
 			if(tempName.contains("small")){
@@ -392,9 +420,14 @@ public class FileFunctions
 					beef.addQuantity(quantities.get(sku), 150);
 				if(tempName.contains("potato"))
 					sPotato.addQuantity(quantities.get(sku), 120);
-				if(tempName.contains("rice"))
+				
+				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
+					rice.addQuantity(quantities.get(sku), 70);
+					veg.addQuantity(quantities.get(sku), 70);
+				}	
+				else if(tempName.contains("rice"))
 					rice.addQuantity(quantities.get(sku), 120);
-				if(tempName.contains("veg"))
+				else if(tempName.contains("veg"))
 					veg.addQuantity(quantities.get(sku), 100);
 			}
 		}
