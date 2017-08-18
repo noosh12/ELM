@@ -13,16 +13,18 @@ public class FileFunctions
 		int totalQuantity = 0;
 		int count = 0;
 		List<OrderItem> orderLine = new ArrayList<>();							//stores the OrderItem objects
-		HashMap<String, Integer> gmdQuantities= new HashMap<String,Integer>();	//meal quantities
-		HashMap<String, String> gmdNames= new HashMap<String,String>();			//meal names
+		HashMap<String, Integer> skuQuantities= new HashMap<String,Integer>();	//meal quantities
+		HashMap<String, String> skuNames= new HashMap<String,String>();			//meal names
+		HashMap<String, String> reverseNames = new HashMap<String, String>();
 		HashMap<String, ArrayList<OrderItem>> ordersByShippingMethod = new HashMap<String, ArrayList<OrderItem>> (); // Orders by shipping method
 		
-		ArrayList<String> skus = new ArrayList<String>();
-		ArrayList<String> names = new ArrayList<String>();
-		HashMap<String, String> Names= new HashMap<String,String>();
+		ArrayList<String> skus = new ArrayList<String>(); //Arraylist that holds skus - for sorting
+		ArrayList<String> names = new ArrayList<String>(); //Arraylist that holds names - for sorting
+		HashMap<String, String> Names= new HashMap<String,String>(); //Arraylist for sorted Names
 		
-		ArrayList<String> orderedOld = new ArrayList<String>();
-		ArrayList<Integer> gmdOld = new ArrayList<Integer>();
+		ArrayList<String> orderedOld = new ArrayList<String>(); //order IDs of orders that contain old/discontinued items
+		ArrayList<Integer> skusOld = new ArrayList<Integer>(); //skus of old/discontinued items
+		boolean duplicates = false;
 		
 		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
 		System.out.println();
@@ -33,13 +35,16 @@ public class FileFunctions
 			BufferedReader input = new BufferedReader(new FileReader("input.csv"));//Buffered Reader object instance with FileReader
 			System.out.print("Reading...");
 			String fileRead = input.readLine(); // Headers
-			fileRead = input.readLine();
+			fileRead = input.readLine(); //first real line
 			
 
 			while (fileRead != null)
 			{
 				// split input line on commas, except those between quotes ("")
 				String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+				
+				
+				//Fixing lines that are incorrectly ended prematurely due to line break in fields like 'notes'
 				// System.out.print("line size = "+tokenize.length+"   ");
 				while(tokenize.length<56){
 					fileRead = fileRead + input.readLine();
@@ -53,16 +58,18 @@ public class FileFunctions
 				int lineItemQuantity = Integer.parseInt(tokenize[16]);	//quantity of current item
 				String lineItemName = tokenize[17];						//product name of current item
 				String lineItemSKU = tokenize[20];						//SKU of current item (i.e. GMD-12)
-				String billingName = tokenize[24];	
+				String billingName = tokenize[24];						//Billing Name provided by customer
 				String shippingName = tokenize[34];						//Shipping Name provided by customer
 				String shippingAddress1 = tokenize[36];					//Shipping Address provided
 				String shippingCity = tokenize[39];						//Shipping city provided (suburb)
 				String notes=tokenize[44];								//notes provided by customer regarding shipping
 				
+				//if customer has not ticked shipping is same as billing, and has left shipping blank
 				if(shippingName != null && !shippingName.isEmpty()){
 					shippingName = billingName;
 				}
-
+				
+				//build orderLine object from chosen extracted values
 				orderLine.add(
 					new OrderItem(orderID, discountCode, shippingMethod, lineItemQuantity, lineItemName,
 						lineItemSKU, billingName, shippingAddress1, shippingCity, notes)
@@ -92,56 +99,102 @@ public class FileFunctions
 		
 		int giftCardCount=0, orderCount=0;
 		String oldOrderID = "NOTAREALID";
-		// Here we loop through all of our order objects to obtain useful info out of them
+		
+		//Preliminary run to build hashmaps skipping first 1/4 of lines
+		//This is because the first and last lines could be problematic
+		//if customer ordered before/after menu changed
+		for (OrderItem order : orderLine)
+		{
+			if (orderCount>count/4){
+				String sku = order.getLineItemSKU();
+				String name = order.getLineItemName();
+				if(!reverseNames.containsKey(name)){
+					if(!skuNames.containsKey(sku)){
+						skuNames.put(sku, name);
+						skuQuantities.put(sku, 0);
+						skus.add(sku);
+						reverseNames.put(name, sku);
+					}
+				}
+			}
+			orderCount++;
+				
+		}
+		System.out.println("Preliminary run commenced from line "+count/4+" to line "+orderCount);
+		
+		orderCount=0;
+		
+		// Here we loop through all of our order objects to fully build our hashmaps
 		for (OrderItem order : orderLine)
 		{
 			String sku;
 			String name;
 			int extraSku;
-			totalQuantity += order.getLineItemQuantity();
-			sku = order.getLineItemSKU();
+			totalQuantity += order.getLineItemQuantity(); //Total items sold counter
+			sku = order.getLineItemSKU(); //sku of current orderLine
 //			System.out.println(order.getOrderID());
 //			System.out.println(order.getLineItemSKU());
 
+			//Skip to next orderLine object if order is a gift card
+			//This is because gift cards don't contain a sku, and as such, give us problems later on if we process it
+			//this is because the blank sku isn't really blank, but is "" which cannot be identified easily
 			if(order.getLineItemName().toLowerCase().contains("gift card")){
 				giftCardCount++;
 				continue;
 			}
-			orderCount++;
+			orderCount++; //Processed orders (gift card orders are NOT processed
 		
+			
 			// Tally order quantities in a HashMap on SKU
-			if (gmdQuantities.containsKey(sku)){	//if item already exists in hashMap
+			if (skuQuantities.containsKey(sku)){	//if item already exists in hashMap
 				name = order.getLineItemName();
-				if (name.equals(gmdNames.get(sku))){ //if name matches sku value
-					gmdQuantities.put(sku, gmdQuantities.get(sku) + order.getLineItemQuantity());
+				if (name.equals(skuNames.get(sku))){ //if name matches sku value
+					skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
 				}
-				else{ //if name does not match sku value (very rare)
-					
-					extraSku = Integer.parseInt(sku.replaceAll("[\\D]", ""));
+				else if (reverseNames.containsKey(name)){
+					//if hashmap contains this name under a dif sku (extremely rare)
+					//occurs when someone orders in between weekly cutoff and menu changed (skus+names)
+					//this part covers the use case when the intended sku is already in-use
+					//(Part 1 of 2)
+					sku = reverseNames.get(name); //set sku to the recorded sku of that menu item
+					skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());					
+				}
+				else{ 
+					//if name does not match recorded sku value (less rare) and item name not in hashmap already
+					//happens when customer manually orders items not on current menu
+
+					extraSku = Integer.parseInt(sku.replaceAll("[\\D]", "")); //extract integer component of sku
 					if(extraSku<10)
 					{
-						sku = "OLD-0"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> ZZZ-12
+						sku = "OLD-0"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> OLD-12
 					}
 					else{
-						sku = "OLD-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> ZZZ-12
+						sku = "OLD-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> OLD-12
 					}
-					gmdOld.add(extraSku);	
+					skusOld.add(extraSku);
 					
-					if(gmdQuantities.containsKey(sku)){
-						gmdQuantities.put(sku, gmdQuantities.get(sku) + order.getLineItemQuantity());
-					}
-					else{
-						gmdQuantities.put(sku, order.getLineItemQuantity());
-						gmdNames.put(sku, order.getLineItemName());
-						skus.add(sku);
-						
-					}
-					orderedOld.add(order.getOrderID());
+//					if(skuQuantities.containsKey(sku)){
+//						skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
+//					}
+//					else{
+//						skuQuantities.put(sku, order.getLineItemQuantity());
+//						skuNames.put(sku, order.getLineItemName());
+//						skus.add(sku);
+//						
+//					}
+					//Shouldn't need the above because items that already exist should be caught in the above else if
+					skuQuantities.put(sku, order.getLineItemQuantity());
+					skuNames.put(sku, order.getLineItemName());
+					skus.add(sku);
+					reverseNames.put(order.getLineItemName(), sku); //add name and sku
+					
+					orderedOld.add(order.getOrderID()); //Recording order ID of current order
 				}				
-			} else {
-				gmdQuantities.put(sku, order.getLineItemQuantity());
-				gmdNames.put(sku, order.getLineItemName());
-				skus.add(sku);
+			} else { //if item does not exist in hashmap yet
+				skuQuantities.put(sku, order.getLineItemQuantity()); //Add sku and initial quantity
+				skuNames.put(sku, order.getLineItemName()); //Add sku and name
+				skus.add(sku); //add sku
+				reverseNames.put(order.getLineItemName(), sku); //add name and sku
 			}		
 
 			// Storing the different shipping methods and the different orders to each shipping method
@@ -155,7 +208,7 @@ public class FileFunctions
 			}		
 		}
 		System.out.println("Gift Cards Count: "+giftCardCount);
-		System.out.println(orderCount+"/"+count+" orders processed");
+		System.out.println(orderCount+"/"+count+" orders processed"); //should be total orders - gift card
 		System.out.println();
 		
 //		System.out.println();
@@ -165,9 +218,9 @@ public class FileFunctions
 //		System.out.println();
 		
 		
-		if (!gmdOld.isEmpty()){
+		if (!skusOld.isEmpty()){
 			System.out.print("Contains OLD meals! Resolving...");
-			for (Integer sku : gmdOld){
+			for (Integer sku : skusOld){
 				String gmdSku="", oldSku="";
 				
 				if(sku<10)
@@ -180,25 +233,25 @@ public class FileFunctions
 					oldSku="OLD-"+sku;
 				}
 				
-				int gmdQuantity = gmdQuantities.get(gmdSku);
-				int oldQuantity = gmdQuantities.get(oldSku);
-				String gmdName = gmdNames.get(gmdSku);
-				String oldName = gmdNames.get(oldSku);
+				int gmdQuantity = skuQuantities.get(gmdSku);
+				int oldQuantity = skuQuantities.get(oldSku);
+				String gmdName = skuNames.get(gmdSku);
+				String oldName = skuNames.get(oldSku);
 //				System.out.println("current");
 //				System.out.println(gmdSku+": "+gmdName+" - "+gmdQuantity);
 //				System.out.println(oldSku+": "+oldName+" - "+oldQuantity);						
 				
 				if (gmdQuantity<oldQuantity){ //Old is the real gmd
-					gmdQuantities.remove(gmdSku);
-					gmdNames.remove(gmdSku);
-					gmdQuantities.remove(oldSku);
-					gmdNames.remove(oldSku);
+					skuQuantities.remove(gmdSku);
+					skuNames.remove(gmdSku);
+					skuQuantities.remove(oldSku);
+					skuNames.remove(oldSku);
 
-					gmdQuantities.put(gmdSku, oldQuantity);//making old the real gmd
-					gmdNames.put(gmdSku, oldName);
+					skuQuantities.put(gmdSku, oldQuantity);//making old the real gmd
+					skuNames.put(gmdSku, oldName);
 					
-					gmdQuantities.put(oldSku, gmdQuantity);//making gmd the real old
-					gmdNames.put(oldSku, gmdName);
+					skuQuantities.put(oldSku, gmdQuantity);//making gmd the real old
+					skuNames.put(oldSku, gmdName);
 //					System.out.println("new");
 //					System.out.println(gmdSku+": "+oldName+" - "+oldQuantity);
 //					System.out.println(oldSku+": "+gmdName+" - "+gmdQuantity);				
@@ -211,8 +264,8 @@ public class FileFunctions
 		
 		System.out.print("Sorting Meal Names...");
 		for(String currentSku: skus){
-			Names.put(gmdNames.get(currentSku), currentSku);
-			names.add(gmdNames.get(currentSku));			
+			Names.put(skuNames.get(currentSku), currentSku);
+			names.add(skuNames.get(currentSku));			
 		}
 		Collections.sort(names);
 		skus.clear();
@@ -223,10 +276,10 @@ public class FileFunctions
 
 
 		System.out.print("Calculating meal totals...");
-		PrintMealTotals(gmdQuantities,gmdNames,totalQuantity, skus);//Prints the totals of each meal
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skus);//Prints the totals of each meal
 
 		System.out.print("Calculating ingredient totals...");
-		CalcPrintIngredients(gmdQuantities,gmdNames); //Calculate the ingredients required
+		CalcPrintIngredients(skuQuantities,skuNames); //Calculate the ingredients required
 
 		System.out.print("Printing sorted delivery methods...");
 		PrintShipping(ordersByShippingMethod, orderedOld); //Print the shipping details of each order of each method
