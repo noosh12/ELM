@@ -24,7 +24,6 @@ public class FileFunctions
 		
 		ArrayList<String> orderedOld = new ArrayList<String>(); //order IDs of orders that contain old/discontinued items
 		ArrayList<Integer> skusOld = new ArrayList<Integer>(); //skus of old/discontinued items
-		boolean duplicates = false;
 		
 		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
 		System.out.println();
@@ -105,7 +104,17 @@ public class FileFunctions
 		//if customer ordered before/after menu changed
 		for (OrderItem order : orderLine)
 		{
-			if (orderCount>count/4){
+			if (orderCount>count/4){ 
+				//skipping first quarter of lines in case customer ordered before menu changed
+				
+				//Skip to next orderLine object if order is a gift card
+				//This is because gift cards don't contain a sku, and as such, give us problems later on if we process it
+				//this is because the blank sku isn't really blank, but is "" which cannot be identified easily
+				if(order.getLineItemName().toLowerCase().contains("gift card")){
+					giftCardCount++;
+					continue;
+				}
+				
 				String sku = order.getLineItemSKU();
 				String name = order.getLineItemName();
 				if(!reverseNames.containsKey(name)){
@@ -117,21 +126,19 @@ public class FileFunctions
 					}
 				}
 			}
-			orderCount++;
-				
+			orderCount++;	
 		}
-		System.out.println("Preliminary run commenced from line "+count/4+" to line "+orderCount);
+		System.out.println("Preliminary run completed on line "+count/4+" to "+orderCount);
 		
 		orderCount=0;
 		
 		// Here we loop through all of our order objects to fully build our hashmaps
 		for (OrderItem order : orderLine)
 		{
-			String sku;
-			String name;
+			String sku = order.getLineItemSKU(); //sku of current orderLine
+			String name = order.getLineItemName();
 			int extraSku;
 			totalQuantity += order.getLineItemQuantity(); //Total items sold counter
-			sku = order.getLineItemSKU(); //sku of current orderLine
 //			System.out.println(order.getOrderID());
 //			System.out.println(order.getLineItemSKU());
 
@@ -146,7 +153,7 @@ public class FileFunctions
 		
 			
 			// Tally order quantities in a HashMap on SKU
-			if (skuQuantities.containsKey(sku)){	//if item already exists in hashMap
+			if (skuQuantities.containsKey(sku)){	//if sku already exists in hashMap
 				name = order.getLineItemName();
 				if (name.equals(skuNames.get(sku))){ //if name matches sku value
 					skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
@@ -190,7 +197,13 @@ public class FileFunctions
 					
 					orderedOld.add(order.getOrderID()); //Recording order ID of current order
 				}				
+			} else if (reverseNames.containsKey(name)){ //hashmaps contain name but not line sku
+				
+				sku = reverseNames.get(name); //set sku to the recorded sku of that menu item
+				skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
+				
 			} else { //if item does not exist in hashmap yet
+				
 				skuQuantities.put(sku, order.getLineItemQuantity()); //Add sku and initial quantity
 				skuNames.put(sku, order.getLineItemName()); //Add sku and name
 				skus.add(sku); //add sku
@@ -217,7 +230,9 @@ public class FileFunctions
 //		}
 //		System.out.println();
 		
-		
+		//If hashmaps contain old meals, looping through them to determine the real old
+		//the sku with the lowest quantity is determined to be the correct old item
+		//i.e. if GMD-12 quantity = 10, and OLD-12 has quantity of 100, skus are swapped
 		if (!skusOld.isEmpty()){
 			System.out.print("Contains OLD meals! Resolving...");
 			for (Integer sku : skusOld){
@@ -297,11 +312,15 @@ public class FileFunctions
 			BufferedWriter totals = new BufferedWriter(new FileWriter("_meal_totals.csv", false));
 			String mealName;
 			String sauceName;
+			boolean duplicates = false;
 			
 			
 			int[] typeTotals = new int[16];
 			HashMap<String, Integer> sauceTotals = new HashMap<String,Integer>();	//sauce totals
 			ArrayList<String> sauces = new ArrayList<String>();
+			
+			ArrayList<String> itemNames = new ArrayList<String>();
+			ArrayList<String> itemSkus = new ArrayList<String>();
 
 			totals.write("TOTAL MEALS: "+total);
 			totals.newLine();
@@ -312,8 +331,17 @@ public class FileFunctions
 
 			// Write the quantities of each meal to file
 			for(String sku : skus){
+				
+				if (itemSkus.contains(sku)||itemNames.contains(names.get(sku)))
+					duplicates = true;
+				
+					
+				itemSkus.add(sku);
+				itemNames.add(names.get(sku));
+				
 				totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
 				totals.newLine();
+				
 				
 				if (sku.contains("GMD")||sku.contains("OLD")){
 					//Totalling the totals for each meal type
@@ -384,6 +412,11 @@ public class FileFunctions
 						sauces.add(sauceName);
 					}
 				}
+			}
+			if(duplicates){
+				totals.newLine();
+				totals.write("ERROR! Duplicates found. File may be incorrect!");
+				totals.newLine();
 			}
 			
 					
