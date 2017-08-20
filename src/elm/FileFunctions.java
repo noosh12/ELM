@@ -24,6 +24,7 @@ public class FileFunctions
 		
 		ArrayList<String> orderedOld = new ArrayList<String>(); //order IDs of orders that contain old/discontinued items
 		ArrayList<Integer> skusOld = new ArrayList<Integer>(); //skus of old/discontinued items
+		ArrayList<String> skusOldNames = new ArrayList<String>(); //skus of old/discontinued items
 		
 		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
 		System.out.println();
@@ -178,7 +179,12 @@ public class FileFunctions
 					else{
 						sku = "OLD-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> OLD-12
 					}
-					skusOld.add(extraSku);
+					
+					if(!skusOld.contains(extraSku)){
+						skusOld.add(extraSku);
+						skusOldNames.add(name);
+					}
+					
 					
 //					if(skuQuantities.containsKey(sku)){
 //						skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
@@ -195,7 +201,7 @@ public class FileFunctions
 					skus.add(sku);
 					reverseNames.put(order.getLineItemName(), sku); //add name and sku
 					
-					orderedOld.add(order.getOrderID()); //Recording order ID of current order
+					//orderedOld.add(order.getOrderID()); //Recording order ID of current order
 				}				
 			} else if (reverseNames.containsKey(name)){ //hashmaps contain name but not line sku
 				
@@ -234,7 +240,7 @@ public class FileFunctions
 		//the sku with the lowest quantity is determined to be the correct old item
 		//i.e. if GMD-12 quantity = 10, and OLD-12 has quantity of 100, skus are swapped
 		if (!skusOld.isEmpty()){
-			System.out.print("Contains OLD meals! Resolving...");
+			System.out.print("Orders contains OLD meals! Determining true OLD meals...");
 			for (Integer sku : skusOld){
 				String gmdSku="", oldSku="";
 				
@@ -271,11 +277,25 @@ public class FileFunctions
 //					System.out.println(gmdSku+": "+oldName+" - "+oldQuantity);
 //					System.out.println(oldSku+": "+gmdName+" - "+gmdQuantity);				
 					
+					if(!skusOldNames.contains(gmdName)){
+						skusOldNames.add(gmdName);
+					}
+					skusOldNames.remove(oldName);
+					
 				}	
 			}
 			System.out.println(" Done!");
 		}
 		
+		System.out.print("Finding Orders containing OLD meals... ");
+		for (OrderItem order : orderLine){
+			if(skusOldNames.contains(order.getLineItemName())){
+				if(!orderedOld.contains(order.getOrderID())){
+					orderedOld.add(order.getOrderID());
+				}
+			}
+		}
+		System.out.println(" Done!");
 		
 		System.out.print("Sorting Meal Names...");
 		for(String currentSku: skus){
@@ -295,7 +315,7 @@ public class FileFunctions
 
 		System.out.print("Calculating ingredient totals...");
 		CalcPrintIngredients(skuQuantities,skuNames); //Calculate the ingredients required
-
+		
 		System.out.print("Printing sorted delivery methods...");
 		PrintShipping(ordersByShippingMethod, orderedOld); //Print the shipping details of each order of each method
 	}
