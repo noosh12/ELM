@@ -24,6 +24,8 @@ Program creates its own csv exports with useful information and metrics like:
 ## Challenges
 Coding for fringe use cases that none of us knew would ever happen. They seem really unlikely, but they do break things.
 
+Coding for a changing menu and business relationships. The meals have a pattern which can be used to determine the ingredient and sauce quantities for each. This program should theoretically work without updates even if the entire menu and vendors change.
+
 For Gym Meals Direct, customers can order through their preferred gym or fitness chain (vendor). They pick up their order from their chosen vendor. Orders needed to be allocated to each vendor. Names and number of vendors is always changing so program had to dynamically adapt to changing business relationships.
 
 For customers who order through a vendor, they can accidentally place orders for meals that are no longer on the menu. Even worse, the SKUs (unique identifier) are re-used for the meal that has replaced the old meal. Identifying the duplicates and notifying management so they avoid providing the customer with the incorrect meal (the SKU associated with it points to the new meal, not the old as it should).
