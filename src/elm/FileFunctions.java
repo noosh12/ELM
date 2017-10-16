@@ -140,8 +140,8 @@ public class FileFunctions
 			String name = order.getLineItemName();
 			int extraSku;
 			totalQuantity += order.getLineItemQuantity(); //Total items sold counter
-//			System.out.println(order.getOrderID());
-//			System.out.println(order.getLineItemSKU());
+			System.out.println(order.getOrderID());
+			System.out.println(order.getLineItemSKU());
 
 			//Skip to next orderLine object if order is a gift card
 			//This is because gift cards don't contain a sku, and as such, give us problems later on if we process it
@@ -341,7 +341,7 @@ public class FileFunctions
 			String sauceName;
 			boolean duplicates = false;			
 			
-			int[] typeTotals = new int[20];
+			int[] typeTotals = new int[22];
 			HashMap<String, Integer> sauceTotals = new HashMap<String,Integer>();	//sauce totals
 			ArrayList<String> sauces = new ArrayList<String>();
 			
@@ -436,6 +436,12 @@ public class FileFunctions
 								typeTotals[11]+=quantities.get(sku);
 						}
 					}
+					if (mealName.contains("meatball")){
+						if(mealName.contains("large"))
+							typeTotals[20]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[21]+=quantities.get(sku);
+					}
 					
 					
 					
@@ -483,6 +489,8 @@ public class FileFunctions
 				totals.write("Chicken + Rice&Vege"+","+typeTotals[14]+","+typeTotals[15]);
 				totals.newLine();
 				totals.write("Chicken + Potato&Vege"+","+typeTotals[18]+","+typeTotals[19]);
+				totals.newLine();
+				totals.write("Meatball Penne"+","+typeTotals[20]+","+typeTotals[21]);
 							
 				//Writing the totals for each sauce type
 				totals.newLine();
