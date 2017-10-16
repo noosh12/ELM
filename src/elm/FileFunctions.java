@@ -287,13 +287,20 @@ public class FileFunctions
 			System.out.println(" Done!");
 		}
 		
-		System.out.print("Finding Orders containing OLD meals... ");
+		
+		System.out.print("Finding Orders containing OLD meals or mismatched SKU meals... ");
 		for (OrderItem order : orderLine){
 			if(skusOldNames.contains(order.getLineItemName())){
 				if(!orderedOld.contains(order.getOrderID())){
 					orderedOld.add(order.getOrderID());
 				}
 			}
+			if(!(order.getLineItemName().equals(skuNames.get(order.getLineItemSKU())))){
+				if(!(order.getNotes().contains("**DIF SKUs**"))){
+					order.setNotes("**DIF SKUs**"+ order.getNotes());
+				}
+			}
+				
 		}
 		System.out.println(" Done!");
 		
@@ -332,10 +339,9 @@ public class FileFunctions
 			BufferedWriter totals = new BufferedWriter(new FileWriter("_meal_totals.csv", false));
 			String mealName;
 			String sauceName;
-			boolean duplicates = false;
+			boolean duplicates = false;			
 			
-			
-			int[] typeTotals = new int[16];
+			int[] typeTotals = new int[20];
 			HashMap<String, Integer> sauceTotals = new HashMap<String,Integer>();	//sauce totals
 			ArrayList<String> sauces = new ArrayList<String>();
 			
@@ -373,6 +379,12 @@ public class FileFunctions
 							if(mealName.contains("small"))
 								typeTotals[13]+=quantities.get(sku);
 						}
+						else if((mealName.contains("potato"))&&(mealName.contains("veg"))){
+							if(mealName.contains("large"))
+								typeTotals[16]+=quantities.get(sku);
+							if(mealName.contains("small"))
+								typeTotals[17]+=quantities.get(sku);
+						}
 						else if(mealName.contains("rice")){
 							if(mealName.contains("large"))
 								typeTotals[0]+=quantities.get(sku);
@@ -398,6 +410,12 @@ public class FileFunctions
 								typeTotals[14]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[15]+=quantities.get(sku);
+						}
+						else if((mealName.contains("potato"))&&(mealName.contains("veg"))){
+							if(mealName.contains("large"))
+								typeTotals[18]+=quantities.get(sku);
+							if(mealName.contains("small"))
+								typeTotals[19]+=quantities.get(sku);
 						}
 						else if(mealName.contains("rice")){
 							if(mealName.contains("large"))
@@ -454,6 +472,8 @@ public class FileFunctions
 				totals.newLine();
 				totals.write("Beef + Rice&Vege"+","+typeTotals[12]+","+typeTotals[13]);
 				totals.newLine();
+				totals.write("Beef + Potato&Vege"+","+typeTotals[16]+","+typeTotals[17]);
+				totals.newLine();
 				totals.write("Chicken + Rice"+","+typeTotals[6]+","+typeTotals[7]);
 				totals.newLine();
 				totals.write("Chicken + Sweet Potato"+","+typeTotals[8]+","+typeTotals[9]);
@@ -461,6 +481,8 @@ public class FileFunctions
 				totals.write("Chicken + Vege"+","+typeTotals[10]+","+typeTotals[11]);
 				totals.newLine();
 				totals.write("Chicken + Rice&Vege"+","+typeTotals[14]+","+typeTotals[15]);
+				totals.newLine();
+				totals.write("Chicken + Potato&Vege"+","+typeTotals[18]+","+typeTotals[19]);
 							
 				//Writing the totals for each sauce type
 				totals.newLine();
@@ -513,7 +535,11 @@ public class FileFunctions
 				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
 					rice.addQuantity(quantities.get(sku), 100);
 					veg.addQuantity(quantities.get(sku), 100);
-				}		
+				}
+				else if((tempName.contains("veg"))&&(tempName.contains("potato"))){
+					sPotato.addQuantity(quantities.get(sku), 100);
+					veg.addQuantity(quantities.get(sku), 100);
+				}
 				else if(tempName.contains("rice"))
 					rice.addQuantity(quantities.get(sku), 200);
 				else if(tempName.contains("veg"))
@@ -530,7 +556,11 @@ public class FileFunctions
 				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
 					rice.addQuantity(quantities.get(sku), 70);
 					veg.addQuantity(quantities.get(sku), 70);
-				}	
+				}
+				else if((tempName.contains("veg"))&&(tempName.contains("potato"))){
+					sPotato.addQuantity(quantities.get(sku), 70);
+					veg.addQuantity(quantities.get(sku), 70);
+				}
 				else if(tempName.contains("rice"))
 					rice.addQuantity(quantities.get(sku), 120);
 				else if(tempName.contains("veg"))
