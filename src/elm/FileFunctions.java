@@ -13,15 +13,18 @@ public class FileFunctions
 		int totalQuantity = 0;
 		int count = 0;
 		List<OrderItem> orderLine = new ArrayList<>();							//stores the OrderItem objects
-		HashMap<String, Integer> gmdQuantities= new HashMap<String,Integer>();	//meal quantities
-		HashMap<String, String> gmdNames= new HashMap<String,String>();			//meal names
+		HashMap<String, Integer> skuQuantities= new HashMap<String,Integer>();	//meal quantities
+		HashMap<String, String> skuNames= new HashMap<String,String>();			//meal names
+		HashMap<String, String> reverseNames = new HashMap<String, String>();
 		HashMap<String, ArrayList<OrderItem>> ordersByShippingMethod = new HashMap<String, ArrayList<OrderItem>> (); // Orders by shipping method
 		
-		ArrayList<String> skus = new ArrayList<String>();
-		ArrayList<String> names = new ArrayList<String>();
-		HashMap<String, String> Names= new HashMap<String,String>();
+		ArrayList<String> skus = new ArrayList<String>(); //Arraylist that holds skus - for sorting
+		ArrayList<String> names = new ArrayList<String>(); //Arraylist that holds names - for sorting
+		HashMap<String, String> Names= new HashMap<String,String>(); //Arraylist for sorted Names
 		
-		ArrayList<String> orderedOld = new ArrayList<String>();
+		ArrayList<String> orderedOld = new ArrayList<String>(); //order IDs of orders that contain old/discontinued items
+		ArrayList<Integer> skusOld = new ArrayList<Integer>(); //skus of old/discontinued items
+		ArrayList<String> skusOldNames = new ArrayList<String>(); //skus of old/discontinued items
 		
 		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
 		System.out.println();
@@ -32,14 +35,17 @@ public class FileFunctions
 			BufferedReader input = new BufferedReader(new FileReader("input.csv"));//Buffered Reader object instance with FileReader
 			System.out.print("Reading...");
 			String fileRead = input.readLine(); // Headers
-			fileRead = input.readLine();
+			fileRead = input.readLine(); //first real line
 			
 
 			while (fileRead != null)
 			{
 				// split input line on commas, except those between quotes ("")
 				String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-				System.out.print("line size = "+tokenize.length+"   ");
+				
+				
+				//Fixing lines that are incorrectly ended prematurely due to line break in fields like 'notes'
+				// System.out.print("line size = "+tokenize.length+"   ");
 				while(tokenize.length<56){
 					fileRead = fileRead + input.readLine();
 					tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
@@ -53,28 +59,29 @@ public class FileFunctions
 				int lineItemQuantity = Integer.parseInt(tokenize[16]);	//quantity of current item
 				String lineItemName = tokenize[17];						//product name of current item
 				String lineItemSKU = tokenize[20];						//SKU of current item (i.e. GMD-12)
-				String billingName = tokenize[24];	
+				String billingName = tokenize[24];						//Billing Name provided by customer
 				String shippingName = tokenize[34];						//Shipping Name provided by customer
 				String shippingAddress1 = tokenize[36];					//Shipping Address provided
 				String shippingCity = tokenize[39];						//Shipping city provided (suburb)
 				String shippingPhone = tokenize[43];
 				String notes=tokenize[44];								//notes provided by customer regarding shipping
 				
+				//if customer has not ticked shipping is same as billing, and has left shipping blank
 				if(shippingName != null && !shippingName.isEmpty()){
 					shippingName = billingName;
 				}
-
+				
+				//build orderLine object from chosen extracted values
 				orderLine.add(
 					new OrderItem(orderID, discountCode, shippingMethod, lineItemQuantity, lineItemName,
 						lineItemSKU, billingName, shippingAddress1, shippingCity, notes, shippingPhone, email)
 				);
 				
-				System.out.println("Built Order "+count);
-				
-				System.out.print("reading in new line from file... ");
+				//System.out.println("Built Order "+count);
+				//System.out.print("reading in new line from file... ");
 				fileRead = input.readLine();
 				count+=1;
-				System.out.println("line read");
+				//System.out.println("line read");
 			}
 
 			input.close();
@@ -91,45 +98,124 @@ public class FileFunctions
 			ioe.printStackTrace();
 			System.exit(1);
 		}
-
+		
+		int giftCardCount=0, orderCount=0;
 		String oldOrderID = "NOTAREALID";
-		// Here we loop through all of our order objects to obtain useful info out of them
+		
+		//Preliminary run to build hashmaps skipping first 1/4 of lines
+		//This is because the first and last lines could be problematic
+		//if customer ordered before/after menu changed
 		for (OrderItem order : orderLine)
 		{
-			String sku;
-			String name;
-
-			int extraSku;
-			totalQuantity += order.getLineItemQuantity();
-			sku = order.getLineItemSKU();
-			// Tally order quantities in a HashMap on SKU
-			if (gmdQuantities.containsKey(sku)){	//if item already exists in hashMap
-				name = order.getLineItemName();
-				if (name.equals(gmdNames.get(sku))){ //if name matches sku value
-					gmdQuantities.put(sku, gmdQuantities.get(sku) + order.getLineItemQuantity());
+			if (orderCount>count/4){ 
+				//skipping first quarter of lines in case customer ordered before menu changed
+				
+				//Skip to next orderLine object if order is a gift card
+				//This is because gift cards don't contain a sku, and as such, give us problems later on if we process it
+				//this is because the blank sku isn't really blank, but is "" which cannot be identified easily
+				if(order.getLineItemName().toLowerCase().contains("gift card")){
+					giftCardCount++;
+					continue;
 				}
-				else{ //if name does not match sku value (very rare)
-					extraSku = Integer.parseInt(sku.replaceAll("[\\D]", ""));
+				
+				String sku = order.getLineItemSKU();
+				String name = order.getLineItemName();
+				if(!reverseNames.containsKey(name)){
+					if(!skuNames.containsKey(sku)){
+						skuNames.put(sku, name);
+						skuQuantities.put(sku, 0);
+						skus.add(sku);
+						reverseNames.put(name, sku);
+					}
+				}
+			}
+			orderCount++;	
+		}
+		System.out.println("Preliminary run completed on line "+count/4+" to "+orderCount);
+		
+		orderCount=0;
+		
+		// Here we loop through all of our order objects to fully build our hashmaps
+		for (OrderItem order : orderLine)
+		{
+			String sku = order.getLineItemSKU(); //sku of current orderLine
+			String name = order.getLineItemName();
+			int extraSku;
+			totalQuantity += order.getLineItemQuantity(); //Total items sold counter
+			System.out.println(order.getOrderID());
+			System.out.println(order.getLineItemSKU());
+
+			//Skip to next orderLine object if order is a gift card
+			//This is because gift cards don't contain a sku, and as such, give us problems later on if we process it
+			//this is because the blank sku isn't really blank, but is "" which cannot be identified easily
+			if(order.getLineItemName().toLowerCase().contains("gift card")){
+				giftCardCount++;
+				continue;
+			}
+			orderCount++; //Processed orders (gift card orders are NOT processed
+		
+			
+			// Tally order quantities in a HashMap on SKU
+			if (skuQuantities.containsKey(sku)){	//if sku already exists in hashMap
+				name = order.getLineItemName();
+				if (name.equals(skuNames.get(sku))){ //if name matches sku value
+					skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
+				}
+				else if (reverseNames.containsKey(name)){
+					//if hashmap contains this name under a dif sku (extremely rare)
+					//occurs when someone orders in between weekly cutoff and menu changed (skus+names)
+					//this part covers the use case when the intended sku is already in-use
+					//(Part 1 of 2)
+					sku = reverseNames.get(name); //set sku to the recorded sku of that menu item
+					skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());					
+				}
+				else{ 
+					//if name does not match recorded sku value (less rare) and item name not in hashmap already
+					//happens when customer manually orders items not on current menu
+
+					extraSku = Integer.parseInt(sku.replaceAll("[\\D]", "")); //extract integer component of sku
 					if(extraSku<10)
-						sku = "OLD-0"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> ZZZ-12
-					else
-						sku = "OLD-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> ZZZ-12
-					
-					if(gmdQuantities.containsKey(sku)){
-						gmdQuantities.put(sku, gmdQuantities.get(sku) + order.getLineItemQuantity());
+					{
+						sku = "OLD-0"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> OLD-12
 					}
 					else{
-						gmdQuantities.put(sku, order.getLineItemQuantity());
-						gmdNames.put(sku, order.getLineItemName());
-						skus.add(sku);
-						
+						sku = "OLD-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> OLD-12
 					}
-					orderedOld.add(order.getOrderID());
+					
+					if(!skusOld.contains(extraSku)){
+						skusOld.add(extraSku);
+						skusOldNames.add(name);
+					}
+					
+					
+//					if(skuQuantities.containsKey(sku)){
+//						skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
+//					}
+//					else{
+//						skuQuantities.put(sku, order.getLineItemQuantity());
+//						skuNames.put(sku, order.getLineItemName());
+//						skus.add(sku);
+//						
+//					}
+					//Shouldn't need the above because items that already exist should be caught in the above else if
+					skuQuantities.put(sku, order.getLineItemQuantity());
+					skuNames.put(sku, order.getLineItemName());
+					skus.add(sku);
+					reverseNames.put(order.getLineItemName(), sku); //add name and sku
+					
+					//orderedOld.add(order.getOrderID()); //Recording order ID of current order
 				}				
-			} else {
-				gmdQuantities.put(sku, order.getLineItemQuantity());
-				gmdNames.put(sku, order.getLineItemName());
-				skus.add(sku);
+			} else if (reverseNames.containsKey(name)){ //hashmaps contain name but not line sku
+				
+				sku = reverseNames.get(name); //set sku to the recorded sku of that menu item
+				skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
+				
+			} else { //if item does not exist in hashmap yet
+				
+				skuQuantities.put(sku, order.getLineItemQuantity()); //Add sku and initial quantity
+				skuNames.put(sku, order.getLineItemName()); //Add sku and name
+				skus.add(sku); //add sku
+				reverseNames.put(order.getLineItemName(), sku); //add name and sku
 			}		
 
 			// Storing the different shipping methods and the different orders to each shipping method
@@ -142,11 +228,88 @@ public class FileFunctions
 				oldOrderID=order.getOrderID();
 			}		
 		}
+		System.out.println("Gift Cards Count: "+giftCardCount);
+		System.out.println(orderCount+"/"+count+" orders processed"); //should be total orders - gift card
+		System.out.println();
+		
+//		System.out.println();
+//		for(String sku : skus){
+//			System.out.println(gmdNames.get(sku)+" - "+gmdQuantities.get(sku));
+//		}
+//		System.out.println();
+		
+		//If hashmaps contain old meals, looping through them to determine the real old
+		//the sku with the lowest quantity is determined to be the correct old item
+		//i.e. if GMD-12 quantity = 10, and OLD-12 has quantity of 100, skus are swapped
+		if (!skusOld.isEmpty()){
+			System.out.print("Orders contains OLD meals! Determining true OLD meals...");
+			for (Integer sku : skusOld){
+				String gmdSku="", oldSku="";
+				
+				if(sku<10)
+				{
+					gmdSku="GMD-0"+sku;
+					oldSku="OLD-0"+sku;
+				}
+				else{
+					gmdSku="GMD-"+sku;
+					oldSku="OLD-"+sku;
+				}
+				
+				int gmdQuantity = skuQuantities.get(gmdSku);
+				int oldQuantity = skuQuantities.get(oldSku);
+				String gmdName = skuNames.get(gmdSku);
+				String oldName = skuNames.get(oldSku);
+//				System.out.println("current");
+//				System.out.println(gmdSku+": "+gmdName+" - "+gmdQuantity);
+//				System.out.println(oldSku+": "+oldName+" - "+oldQuantity);						
+				
+				if (gmdQuantity<oldQuantity){ //Old is the real gmd
+					skuQuantities.remove(gmdSku);
+					skuNames.remove(gmdSku);
+					skuQuantities.remove(oldSku);
+					skuNames.remove(oldSku);
+
+					skuQuantities.put(gmdSku, oldQuantity);//making old the real gmd
+					skuNames.put(gmdSku, oldName);
+					
+					skuQuantities.put(oldSku, gmdQuantity);//making gmd the real old
+					skuNames.put(oldSku, gmdName);
+//					System.out.println("new");
+//					System.out.println(gmdSku+": "+oldName+" - "+oldQuantity);
+//					System.out.println(oldSku+": "+gmdName+" - "+gmdQuantity);				
+					
+					if(!skusOldNames.contains(gmdName)){
+						skusOldNames.add(gmdName);
+					}
+					skusOldNames.remove(oldName);
+					
+				}	
+			}
+			System.out.println(" Done!");
+		}
+		
+		
+		System.out.print("Finding Orders containing OLD meals or mismatched SKU meals... ");
+		for (OrderItem order : orderLine){
+			if(skusOldNames.contains(order.getLineItemName())){
+				if(!orderedOld.contains(order.getOrderID())){
+					orderedOld.add(order.getOrderID());
+				}
+			}
+			if(!(order.getLineItemName().equals(skuNames.get(order.getLineItemSKU())))){
+				if(!(order.getNotes().contains("**DIF SKUs**"))){
+					order.setNotes("**DIF SKUs**"+ order.getNotes());
+				}
+			}
+				
+		}
+		System.out.println(" Done!");
 		
 		System.out.print("Sorting Meal Names...");
 		for(String currentSku: skus){
-			Names.put(gmdNames.get(currentSku), currentSku);
-			names.add(gmdNames.get(currentSku));			
+			Names.put(skuNames.get(currentSku), currentSku);
+			names.add(skuNames.get(currentSku));			
 		}
 		Collections.sort(names);
 		skus.clear();
@@ -157,11 +320,11 @@ public class FileFunctions
 
 
 		System.out.print("Calculating meal totals...");
-		PrintMealTotals(gmdQuantities,gmdNames,totalQuantity, skus);//Prints the totals of each meal
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skus);//Prints the totals of each meal
 
 		System.out.print("Calculating ingredient totals...");
-		CalcPrintIngredients(gmdQuantities,gmdNames); //Calculate the ingredients required
-
+		CalcPrintIngredients(skuQuantities,skuNames); //Calculate the ingredients required
+		
 		System.out.print("Printing sorted delivery methods...");
 		PrintShipping(ordersByShippingMethod, orderedOld); //Print the shipping details of each order of each method
 	}
@@ -178,11 +341,14 @@ public class FileFunctions
 			BufferedWriter totals = new BufferedWriter(new FileWriter("_meal_totals.csv", false));
 			String mealName;
 			String sauceName;
+			boolean duplicates = false;			
 			
-			
-			int[] typeTotals = new int[12];
+			int[] typeTotals = new int[22];
 			HashMap<String, Integer> sauceTotals = new HashMap<String,Integer>();	//sauce totals
 			ArrayList<String> sauces = new ArrayList<String>();
+			
+			ArrayList<String> itemNames = new ArrayList<String>();
+			ArrayList<String> itemSkus = new ArrayList<String>();
 
 			totals.write("TOTAL MEALS: "+total);
 			totals.newLine();
@@ -193,26 +359,47 @@ public class FileFunctions
 
 			// Write the quantities of each meal to file
 			for(String sku : skus){
+				
+				if (itemSkus.contains(sku)||itemNames.contains(names.get(sku)))
+					duplicates = true;
+				
+					
+				itemSkus.add(sku);
+				itemNames.add(names.get(sku));
+				
 				totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
 				totals.newLine();
+				
 				
 				if (sku.contains("GMD")||sku.contains("OLD")){
 					//Totalling the totals for each meal type
 					mealName = names.get(sku).toLowerCase();
 					if (mealName.contains("steak")){
-						if(mealName.contains("rice")){
+						if((mealName.contains("rice"))&&(mealName.contains("veg"))){
+							if(mealName.contains("large"))
+								typeTotals[12]+=quantities.get(sku);
+							if(mealName.contains("small"))
+								typeTotals[13]+=quantities.get(sku);
+						}
+						else if((mealName.contains("potato"))&&(mealName.contains("veg"))){
+							if(mealName.contains("large"))
+								typeTotals[16]+=quantities.get(sku);
+							if(mealName.contains("small"))
+								typeTotals[17]+=quantities.get(sku);
+						}
+						else if(mealName.contains("rice")){
 							if(mealName.contains("large"))
 								typeTotals[0]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[1]+=quantities.get(sku);
 						}
-						if(mealName.contains("potato")){
+						else if(mealName.contains("potato")){
 							if(mealName.contains("large"))
 								typeTotals[2]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[3]+=quantities.get(sku);
 						}
-						if(mealName.contains("veg")){
+						else if(mealName.contains("veg")){
 							if(mealName.contains("large"))
 								typeTotals[4]+=quantities.get(sku);
 							if(mealName.contains("small"))
@@ -220,24 +407,42 @@ public class FileFunctions
 						}
 					}
 					if (mealName.contains("chicken")){
-						if(mealName.contains("rice")){
+						if((mealName.contains("rice"))&&(mealName.contains("veg"))){
+							if(mealName.contains("large"))
+								typeTotals[14]+=quantities.get(sku);
+							if(mealName.contains("small"))
+								typeTotals[15]+=quantities.get(sku);
+						}
+						else if((mealName.contains("potato"))&&(mealName.contains("veg"))){
+							if(mealName.contains("large"))
+								typeTotals[18]+=quantities.get(sku);
+							if(mealName.contains("small"))
+								typeTotals[19]+=quantities.get(sku);
+						}
+						else if(mealName.contains("rice")){
 							if(mealName.contains("large"))
 								typeTotals[6]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[7]+=quantities.get(sku);
 						}
-						if(mealName.contains("potato")){
+						else if(mealName.contains("potato")){
 							if(mealName.contains("large"))
 								typeTotals[8]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[9]+=quantities.get(sku);
 						}
-						if(mealName.contains("veg")){
+						else if(mealName.contains("veg")){
 							if(mealName.contains("large"))
 								typeTotals[10]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[11]+=quantities.get(sku);
 						}
+					}
+					if (mealName.contains("meatball")){
+						if(mealName.contains("large"))
+							typeTotals[20]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[21]+=quantities.get(sku);
 					}
 					
 					
@@ -254,6 +459,11 @@ public class FileFunctions
 					}
 				}
 			}
+			if(duplicates){
+				totals.newLine();
+				totals.write("ERROR! Duplicates found. File may be incorrect!");
+				totals.newLine();
+			}
 			
 					
 			if (!sauceTotals.isEmpty()){
@@ -268,11 +478,21 @@ public class FileFunctions
 				totals.newLine();
 				totals.write("Beef + Vege"+","+typeTotals[4]+","+typeTotals[5]);
 				totals.newLine();
+				totals.write("Beef + Rice&Vege"+","+typeTotals[12]+","+typeTotals[13]);
+				totals.newLine();
+				totals.write("Beef + Potato&Vege"+","+typeTotals[16]+","+typeTotals[17]);
+				totals.newLine();
 				totals.write("Chicken + Rice"+","+typeTotals[6]+","+typeTotals[7]);
 				totals.newLine();
 				totals.write("Chicken + Sweet Potato"+","+typeTotals[8]+","+typeTotals[9]);
 				totals.newLine();
 				totals.write("Chicken + Vege"+","+typeTotals[10]+","+typeTotals[11]);
+				totals.newLine();
+				totals.write("Chicken + Rice&Vege"+","+typeTotals[14]+","+typeTotals[15]);
+				totals.newLine();
+				totals.write("Chicken + Potato&Vege"+","+typeTotals[18]+","+typeTotals[19]);
+				totals.newLine();
+				totals.write("Meatball Penne"+","+typeTotals[20]+","+typeTotals[21]);
 							
 				//Writing the totals for each sauce type
 				totals.newLine();
@@ -322,9 +542,17 @@ public class FileFunctions
 					beef.addQuantity(quantities.get(sku), 200);
 				if(tempName.contains("potato"))
 					sPotato.addQuantity(quantities.get(sku), 200);
-				if(tempName.contains("rice"))
+				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
+					rice.addQuantity(quantities.get(sku), 100);
+					veg.addQuantity(quantities.get(sku), 100);
+				}
+				else if((tempName.contains("veg"))&&(tempName.contains("potato"))){
+					sPotato.addQuantity(quantities.get(sku), 100);
+					veg.addQuantity(quantities.get(sku), 100);
+				}
+				else if(tempName.contains("rice"))
 					rice.addQuantity(quantities.get(sku), 200);
-				if(tempName.contains("veg"))
+				else if(tempName.contains("veg"))
 					veg.addQuantity(quantities.get(sku), 180);
 			}
 			if(tempName.contains("small")){
@@ -334,9 +562,18 @@ public class FileFunctions
 					beef.addQuantity(quantities.get(sku), 150);
 				if(tempName.contains("potato"))
 					sPotato.addQuantity(quantities.get(sku), 120);
-				if(tempName.contains("rice"))
+				
+				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
+					rice.addQuantity(quantities.get(sku), 70);
+					veg.addQuantity(quantities.get(sku), 70);
+				}
+				else if((tempName.contains("veg"))&&(tempName.contains("potato"))){
+					sPotato.addQuantity(quantities.get(sku), 70);
+					veg.addQuantity(quantities.get(sku), 70);
+				}
+				else if(tempName.contains("rice"))
 					rice.addQuantity(quantities.get(sku), 120);
-				if(tempName.contains("veg"))
+				else if(tempName.contains("veg"))
 					veg.addQuantity(quantities.get(sku), 100);
 			}
 		}
