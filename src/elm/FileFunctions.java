@@ -71,6 +71,12 @@ public class FileFunctions
 					shippingName = billingName;
 				}
 				
+				//indenting protein ball names so they're seperated from the ordinary meals
+				if(lineItemName.toLowerCase().contains("protein balls")){
+					lineItemName = " " + lineItemName;
+				}
+			
+				
 				//build orderLine object from chosen extracted values
 				orderLine.add(
 					new OrderItem(orderID, discountCode, shippingMethod, lineItemQuantity, lineItemName,
@@ -153,7 +159,8 @@ public class FileFunctions
 				continue;
 			}
 			orderCount++; //Processed orders (gift card orders are NOT processed
-		
+			
+			
 			
 			// Tally order quantities in a HashMap on SKU
 			if (skuQuantities.containsKey(sku)){	//if sku already exists in hashMap
