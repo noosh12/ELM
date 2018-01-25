@@ -350,7 +350,7 @@ public class FileFunctions
 			String sauceName;
 			boolean duplicates = false;			
 			
-			int[] typeTotals = new int[22];
+			int[] typeTotals = new int[20];
 			HashMap<String, Integer> sauceTotals = new HashMap<String,Integer>();	//sauce totals
 			ArrayList<String> sauces = new ArrayList<String>();
 			
@@ -445,12 +445,6 @@ public class FileFunctions
 								typeTotals[11]+=quantities.get(sku);
 						}
 					}
-					if (mealName.contains("meatball")){
-						if(mealName.contains("large"))
-							typeTotals[20]+=quantities.get(sku);
-						if(mealName.contains("small"))
-							typeTotals[21]+=quantities.get(sku);
-					}
 					
 					
 					
@@ -498,8 +492,6 @@ public class FileFunctions
 				totals.write("Chicken + Rice&Vege"+","+typeTotals[14]+","+typeTotals[15]);
 				totals.newLine();
 				totals.write("Chicken + Potato&Vege"+","+typeTotals[18]+","+typeTotals[19]);
-				totals.newLine();
-				totals.write("Meatball Penne"+","+typeTotals[20]+","+typeTotals[21]);
 							
 				//Writing the totals for each sauce type
 				totals.newLine();
@@ -527,12 +519,35 @@ public class FileFunctions
 	 * File will be '_ingredients.csv'
 	 */
 	public static void CalcPrintIngredients(HashMap<String, Integer> quantities, HashMap<String, String> names){
-
+		
+		List<Ingredient> ingredients = new ArrayList<>();	
+		
+		
+		//todo fix this
+		ingredients.add(new Ingredient("Chicken"));
+		ingredients.add(new Ingredient("Beef"));
+		ingredients.add(new Ingredient("Mince"));
+		ingredients.add(new Ingredient("Lamb"));
+		ingredients.add(new Ingredient("Barramundi"));
+		ingredients.add(new Ingredient("Basa"));
+		ingredients.add(new Ingredient("Rice"));
+		ingredients.add(new Ingredient("Sweet Potato"));
+		ingredients.add(new Ingredient("Veg"));
+		
+		
+		
 		Ingredient chicken = new Ingredient("Chicken");// create temporary instance of Ingredient object
 		Ingredient beef = new Ingredient("Beef");
 		Ingredient sPotato = new Ingredient("Sweet Potato");
 		Ingredient rice = new Ingredient("Rice");
 		Ingredient veg = new Ingredient("Veg");
+		Ingredient mince = new Ingredient("Mince");
+		Ingredient barra = new Ingredient("Barramundi");
+		Ingredient basa = new Ingredient("Basa");
+		Ingredient lamb = new Ingredient("Lamb");
+		
+		
+		
 
 		/*
 		 * Totalling Ingredient Quantities
@@ -543,10 +558,30 @@ public class FileFunctions
 			String tempName = names.get(sku).toLowerCase();
 
 			if(tempName.contains("large")){
-				if(tempName.contains("chicken"))
-					chicken.addQuantity(quantities.get(sku), 200);
-				if(tempName.contains("steak"))
+				if(tempName.contains("chicken")){
+					chicken.addQuantity(quantities.get(sku), 200);	
+					ingredients.get(0).addQuantity(quantities.get(sku), 200);
+					System.out.print("chicken+200*"+quantities.get(sku)+"  ");
+					System.out.print(chicken.getQuantity()+"  ");
+					System.out.println(ingredients.get(0).getQuantity());					
+				}
+				if(tempName.contains("steak")){
 					beef.addQuantity(quantities.get(sku), 200);
+					ingredients.get(1).addQuantity(quantities.get(sku), 200);	
+				}	
+				if(tempName.contains("meatballs"))
+					mince.addQuantity(quantities.get(sku), 200);
+				if(tempName.contains("con carne")){
+					mince.addQuantity(quantities.get(sku), 200);
+					rice.addQuantity(quantities.get(sku), 200);
+				}				
+				if(tempName.contains("barra"))
+					barra.addQuantity(quantities.get(sku), 160);
+				if(tempName.contains("basa"))
+					basa.addQuantity(quantities.get(sku), 160);
+				if(tempName.contains("lamb"))
+					lamb.addQuantity(quantities.get(sku), 160);
+				
 				if(tempName.contains("potato"))
 					sPotato.addQuantity(quantities.get(sku), 200);
 				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
@@ -563,13 +598,32 @@ public class FileFunctions
 					veg.addQuantity(quantities.get(sku), 180);
 			}
 			if(tempName.contains("small")){
-				if(tempName.contains("chicken"))
+				if(tempName.contains("chicken")){
 					chicken.addQuantity(quantities.get(sku), 150);
-				if(tempName.contains("steak"))
+					ingredients.get(0).addQuantity(quantities.get(sku), 150);
+					System.out.print("chicken+150*"+quantities.get(sku)+"  ");
+					System.out.print(chicken.getQuantity()+"  ");
+					System.out.println(ingredients.get(0).getQuantity());
+				}
+				if(tempName.contains("steak")){
 					beef.addQuantity(quantities.get(sku), 150);
+					ingredients.get(1).addQuantity(quantities.get(sku), 150);
+				}		
+				if(tempName.contains("meatballs"))
+					mince.addQuantity(quantities.get(sku), 150);
+				if(tempName.contains("con carne")){
+					mince.addQuantity(quantities.get(sku), 150);
+					rice.addQuantity(quantities.get(sku), 150);
+				}	
+				if(tempName.contains("barra"))
+					barra.addQuantity(quantities.get(sku), 110);
+				if(tempName.contains("basa"))
+					basa.addQuantity(quantities.get(sku), 110);
+				if(tempName.contains("lamb"))
+					lamb.addQuantity(quantities.get(sku), 120);
+				
 				if(tempName.contains("potato"))
 					sPotato.addQuantity(quantities.get(sku), 120);
-				
 				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
 					rice.addQuantity(quantities.get(sku), 70);
 					veg.addQuantity(quantities.get(sku), 70);
@@ -603,6 +657,13 @@ public class FileFunctions
 			ingredientsFile.write(sPotato.getName()+","+(float)sPotato.getQuantity()/1000);
 			ingredientsFile.newLine();
 			ingredientsFile.write(veg.getName()+","+(float)veg.getQuantity()/1000);
+			
+			ingredientsFile.newLine();
+			for (Ingredient ingri : ingredients)
+			{
+				ingredientsFile.newLine();
+				ingredientsFile.write(ingri.getName()+","+(float)ingri.getQuantity()/1000);
+			}
 
 			ingredientsFile.close();
 			System.out.println(" Done!");
