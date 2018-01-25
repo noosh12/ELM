@@ -106,6 +106,7 @@ public class FileFunctions
 		}
 		
 		int giftCardCount=0, orderCount=0;
+		int smalls = 0, larges = 0, snacks = 0;
 		String oldOrderID = "NOTAREALID";
 		
 		//Preliminary run to build hashmaps skipping first 1/4 of lines
@@ -160,6 +161,12 @@ public class FileFunctions
 			}
 			orderCount++; //Processed orders (gift card orders are NOT processed
 			
+			if(order.getLineItemName().toLowerCase().contains("large"))
+				larges+=order.getLineItemQuantity();
+			if(order.getLineItemName().toLowerCase().contains("small"))
+				smalls+=order.getLineItemQuantity();
+			if(order.getLineItemName().toLowerCase().contains("protein ball"))
+				snacks+=order.getLineItemQuantity();
 			
 			
 			// Tally order quantities in a HashMap on SKU
@@ -235,6 +242,9 @@ public class FileFunctions
 				oldOrderID=order.getOrderID();
 			}		
 		}
+		System.out.println("Large Meals Count: "+larges);
+		System.out.println("Small Meals Count: "+smalls);
+		System.out.println("Snacks Count: "+snacks);
 		System.out.println("Gift Cards Count: "+giftCardCount);
 		System.out.println(orderCount+"/"+count+" orders processed"); //should be total orders - gift card
 		System.out.println();
@@ -327,7 +337,7 @@ public class FileFunctions
 
 
 		System.out.print("Calculating meal totals...");
-		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skus);//Prints the totals of each meal
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skus, larges, smalls, snacks);//Prints the totals of each meal
 
 		System.out.print("Calculating ingredient totals...");
 		CalcPrintIngredients(skuQuantities,skuNames); //Calculate the ingredients required
@@ -340,7 +350,7 @@ public class FileFunctions
 	 *   Writes the total sold quantities of each menu item
 	 *   to file '_meal_totals.csv'
 	 */
-	public static void PrintMealTotals(HashMap<String, Integer> quantities, HashMap<String, String> names, int total, ArrayList<String> skus){
+	public static void PrintMealTotals(HashMap<String, Integer> quantities, HashMap<String, String> names, int total, ArrayList<String> skus, int larges, int smalls, int snacks){
 		try
 		{
 			// creating a BufferedWriter instance with FileWriter
@@ -357,7 +367,7 @@ public class FileFunctions
 			ArrayList<String> itemNames = new ArrayList<String>();
 			ArrayList<String> itemSkus = new ArrayList<String>();
 
-			totals.write("TOTAL MEALS: "+total);
+			totals.write("TOTAL MEALS: "+ (total-snacks));
 			totals.newLine();
 			totals.newLine();
 			totals.newLine();
@@ -478,20 +488,29 @@ public class FileFunctions
 				totals.write("Beef + Sweet Potato"+","+typeTotals[2]+","+typeTotals[3]);
 				totals.newLine();
 				totals.write("Beef + Vege"+","+typeTotals[4]+","+typeTotals[5]);
-				totals.newLine();
-				totals.write("Beef + Rice&Vege"+","+typeTotals[12]+","+typeTotals[13]);
-				totals.newLine();
-				totals.write("Beef + Potato&Vege"+","+typeTotals[16]+","+typeTotals[17]);
+				if(typeTotals[12] !=0 && typeTotals[13] !=0){
+					totals.newLine();
+					totals.write("Beef + Rice&Vege"+","+typeTotals[12]+","+typeTotals[13]);
+				}
+				if(typeTotals[16] !=0 && typeTotals[17] !=0){
+					totals.newLine();
+					totals.write("Beef + Potato&Vege"+","+typeTotals[16]+","+typeTotals[17]);
+				}
 				totals.newLine();
 				totals.write("Chicken + Rice"+","+typeTotals[6]+","+typeTotals[7]);
 				totals.newLine();
 				totals.write("Chicken + Sweet Potato"+","+typeTotals[8]+","+typeTotals[9]);
 				totals.newLine();
 				totals.write("Chicken + Vege"+","+typeTotals[10]+","+typeTotals[11]);
-				totals.newLine();
-				totals.write("Chicken + Rice&Vege"+","+typeTotals[14]+","+typeTotals[15]);
-				totals.newLine();
-				totals.write("Chicken + Potato&Vege"+","+typeTotals[18]+","+typeTotals[19]);
+				if(typeTotals[14] !=0 && typeTotals[15] !=0){
+					totals.newLine();
+					totals.write("Chicken + Rice&Vege"+","+typeTotals[14]+","+typeTotals[15]);
+				}
+				if(typeTotals[18] !=0 && typeTotals[19] !=0){
+					totals.newLine();
+					totals.write("Chicken + Potato&Vege"+","+typeTotals[18]+","+typeTotals[19]);
+				}
+
 							
 				//Writing the totals for each sauce type
 				totals.newLine();
@@ -503,6 +522,14 @@ public class FileFunctions
 					totals.write(sauce +","+sauceTotals.get(sauce)+","+String.format("%1$,.2f", sauceTotals.get(sauce)*0.12)+" L");
 				}
 			}
+			totals.newLine();totals.newLine();
+			totals.write(","+"QUANTITY"+","+"PERCENTAGE");
+			totals.newLine();
+			totals.write("Large Meals"+","+larges+","+String.format("%1$,.2f", larges*100.0/total)+" %");
+			totals.newLine();
+			totals.write("Small Meals"+","+smalls+","+String.format("%1$,.2f", smalls*100.0/total)+" %");
+			totals.newLine();
+			totals.write("Snacks"+","+snacks+","+String.format("%1$,.2f", snacks*100.0/total)+" %");
 				
 			totals.close();
 			System.out.println(" Done!");
