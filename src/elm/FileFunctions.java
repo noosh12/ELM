@@ -148,8 +148,8 @@ public class FileFunctions
 			String name = order.getLineItemName();
 			int extraSku;
 			totalQuantity += order.getLineItemQuantity(); //Total items sold counter
-			System.out.println(order.getOrderID());
-			System.out.println(order.getLineItemSKU());
+			//System.out.println(order.getOrderID());
+			//System.out.println(order.getLineItemSKU());
 
 			//Skip to next orderLine object if order is a gift card
 			//This is because gift cards don't contain a sku, and as such, give us problems later on if we process it
@@ -522,33 +522,18 @@ public class FileFunctions
 		
 		List<Ingredient> ingredients = new ArrayList<>();	
 		
-		
 		//todo fix this
-		ingredients.add(new Ingredient("Chicken"));
-		ingredients.add(new Ingredient("Beef"));
-		ingredients.add(new Ingredient("Mince"));
-		ingredients.add(new Ingredient("Lamb"));
-		ingredients.add(new Ingredient("Barramundi"));
-		ingredients.add(new Ingredient("Basa"));
-		ingredients.add(new Ingredient("Rice"));
-		ingredients.add(new Ingredient("Sweet Potato"));
-		ingredients.add(new Ingredient("Veg"));
+		ingredients.add(new Ingredient("Chicken")); 	//0
+		ingredients.add(new Ingredient("Beef"));		//1
+		ingredients.add(new Ingredient("Mince"));		//2	
+		ingredients.add(new Ingredient("Lamb"));		//3
+		ingredients.add(new Ingredient("Barramundi"));	//4
+		ingredients.add(new Ingredient("Basa"));		//5
+		ingredients.add(new Ingredient("Rice"));		//6
+		ingredients.add(new Ingredient("Sweet Potato"));//7
+		ingredients.add(new Ingredient("Veg"));			//8
 		
 		
-		
-		Ingredient chicken = new Ingredient("Chicken");// create temporary instance of Ingredient object
-		Ingredient beef = new Ingredient("Beef");
-		Ingredient sPotato = new Ingredient("Sweet Potato");
-		Ingredient rice = new Ingredient("Rice");
-		Ingredient veg = new Ingredient("Veg");
-		Ingredient mince = new Ingredient("Mince");
-		Ingredient barra = new Ingredient("Barramundi");
-		Ingredient basa = new Ingredient("Basa");
-		Ingredient lamb = new Ingredient("Lamb");
-		
-		
-		
-
 		/*
 		 * Totalling Ingredient Quantities
 		 * This is accomplished by searching the menu item name for keywords like large, chicken, rice, etc
@@ -558,84 +543,70 @@ public class FileFunctions
 			String tempName = names.get(sku).toLowerCase();
 
 			if(tempName.contains("large")){
-				if(tempName.contains("chicken")){
-					chicken.addQuantity(quantities.get(sku), 200);	
-					ingredients.get(0).addQuantity(quantities.get(sku), 200);
-					System.out.print("chicken+200*"+quantities.get(sku)+"  ");
-					System.out.print(chicken.getQuantity()+"  ");
-					System.out.println(ingredients.get(0).getQuantity());					
-				}
-				if(tempName.contains("steak")){
-					beef.addQuantity(quantities.get(sku), 200);
+				if(tempName.contains("chicken"))
+					ingredients.get(0).addQuantity(quantities.get(sku), 200);				
+				if(tempName.contains("steak"))
 					ingredients.get(1).addQuantity(quantities.get(sku), 200);	
-				}	
 				if(tempName.contains("meatballs"))
-					mince.addQuantity(quantities.get(sku), 200);
+					ingredients.get(2).addQuantity(quantities.get(sku), 200);
 				if(tempName.contains("con carne")){
-					mince.addQuantity(quantities.get(sku), 200);
-					rice.addQuantity(quantities.get(sku), 200);
+					ingredients.get(2).addQuantity(quantities.get(sku), 200);
+					ingredients.get(6).addQuantity(quantities.get(sku), 200);
 				}				
 				if(tempName.contains("barra"))
-					barra.addQuantity(quantities.get(sku), 160);
+					ingredients.get(4).addQuantity(quantities.get(sku), 160);
 				if(tempName.contains("basa"))
-					basa.addQuantity(quantities.get(sku), 160);
+					ingredients.get(5).addQuantity(quantities.get(sku), 160);
 				if(tempName.contains("lamb"))
-					lamb.addQuantity(quantities.get(sku), 160);
+					ingredients.get(3).addQuantity(quantities.get(sku), 160);
 				
 				if(tempName.contains("potato"))
-					sPotato.addQuantity(quantities.get(sku), 200);
+					ingredients.get(7).addQuantity(quantities.get(sku), 200);
 				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
-					rice.addQuantity(quantities.get(sku), 100);
-					veg.addQuantity(quantities.get(sku), 100);
+					ingredients.get(6).addQuantity(quantities.get(sku), 100);
+					ingredients.get(8).addQuantity(quantities.get(sku), 100);
 				}
 				else if((tempName.contains("veg"))&&(tempName.contains("potato"))){
-					sPotato.addQuantity(quantities.get(sku), 100);
-					veg.addQuantity(quantities.get(sku), 100);
+					ingredients.get(7).addQuantity(quantities.get(sku), 100);
+					ingredients.get(8).addQuantity(quantities.get(sku), 100);
 				}
 				else if(tempName.contains("rice"))
-					rice.addQuantity(quantities.get(sku), 200);
+					ingredients.get(6).addQuantity(quantities.get(sku), 200);
 				else if(tempName.contains("veg"))
-					veg.addQuantity(quantities.get(sku), 180);
+					ingredients.get(8).addQuantity(quantities.get(sku), 180);
 			}
 			if(tempName.contains("small")){
-				if(tempName.contains("chicken")){
-					chicken.addQuantity(quantities.get(sku), 150);
-					ingredients.get(0).addQuantity(quantities.get(sku), 150);
-					System.out.print("chicken+150*"+quantities.get(sku)+"  ");
-					System.out.print(chicken.getQuantity()+"  ");
-					System.out.println(ingredients.get(0).getQuantity());
-				}
-				if(tempName.contains("steak")){
-					beef.addQuantity(quantities.get(sku), 150);
-					ingredients.get(1).addQuantity(quantities.get(sku), 150);
-				}		
+				if(tempName.contains("chicken"))
+					ingredients.get(0).addQuantity(quantities.get(sku), 150);				
+				if(tempName.contains("steak"))
+					ingredients.get(1).addQuantity(quantities.get(sku), 150);	
 				if(tempName.contains("meatballs"))
-					mince.addQuantity(quantities.get(sku), 150);
+					ingredients.get(2).addQuantity(quantities.get(sku), 150);
 				if(tempName.contains("con carne")){
-					mince.addQuantity(quantities.get(sku), 150);
-					rice.addQuantity(quantities.get(sku), 150);
-				}	
+					ingredients.get(2).addQuantity(quantities.get(sku), 150);
+					ingredients.get(6).addQuantity(quantities.get(sku), 150);
+				}				
 				if(tempName.contains("barra"))
-					barra.addQuantity(quantities.get(sku), 110);
+					ingredients.get(4).addQuantity(quantities.get(sku), 110);
 				if(tempName.contains("basa"))
-					basa.addQuantity(quantities.get(sku), 110);
+					ingredients.get(5).addQuantity(quantities.get(sku), 110);
 				if(tempName.contains("lamb"))
-					lamb.addQuantity(quantities.get(sku), 120);
+					ingredients.get(3).addQuantity(quantities.get(sku), 120);
 				
 				if(tempName.contains("potato"))
-					sPotato.addQuantity(quantities.get(sku), 120);
+					ingredients.get(7).addQuantity(quantities.get(sku), 120);
 				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
-					rice.addQuantity(quantities.get(sku), 70);
-					veg.addQuantity(quantities.get(sku), 70);
+					ingredients.get(6).addQuantity(quantities.get(sku), 70);
+					ingredients.get(8).addQuantity(quantities.get(sku), 70);
 				}
 				else if((tempName.contains("veg"))&&(tempName.contains("potato"))){
-					sPotato.addQuantity(quantities.get(sku), 70);
-					veg.addQuantity(quantities.get(sku), 70);
+					ingredients.get(7).addQuantity(quantities.get(sku), 70);
+					ingredients.get(8).addQuantity(quantities.get(sku), 70);
 				}
 				else if(tempName.contains("rice"))
-					rice.addQuantity(quantities.get(sku), 120);
+					ingredients.get(6).addQuantity(quantities.get(sku), 120);
 				else if(tempName.contains("veg"))
-					veg.addQuantity(quantities.get(sku), 100);
+					ingredients.get(8).addQuantity(quantities.get(sku), 100);
 			}
 		}
 
@@ -647,18 +618,8 @@ public class FileFunctions
 			BufferedWriter ingredientsFile = new BufferedWriter(new FileWriter("_ingredients.csv", false));
 
 			ingredientsFile.write("INGREDIENT"+","+"kg");
-			ingredientsFile.newLine(); ingredientsFile.newLine(); ingredientsFile.newLine();
-			ingredientsFile.write(chicken.getName()+","+(float)chicken.getQuantity()/1000);
 			ingredientsFile.newLine();
-			ingredientsFile.write(beef.getName()+","+(float)beef.getQuantity()/1000);
-			ingredientsFile.newLine(); ingredientsFile.newLine(); ingredientsFile.newLine();
-			ingredientsFile.write(rice.getName()+","+(float)rice.getQuantity()/1000);
-			ingredientsFile.newLine();
-			ingredientsFile.write(sPotato.getName()+","+(float)sPotato.getQuantity()/1000);
-			ingredientsFile.newLine();
-			ingredientsFile.write(veg.getName()+","+(float)veg.getQuantity()/1000);
-			
-			ingredientsFile.newLine();
+
 			for (Ingredient ingri : ingredients)
 			{
 				ingredientsFile.newLine();
