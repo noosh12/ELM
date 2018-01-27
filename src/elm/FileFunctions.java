@@ -513,9 +513,7 @@ public class FileFunctions
 
 							
 				//Writing the totals for each sauce type
-				totals.newLine();
-				totals.newLine();
-				totals.newLine();
+				totals.newLine();	totals.newLine();	totals.newLine();
 				totals.write("SAUCE TOTALS"+","+"TOTAL"+","+"LITRES");				
 				for (String sauce : sauces){
 					totals.newLine();
@@ -549,16 +547,15 @@ public class FileFunctions
 		
 		List<Ingredient> ingredients = new ArrayList<>();	
 		
-		//todo fix this
-		ingredients.add(new Ingredient("Chicken")); 	//0
-		ingredients.add(new Ingredient("Beef"));		//1
-		ingredients.add(new Ingredient("Mince"));		//2	
-		ingredients.add(new Ingredient("Lamb"));		//3
-		ingredients.add(new Ingredient("Barramundi"));	//4
-		ingredients.add(new Ingredient("Basa"));		//5
-		ingredients.add(new Ingredient("Rice"));		//6
-		ingredients.add(new Ingredient("Sweet Potato"));//7
-		ingredients.add(new Ingredient("Veg"));			//8
+		ingredients.add(new Ingredient("Chicken"));		int chicken = 0;
+		ingredients.add(new Ingredient("Steak"));		int steak = 1;
+		ingredients.add(new Ingredient("Mince"));		int mince = 2;
+		ingredients.add(new Ingredient("Lamb"));		int lamb = 3;
+		ingredients.add(new Ingredient("Barramundi"));	int barramundi = 4;
+		ingredients.add(new Ingredient("Basa"));		int basa = 5;
+		ingredients.add(new Ingredient("Rice"));		int rice = 6;
+		ingredients.add(new Ingredient("Sweet Potato"));int sweetPotato = 7;
+		ingredients.add(new Ingredient("Veg"));			int veg = 8;
 		
 		
 		/*
@@ -571,69 +568,69 @@ public class FileFunctions
 
 			if(tempName.contains("large")){
 				if(tempName.contains("chicken"))
-					ingredients.get(0).addQuantity(quantities.get(sku), 200);				
+					ingredients.get(chicken).addQuantity(quantities.get(sku), 200);	
 				if(tempName.contains("steak"))
-					ingredients.get(1).addQuantity(quantities.get(sku), 200);	
+					ingredients.get(steak).addQuantity(quantities.get(sku), 200);	
 				if(tempName.contains("meatballs"))
-					ingredients.get(2).addQuantity(quantities.get(sku), 200);
+					ingredients.get(mince).addQuantity(quantities.get(sku), 200);
 				if(tempName.contains("con carne")){
-					ingredients.get(2).addQuantity(quantities.get(sku), 200);
-					ingredients.get(6).addQuantity(quantities.get(sku), 200);
+					ingredients.get(mince).addQuantity(quantities.get(sku), 200);
+					ingredients.get(rice).addQuantity(quantities.get(sku), 200);
 				}				
 				if(tempName.contains("barra"))
-					ingredients.get(4).addQuantity(quantities.get(sku), 160);
+					ingredients.get(barramundi).addQuantity(quantities.get(sku), 160);
 				if(tempName.contains("basa"))
-					ingredients.get(5).addQuantity(quantities.get(sku), 160);
+					ingredients.get(basa).addQuantity(quantities.get(sku), 160);
 				if(tempName.contains("lamb"))
-					ingredients.get(3).addQuantity(quantities.get(sku), 160);
+					ingredients.get(lamb).addQuantity(quantities.get(sku), 160);
 				
-				if(tempName.contains("potato"))
-					ingredients.get(7).addQuantity(quantities.get(sku), 200);
+				if(tempName.contains("sweet potato"))
+					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 200);
 				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
-					ingredients.get(6).addQuantity(quantities.get(sku), 100);
-					ingredients.get(8).addQuantity(quantities.get(sku), 100);
+					ingredients.get(rice).addQuantity(quantities.get(sku), 100);
+					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
 				}
-				else if((tempName.contains("veg"))&&(tempName.contains("potato"))){
-					ingredients.get(7).addQuantity(quantities.get(sku), 100);
-					ingredients.get(8).addQuantity(quantities.get(sku), 100);
+				else if((tempName.contains("veg"))&&(tempName.contains("sweet potato"))){
+					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 100);
+					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
 				}
 				else if(tempName.contains("rice"))
-					ingredients.get(6).addQuantity(quantities.get(sku), 200);
+					ingredients.get(rice).addQuantity(quantities.get(sku), 200);
 				else if(tempName.contains("veg"))
-					ingredients.get(8).addQuantity(quantities.get(sku), 180);
+					ingredients.get(veg).addQuantity(quantities.get(sku), 180);
 			}
 			if(tempName.contains("small")){
 				if(tempName.contains("chicken"))
-					ingredients.get(0).addQuantity(quantities.get(sku), 150);				
+					ingredients.get(chicken).addQuantity(quantities.get(sku), 150);				
 				if(tempName.contains("steak"))
-					ingredients.get(1).addQuantity(quantities.get(sku), 150);	
+					ingredients.get(steak).addQuantity(quantities.get(sku), 150);	
 				if(tempName.contains("meatballs"))
-					ingredients.get(2).addQuantity(quantities.get(sku), 150);
+					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
 				if(tempName.contains("con carne")){
-					ingredients.get(2).addQuantity(quantities.get(sku), 150);
-					ingredients.get(6).addQuantity(quantities.get(sku), 150);
+					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
+					ingredients.get(rice).addQuantity(quantities.get(sku), 150);
 				}				
 				if(tempName.contains("barra"))
-					ingredients.get(4).addQuantity(quantities.get(sku), 110);
+					ingredients.get(barramundi).addQuantity(quantities.get(sku), 110);
 				if(tempName.contains("basa"))
-					ingredients.get(5).addQuantity(quantities.get(sku), 110);
+					ingredients.get(basa).addQuantity(quantities.get(sku), 110);
 				if(tempName.contains("lamb"))
-					ingredients.get(3).addQuantity(quantities.get(sku), 120);
+					ingredients.get(lamb).addQuantity(quantities.get(sku), 120);
 				
-				if(tempName.contains("potato"))
-					ingredients.get(7).addQuantity(quantities.get(sku), 120);
+				if(tempName.contains("sweet potato"))
+					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 120);
 				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
-					ingredients.get(6).addQuantity(quantities.get(sku), 70);
-					ingredients.get(8).addQuantity(quantities.get(sku), 70);
+					ingredients.get(rice).addQuantity(quantities.get(sku), 70);
+					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
 				}
-				else if((tempName.contains("veg"))&&(tempName.contains("potato"))){
-					ingredients.get(7).addQuantity(quantities.get(sku), 70);
-					ingredients.get(8).addQuantity(quantities.get(sku), 70);
+				else if((tempName.contains("veg"))&&(tempName.contains("sweet potato"))){
+					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 70);
+					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
 				}
 				else if(tempName.contains("rice"))
-					ingredients.get(6).addQuantity(quantities.get(sku), 120);
+					ingredients.get(rice).addQuantity(quantities.get(sku), 120);
 				else if(tempName.contains("veg"))
-					ingredients.get(8).addQuantity(quantities.get(sku), 100);
+					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
 			}
 		}
 
@@ -675,17 +672,12 @@ public class FileFunctions
 			BufferedWriter shipping = new BufferedWriter(new FileWriter("_shipping.csv", false));
 			BufferedWriter notes = new BufferedWriter(new FileWriter("_delivery_notes.csv", false));
 			shipping.write("SHIPPING METHODS: " + ordersByShippingMethod.keySet().size());
-			shipping.newLine();
-			shipping.newLine();
-			shipping.newLine();
-			shipping.newLine();
-			shipping.newLine();
+			shipping.newLine();	shipping.newLine();	shipping.newLine();	shipping.newLine();	shipping.newLine();
+			
 			notes.write("NAME,ADDRESS,PHONE");
 			notes.newLine();
 			notes.write("EMAIL,NOTE,METHOD");
-			notes.newLine();
-			notes.newLine();
-			notes.newLine();
+			notes.newLine();notes.newLine();notes.newLine();
 
 
 			//Looping through all shipping methods and within that, looping through all orders while printing
@@ -707,17 +699,13 @@ public class FileFunctions
 							notes.write(order.getShippingName()+","+order.getShippingAddress()+","+order.getShippingPhone());
 							notes.newLine();
 							notes.write(order.getEmail()+","+order.getNotes()+","+shippingMethod);
-							notes.newLine();
-							notes.newLine();
-							notes.newLine();
+							notes.newLine();notes.newLine();notes.newLine();
 						}
 					}					
 				}
 				
 				shipping.write("     TOTAL: " + ordersByShippingMethod.get(shippingMethod).size());
-				shipping.newLine();
-				shipping.newLine();
-				shipping.newLine();
+				shipping.newLine();	shipping.newLine();	shipping.newLine();
 			}
 
 			shipping.close();
