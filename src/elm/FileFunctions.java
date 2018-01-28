@@ -510,15 +510,18 @@ public class FileFunctions
 					totals.newLine();
 					totals.write("Chicken + Potato&Vege"+","+typeTotals[18]+","+typeTotals[19]);
 				}
-
+				
 							
 				//Writing the totals for each sauce type
 				totals.newLine();	totals.newLine();	totals.newLine();
-				totals.write("SAUCE TOTALS"+","+"TOTAL"+","+"LITRES");				
+				totals.write("SAUCE TOTALS"+","+"LITRES"+","+"TOTAL"+","+"TOTAL"+"% OF MEALS");				
 				for (String sauce : sauces){
 					totals.newLine();
-					totals.write(sauce +","+sauceTotals.get(sauce)+","+String.format("%1$,.2f", sauceTotals.get(sauce)*0.12)+" L");
+					totals.write(sauce +","+String.format("%1$,.2f", sauceTotals.get(sauce)*0.12)+" L"+","+sauceTotals.get(sauce)+","+sauceTotals.get(sauce)*100.0/(total-snacks)+"%");
 				}
+				totals.newLine(); totals.newLine();
+				totals.write("Average"+","+","+(total-snacks)/sauces.size()+","+(((total-snacks)/sauces.size())*100.0)/(total-snacks)+"%");
+				
 			}
 			totals.newLine();totals.newLine();
 			totals.write(","+"QUANTITY"+","+"PERCENTAGE");
