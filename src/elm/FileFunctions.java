@@ -514,7 +514,7 @@ public class FileFunctions
 							
 				//Writing the totals for each sauce type
 				totals.newLine();	totals.newLine();	totals.newLine();
-				totals.write("SAUCE TOTALS"+","+"LITRES"+","+"TOTAL"+","+"TOTAL"+"% OF MEALS");				
+				totals.write("SAUCE TOTALS"+","+"LITRES"+","+"TOTAL"+","+"% OF MEALS");				
 				for (String sauce : sauces){
 					totals.newLine();
 					totals.write(sauce +","+String.format("%1$,.2f", sauceTotals.get(sauce)*0.12)+" L"+","+sauceTotals.get(sauce)+","+sauceTotals.get(sauce)*100.0/(total-snacks)+"%");
@@ -524,7 +524,7 @@ public class FileFunctions
 				
 			}
 			totals.newLine();totals.newLine();
-			totals.write(","+"QUANTITY"+","+"PERCENTAGE");
+			totals.write(","+"QUANTITY"+","+"%");
 			totals.newLine();
 			totals.write("Large Meals"+","+larges+","+String.format("%1$,.2f", larges*100.0/total)+" %");
 			totals.newLine();
