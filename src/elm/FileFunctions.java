@@ -559,6 +559,12 @@ public class FileFunctions
 		ingredients.add(new Ingredient("Rice"));		int rice = 6;
 		ingredients.add(new Ingredient("Sweet Potato"));int sweetPotato = 7;
 		ingredients.add(new Ingredient("Veg"));			int veg = 8;
+		ingredients.add(new Ingredient("Capsicum"));	int capsicum = 9;
+		ingredients.add(new Ingredient("Corn"));		int corn = 10;
+		ingredients.add(new Ingredient("Beans"));		int beans = 11;
+		ingredients.add(new Ingredient("Mash Potato"));	int mashPotato = 12;
+		ingredients.add(new Ingredient("Cous Cous"));	int cousCous = 13;
+		ingredients.add(new Ingredient("Cottage Pie"));	int cottagePie = 14;
 		
 		
 		/*
