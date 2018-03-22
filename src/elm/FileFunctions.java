@@ -558,13 +558,10 @@ public class FileFunctions
 		ingredients.add(new Ingredient("Basa"));		int basa = 5;
 		ingredients.add(new Ingredient("Rice"));		int rice = 6;
 		ingredients.add(new Ingredient("Sweet Potato"));int sweetPotato = 7;
-		ingredients.add(new Ingredient("Veg"));			int veg = 8;
-		ingredients.add(new Ingredient("Capsicum"));	int capsicum = 9;
-		ingredients.add(new Ingredient("Corn"));		int corn = 10;
-		ingredients.add(new Ingredient("Beans"));		int beans = 11;
-		ingredients.add(new Ingredient("Mash Potato"));	int mashPotato = 12;
-		ingredients.add(new Ingredient("Cous Cous"));	int cousCous = 13;
-		ingredients.add(new Ingredient("Cottage Pie"));	int cottagePie = 14;
+		ingredients.add(new Ingredient("Veg"));			int veg = 8;	
+		ingredients.add(new Ingredient("Mash Potato"));	int mashPotato = 9;
+		ingredients.add(new Ingredient("Cous Cous"));	int cousCous = 10;
+
 		
 		
 		/*
@@ -592,9 +589,12 @@ public class FileFunctions
 					ingredients.get(basa).addQuantity(quantities.get(sku), 160);
 				if(tempName.contains("lamb"))
 					ingredients.get(lamb).addQuantity(quantities.get(sku), 160);
+				if(tempName.contains("cottage pie")){
+					ingredients.get(mince).addQuantity(quantities.get(sku), 200);
+					ingredients.get(mashPotato).addQuantity(quantities.get(sku), 200);
+				}
 				
-				if(tempName.contains("sweet potato"))
-					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 200);
+				
 				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
 					ingredients.get(rice).addQuantity(quantities.get(sku), 100);
 					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
@@ -603,10 +603,17 @@ public class FileFunctions
 					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 100);
 					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
 				}
+				else if(tempName.contains("salsa"))
+					ingredients.get(cousCous).addQuantity(quantities.get(sku), 200);
+				else if(tempName.contains("fajita"))
+					ingredients.get(rice).addQuantity(quantities.get(sku), 150);
 				else if(tempName.contains("rice"))
 					ingredients.get(rice).addQuantity(quantities.get(sku), 200);
 				else if(tempName.contains("veg"))
 					ingredients.get(veg).addQuantity(quantities.get(sku), 180);
+				else if(tempName.contains("sweet potato"))
+					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 200);
+				
 			}
 			if(tempName.contains("small")){
 				if(tempName.contains("chicken"))
@@ -625,9 +632,12 @@ public class FileFunctions
 					ingredients.get(basa).addQuantity(quantities.get(sku), 110);
 				if(tempName.contains("lamb"))
 					ingredients.get(lamb).addQuantity(quantities.get(sku), 120);
+				if(tempName.contains("cottage pie")){
+					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
+					ingredients.get(mashPotato).addQuantity(quantities.get(sku), 150);
+				}
 				
-				if(tempName.contains("sweet potato"))
-					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 120);
+				
 				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
 					ingredients.get(rice).addQuantity(quantities.get(sku), 70);
 					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
@@ -636,10 +646,16 @@ public class FileFunctions
 					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 70);
 					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
 				}
+				else if(tempName.contains("salsa"))
+					ingredients.get(cousCous).addQuantity(quantities.get(sku), 200);
+				else if(tempName.contains("fajita"))
+					ingredients.get(rice).addQuantity(quantities.get(sku), 100);
 				else if(tempName.contains("rice"))
 					ingredients.get(rice).addQuantity(quantities.get(sku), 120);
 				else if(tempName.contains("veg"))
 					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
+				else if(tempName.contains("sweet potato"))
+					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 120);
 			}
 		}
 
