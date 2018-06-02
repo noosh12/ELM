@@ -167,6 +167,9 @@ public class FileFunctions
 				smalls+=order.getLineItemQuantity();
 			if(order.getLineItemName().toLowerCase().contains("protein ball"))
 				snacks+=order.getLineItemQuantity();
+			if(order.getLineItemName().toLowerCase().contains("raw bars"))
+				snacks+=order.getLineItemQuantity();
+
 			
 			
 			// Tally order quantities in a HashMap on SKU
@@ -561,6 +564,8 @@ public class FileFunctions
 		ingredients.add(new Ingredient("Veg"));			int veg = 8;	
 		ingredients.add(new Ingredient("Mash Potato"));	int mashPotato = 9;
 		ingredients.add(new Ingredient("Cous Cous"));	int cousCous = 10;
+		ingredients.add(new Ingredient("Tikka Rice"));	int tikka = 11;
+		ingredients.add(new Ingredient("Potato"));		int potato = 12;
 
 		
 		
@@ -607,6 +612,12 @@ public class FileFunctions
 					ingredients.get(cousCous).addQuantity(quantities.get(sku), 200);
 				else if(tempName.contains("fajita"))
 					ingredients.get(rice).addQuantity(quantities.get(sku), 150);
+				else if(tempName.contains("tikka"))
+					ingredients.get(tikka).addQuantity(quantities.get(sku), 200);
+				else if(tempName.contains("tuscan")){
+					ingredients.get(potato).addQuantity(quantities.get(sku), 100);
+					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 100);
+				}
 				else if(tempName.contains("rice"))
 					ingredients.get(rice).addQuantity(quantities.get(sku), 200);
 				else if(tempName.contains("veg"))
@@ -650,6 +661,12 @@ public class FileFunctions
 					ingredients.get(cousCous).addQuantity(quantities.get(sku), 200);
 				else if(tempName.contains("fajita"))
 					ingredients.get(rice).addQuantity(quantities.get(sku), 100);
+				else if(tempName.contains("tikka"))
+					ingredients.get(tikka).addQuantity(quantities.get(sku), 120);
+				else if(tempName.contains("tuscan")){
+					ingredients.get(potato).addQuantity(quantities.get(sku), 60);
+					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 60);
+				}
 				else if(tempName.contains("rice"))
 					ingredients.get(rice).addQuantity(quantities.get(sku), 120);
 				else if(tempName.contains("veg"))
