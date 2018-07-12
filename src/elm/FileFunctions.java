@@ -566,6 +566,7 @@ public class FileFunctions
 		ingredients.add(new Ingredient("Cous Cous"));	int cousCous = 10;
 		ingredients.add(new Ingredient("Tikka Rice"));	int tikka = 11;
 		ingredients.add(new Ingredient("Potato"));		int potato = 12;
+		ingredients.add(new Ingredient("Diced Beef"));	int beef = 13;
 
 		
 		
@@ -597,6 +598,10 @@ public class FileFunctions
 				if(tempName.contains("cottage pie")){
 					ingredients.get(mince).addQuantity(quantities.get(sku), 200);
 					ingredients.get(mashPotato).addQuantity(quantities.get(sku), 200);
+				}
+				if(tempName.contains("beef goulash")){
+					ingredients.get(beef).addQuantity(quantities.get(sku), 200);
+					ingredients.get(potato).addQuantity(quantities.get(sku), 200);
 				}
 				
 				
@@ -646,6 +651,10 @@ public class FileFunctions
 				if(tempName.contains("cottage pie")){
 					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
 					ingredients.get(mashPotato).addQuantity(quantities.get(sku), 150);
+				}
+				if(tempName.contains("beef goulash")){
+					ingredients.get(beef).addQuantity(quantities.get(sku), 150);
+					ingredients.get(potato).addQuantity(quantities.get(sku), 150);
 				}
 				
 				
