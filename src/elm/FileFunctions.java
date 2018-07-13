@@ -391,8 +391,8 @@ public class FileFunctions
 				totals.newLine();
 				
 				
-				if (sku.contains("GMD")||sku.contains("OLD")){
-					//Totalling the totals for each meal type
+				//if (sku.contains("GMD")||sku.contains("OLD")){
+					//Totaling the totals for each meal type
 					mealName = names.get(sku).toLowerCase();
 					if (mealName.contains("steak")){
 						if((mealName.contains("rice"))&&(mealName.contains("veg"))){
@@ -471,7 +471,7 @@ public class FileFunctions
 						sauceTotals.put(sauceName, quantities.get(sku));
 						sauces.add(sauceName);
 					}
-				}
+				//}
 			}
 			if(duplicates){
 				totals.newLine();
