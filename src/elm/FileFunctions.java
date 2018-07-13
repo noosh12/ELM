@@ -76,7 +76,7 @@ public class FileFunctions
 					lineItemName = " " + lineItemName;
 				}
 				if(lineItemName.toLowerCase().contains("raw bars")){
-					lineItemName = " " + lineItemName;
+					lineItemName = "  " + lineItemName;
 				}
 			
 				
@@ -467,13 +467,18 @@ public class FileFunctions
 					String[] mealNameSplit = names.get(sku).split(" - ");
 					sauceName = mealNameSplit[0];
 					
-					if (sauceTotals.containsKey(sauceName)){ //if item already exists in hashMap
-						sauceTotals.put(sauceName, sauceTotals.get(sauceName)+quantities.get(sku));					
+					if (!(sku.contains("BALL")||(sku.contains("BAR"))))
+					{
+						if (sauceTotals.containsKey(sauceName)){ //if item already exists in hashMap
+							sauceTotals.put(sauceName, sauceTotals.get(sauceName)+quantities.get(sku));					
+						}
+						else {
+							sauceTotals.put(sauceName, quantities.get(sku));
+							sauces.add(sauceName);
+						}
 					}
-					else {
-						sauceTotals.put(sauceName, quantities.get(sku));
-						sauces.add(sauceName);
-					}
+					
+					
 				//}
 			}
 			if(duplicates){
