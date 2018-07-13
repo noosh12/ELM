@@ -75,6 +75,9 @@ public class FileFunctions
 				if(lineItemName.toLowerCase().contains("protein balls")){
 					lineItemName = " " + lineItemName;
 				}
+				if(lineItemName.toLowerCase().contains("raw bars")){
+					lineItemName = " " + lineItemName;
+				}
 			
 				
 				//build orderLine object from chosen extracted values
