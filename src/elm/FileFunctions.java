@@ -574,8 +574,19 @@ public class FileFunctions
 		ingredients.add(new Ingredient("Cous Cous"));	int cousCous = 10;
 		ingredients.add(new Ingredient("Tikka Rice"));	int tikka = 11;
 		ingredients.add(new Ingredient("Potato"));		int potato = 12;
-		ingredients.add(new Ingredient("Diced Beef"));	int beef = 13;
-
+		ingredients.add(new Ingredient("Diced Beef"));  int beef = 13;
+		ingredients.add(new Ingredient("Lentils"));		int lentil = 14;
+		ingredients.add(new Ingredient("Brocolli"));	int brocolli = 15;
+		ingredients.add(new Ingredient("Beans"));		int beans = 16;
+		ingredients.add(new Ingredient("Peas"));		int peas = 17;
+		ingredients.add(new Ingredient("Rice Noodles"));int riceNoodles = 18;
+		ingredients.add(new Ingredient("Tofu"));		int tofu = 19;
+		ingredients.add(new Ingredient("Capsicum"));	int capsicum = 20;
+		ingredients.add(new Ingredient("Carrot"));		int carrot = 21;
+		ingredients.add(new Ingredient("Mushroom"));	int mushroom = 22;
+		ingredients.add(new Ingredient("Risotto Rice"));int risottoRice = 23;
+		ingredients.add(new Ingredient("Quinoa"));		int quinoa = 24;
+		ingredients.add(new Ingredient("Corn"));		int corn = 25;
 		
 		
 		/*
@@ -610,6 +621,33 @@ public class FileFunctions
 				if(tempName.contains("beef goulash")){
 					ingredients.get(beef).addQuantity(quantities.get(sku), 200);
 					ingredients.get(potato).addQuantity(quantities.get(sku), 200);
+				}
+				if(tempName.contains("coconut curry lentils")){
+					ingredients.get(lentil).addQuantity(quantities.get(sku), 150);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 40);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 40);		
+				}
+				if(tempName.contains("tofu pad thai")){
+					ingredients.get(riceNoodles).addQuantity(quantities.get(sku), 100);
+					ingredients.get(tofu).addQuantity(quantities.get(sku), 100);
+					ingredients.get(capsicum).addQuantity(quantities.get(sku), 80);
+					ingredients.get(carrot).addQuantity(quantities.get(sku), 20);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 40);
+				}
+				if(tempName.contains("mushroom quinoa risotto")){
+					ingredients.get(mushroom).addQuantity(quantities.get(sku), 50);
+					ingredients.get(risottoRice).addQuantity(quantities.get(sku), 90);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 50);
+					ingredients.get(quinoa).addQuantity(quantities.get(sku), 20);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 30);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 80);
+				}
+				if(tempName.contains("burrito bowl")){
+					ingredients.get(capsicum).addQuantity(quantities.get(sku), 80);
+					ingredients.get(quinoa).addQuantity(quantities.get(sku), 150);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 120);
+					ingredients.get(corn).addQuantity(quantities.get(sku), 25);					
 				}
 				
 				
@@ -663,6 +701,35 @@ public class FileFunctions
 				if(tempName.contains("beef goulash")){
 					ingredients.get(beef).addQuantity(quantities.get(sku), 150);
 					ingredients.get(potato).addQuantity(quantities.get(sku), 150);
+				}
+				if(tempName.contains("coconut curry lentils")){
+					ingredients.get(lentil).addQuantity(quantities.get(sku), 120);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 60);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
+					
+				}
+				if(tempName.contains("tofu pad thai")){
+					ingredients.get(riceNoodles).addQuantity(quantities.get(sku), 80);
+					ingredients.get(tofu).addQuantity(quantities.get(sku), 80);
+					ingredients.get(capsicum).addQuantity(quantities.get(sku), 40);
+					ingredients.get(carrot).addQuantity(quantities.get(sku), 15);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
+				}
+				if(tempName.contains("mushroom quinoa risotto")){
+					ingredients.get(mushroom).addQuantity(quantities.get(sku), 30);
+					ingredients.get(risottoRice).addQuantity(quantities.get(sku), 70);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
+					ingredients.get(quinoa).addQuantity(quantities.get(sku), 20);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 60);
+				}
+				if(tempName.contains("burrito bowl")){
+					ingredients.get(capsicum).addQuantity(quantities.get(sku), 60);
+					ingredients.get(quinoa).addQuantity(quantities.get(sku), 100);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 80);
+					ingredients.get(corn).addQuantity(quantities.get(sku), 20);
+					
 				}
 				
 				
