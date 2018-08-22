@@ -574,19 +574,20 @@ public class FileFunctions
 		ingredients.add(new Ingredient("Cous Cous"));	int cousCous = 10;
 		ingredients.add(new Ingredient("Tikka Rice"));	int tikka = 11;
 		ingredients.add(new Ingredient("Potato"));		int potato = 12;
-		ingredients.add(new Ingredient("Diced Beef"));  int beef = 13;
-		ingredients.add(new Ingredient("Lentils"));		int lentil = 14;
-		ingredients.add(new Ingredient("Brocolli"));	int brocolli = 15;
-		ingredients.add(new Ingredient("Beans"));		int beans = 16;
-		ingredients.add(new Ingredient("Peas"));		int peas = 17;
-		ingredients.add(new Ingredient("Rice Noodles"));int riceNoodles = 18;
-		ingredients.add(new Ingredient("Tofu"));		int tofu = 19;
-		ingredients.add(new Ingredient("Capsicum"));	int capsicum = 20;
-		ingredients.add(new Ingredient("Carrot"));		int carrot = 21;
-		ingredients.add(new Ingredient("Mushroom"));	int mushroom = 22;
-		ingredients.add(new Ingredient("Risotto Rice"));int risottoRice = 23;
-		ingredients.add(new Ingredient("Quinoa"));		int quinoa = 24;
-		ingredients.add(new Ingredient("Corn"));		int corn = 25;
+		ingredients.add(new Ingredient("Diced Beef"));	int beef = 13;
+		ingredients.add(new Ingredient("Brown Rice"));	int brownRice = 14;
+		ingredients.add(new Ingredient("Lentils"));		int lentil = 15;
+		ingredients.add(new Ingredient("Brocolli"));	int brocolli = 16;
+		ingredients.add(new Ingredient("Beans"));		int beans = 17;
+		ingredients.add(new Ingredient("Peas"));		int peas = 18;
+		ingredients.add(new Ingredient("Rice Noodles"));int riceNoodles = 19;
+		ingredients.add(new Ingredient("Tofu"));		int tofu = 20;
+		ingredients.add(new Ingredient("Capsicum"));	int capsicum = 21;
+		ingredients.add(new Ingredient("Carrot"));		int carrot = 22;
+		ingredients.add(new Ingredient("Mushroom"));	int mushroom = 23;
+		ingredients.add(new Ingredient("Risotto Rice"));int risottoRice = 24;
+		ingredients.add(new Ingredient("Quinoa"));		int quinoa = 25;
+		ingredients.add(new Ingredient("Corn"));		int corn = 26;
 		
 		
 		/*
@@ -651,7 +652,11 @@ public class FileFunctions
 				}
 				
 				
-				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
+				if((tempName.contains("veg"))&&(tempName.contains("brown rice"))){
+					ingredients.get(brownRice).addQuantity(quantities.get(sku), 100);
+					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
+				}
+				else if((tempName.contains("veg"))&&(tempName.contains("rice"))){
 					ingredients.get(rice).addQuantity(quantities.get(sku), 100);
 					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
 				}
@@ -733,7 +738,11 @@ public class FileFunctions
 				}
 				
 				
-				if((tempName.contains("veg"))&&(tempName.contains("rice"))){
+				if((tempName.contains("veg"))&&(tempName.contains("brown rice"))){
+					ingredients.get(brownRice).addQuantity(quantities.get(sku), 70);
+					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
+				}
+				else if((tempName.contains("veg"))&&(tempName.contains("rice"))){
 					ingredients.get(rice).addQuantity(quantities.get(sku), 70);
 					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
 				}
