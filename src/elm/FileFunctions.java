@@ -366,7 +366,7 @@ public class FileFunctions
 			String sauceName;
 			boolean duplicates = false;			
 			
-			int[] typeTotals = new int[20];
+			int[] typeTotals = new int[16];
 			HashMap<String, Integer> sauceTotals = new HashMap<String,Integer>();	//sauce totals
 			ArrayList<String> sauces = new ArrayList<String>();
 			
@@ -398,25 +398,19 @@ public class FileFunctions
 					//Totaling the totals for each meal type
 					mealName = names.get(sku).toLowerCase();
 					if (mealName.contains("steak")){
-						if((mealName.contains("rice"))&&(mealName.contains("veg"))){
+						if((mealName.contains("brown rice"))&&(mealName.contains("veg"))){
 							if(mealName.contains("large"))
 								typeTotals[12]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[13]+=quantities.get(sku);
 						}
-						else if((mealName.contains("potato"))&&(mealName.contains("veg"))){
-							if(mealName.contains("large"))
-								typeTotals[16]+=quantities.get(sku);
-							if(mealName.contains("small"))
-								typeTotals[17]+=quantities.get(sku);
-						}
-						else if(mealName.contains("rice")){
+						else if(mealName.contains("rice")&&(!mealName.contains("brown"))&&(!mealName.contains("noodles"))){
 							if(mealName.contains("large"))
 								typeTotals[0]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[1]+=quantities.get(sku);
 						}
-						else if(mealName.contains("potato")){
+						else if(mealName.contains("sweet potato")&&(!mealName.contains("mash"))){
 							if(mealName.contains("large"))
 								typeTotals[2]+=quantities.get(sku);
 							if(mealName.contains("small"))
@@ -430,25 +424,19 @@ public class FileFunctions
 						}
 					}
 					if (mealName.contains("chicken")){
-						if((mealName.contains("rice"))&&(mealName.contains("veg"))){
+						if((mealName.contains("brown rice"))&&(mealName.contains("veg"))){
 							if(mealName.contains("large"))
 								typeTotals[14]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[15]+=quantities.get(sku);
 						}
-						else if((mealName.contains("potato"))&&(mealName.contains("veg"))){
-							if(mealName.contains("large"))
-								typeTotals[18]+=quantities.get(sku);
-							if(mealName.contains("small"))
-								typeTotals[19]+=quantities.get(sku);
-						}
-						else if(mealName.contains("rice")){
+						else if(mealName.contains("rice")&&(!mealName.contains("brown"))&&(!mealName.contains("noodles"))){
 							if(mealName.contains("large"))
 								typeTotals[6]+=quantities.get(sku);
 							if(mealName.contains("small"))
 								typeTotals[7]+=quantities.get(sku);
 						}
-						else if(mealName.contains("potato")){
+						else if(mealName.contains("sweet potato")&&(!mealName.contains("mash"))){
 							if(mealName.contains("large"))
 								typeTotals[8]+=quantities.get(sku);
 							if(mealName.contains("small"))
@@ -494,33 +482,26 @@ public class FileFunctions
 				totals.newLine();
 				totals.write("TYPE TOTALS"+","+"LARGE"+","+"SMALL");
 				totals.newLine();
-				totals.write("Beef + Rice"+","+typeTotals[0]+","+typeTotals[1]);
+				totals.write("Steak + White Rice"+","+typeTotals[0]+","+typeTotals[1]);
 				totals.newLine();
-				totals.write("Beef + Sweet Potato"+","+typeTotals[2]+","+typeTotals[3]);
+				totals.write("Steak + Sweet Potato"+","+typeTotals[2]+","+typeTotals[3]);
 				totals.newLine();
-				totals.write("Beef + Vege"+","+typeTotals[4]+","+typeTotals[5]);
+				totals.write("Steak + Vege"+","+typeTotals[4]+","+typeTotals[5]);
 				if(typeTotals[12] !=0 && typeTotals[13] !=0){
 					totals.newLine();
-					totals.write("Beef + Rice&Vege"+","+typeTotals[12]+","+typeTotals[13]);
-				}
-				if(typeTotals[16] !=0 && typeTotals[17] !=0){
-					totals.newLine();
-					totals.write("Beef + Potato&Vege"+","+typeTotals[16]+","+typeTotals[17]);
+					totals.write("Steak + Brown Rice & Vege"+","+typeTotals[12]+","+typeTotals[13]);
 				}
 				totals.newLine();
-				totals.write("Chicken + Rice"+","+typeTotals[6]+","+typeTotals[7]);
+				totals.write("Chicken + White Rice"+","+typeTotals[6]+","+typeTotals[7]);
 				totals.newLine();
 				totals.write("Chicken + Sweet Potato"+","+typeTotals[8]+","+typeTotals[9]);
 				totals.newLine();
 				totals.write("Chicken + Vege"+","+typeTotals[10]+","+typeTotals[11]);
 				if(typeTotals[14] !=0 && typeTotals[15] !=0){
 					totals.newLine();
-					totals.write("Chicken + Rice&Vege"+","+typeTotals[14]+","+typeTotals[15]);
+					totals.write("Chicken + Brown Rice & Vege"+","+typeTotals[14]+","+typeTotals[15]);
 				}
-				if(typeTotals[18] !=0 && typeTotals[19] !=0){
-					totals.newLine();
-					totals.write("Chicken + Potato&Vege"+","+typeTotals[18]+","+typeTotals[19]);
-				}
+
 				
 							
 				//Writing the totals for each sauce type
