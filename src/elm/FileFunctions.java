@@ -570,10 +570,10 @@ public class FileFunctions
 		ingredients.add(new Ingredient("Rice"));		int rice = 6;
 		ingredients.add(new Ingredient("Sweet Potato"));int sweetPotato = 7;
 		ingredients.add(new Ingredient("Veg"));			int veg = 8;	
-		ingredients.add(new Ingredient("Mash Potato"));	int mashPotato = 9;
+		ingredients.add(new Ingredient("White Potato Mash"));	int mashPotato = 9;
 		ingredients.add(new Ingredient("Cous Cous"));	int cousCous = 10;
 		ingredients.add(new Ingredient("Tikka Rice"));	int tikka = 11;
-		ingredients.add(new Ingredient("Potato"));		int potato = 12;
+		ingredients.add(new Ingredient("White Potato"));		int potato = 12;
 		ingredients.add(new Ingredient("Diced Beef"));	int beef = 13;
 		ingredients.add(new Ingredient("Brown Rice"));	int brownRice = 14;
 		ingredients.add(new Ingredient("Lentils"));		int lentil = 15;
@@ -588,6 +588,7 @@ public class FileFunctions
 		ingredients.add(new Ingredient("Risotto Rice"));int risottoRice = 24;
 		ingredients.add(new Ingredient("Quinoa"));		int quinoa = 25;
 		ingredients.add(new Ingredient("Corn"));		int corn = 26;
+		ingredients.add(new Ingredient("Sweet Potato Mash"));		int mashSweetPotato = 27;
 		
 		
 		/*
@@ -663,6 +664,10 @@ public class FileFunctions
 				else if((tempName.contains("veg"))&&(tempName.contains("sweet potato"))){
 					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 100);
 					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
+				}
+				else if((tempName.contains("sweet potato mash"))&&(tempName.contains("broccoli"))){
+					ingredients.get(mashSweetPotato).addQuantity(quantities.get(sku), 150);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
 				}
 				else if(tempName.contains("salsa"))
 					ingredients.get(cousCous).addQuantity(quantities.get(sku), 200);
@@ -749,6 +754,10 @@ public class FileFunctions
 				else if((tempName.contains("veg"))&&(tempName.contains("sweet potato"))){
 					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 70);
 					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
+				}
+				else if((tempName.contains("sweet potato mash"))&&(tempName.contains("broccoli"))){
+					ingredients.get(mashSweetPotato).addQuantity(quantities.get(sku), 60);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 60);
 				}
 				else if(tempName.contains("salsa"))
 					ingredients.get(cousCous).addQuantity(quantities.get(sku), 200);
