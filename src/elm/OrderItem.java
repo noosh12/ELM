@@ -77,5 +77,9 @@ public class OrderItem {
 	public String getEmail(){
 		return email;
 	}
+	
+	public String getFullShippingString(){
+		return orderID + "," + shippingName + "," + shippingAddress1 + "," + shippingCity + "," + notes;
+	}
 
 }
