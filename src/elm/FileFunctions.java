@@ -570,7 +570,9 @@ public class FileFunctions
 		ingredients.add(new Ingredient("Quinoa"));		int quinoa = 25;
 		ingredients.add(new Ingredient("Corn"));		int corn = 26;
 		ingredients.add(new Ingredient("Sweet Potato Mash"));		int mashSweetPotato = 27;
-		
+		ingredients.add(new Ingredient("Cauliflower"));	int cauliflower = 28;
+		ingredients.add(new Ingredient("Zuchini"));		int zuchini = 29;
+		ingredients.add(new Ingredient("Eggplant"));	int eggplant = 30;
 		
 		/*
 		 * Totalling Ingredient Quantities
@@ -631,6 +633,16 @@ public class FileFunctions
 					ingredients.get(quinoa).addQuantity(quantities.get(sku), 150);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 120);
 					ingredients.get(corn).addQuantity(quantities.get(sku), 25);					
+				}
+				if(tempName.contains("thai green curry")){
+					ingredients.get(chicken).addQuantity(quantities.get(sku), 200);
+					ingredients.get(cauliflower).addQuantity(quantities.get(sku), 200);
+				}
+				if(tempName.contains("sunday roast chicken")){
+					ingredients.get(capsicum).addQuantity(quantities.get(sku), 50);
+					ingredients.get(zuchini).addQuantity(quantities.get(sku), 50);
+					ingredients.get(eggplant).addQuantity(quantities.get(sku), 50);
+					ingredients.get(carrot).addQuantity(quantities.get(sku), 50);
 				}
 				
 				
@@ -722,6 +734,17 @@ public class FileFunctions
 					ingredients.get(corn).addQuantity(quantities.get(sku), 20);
 					
 				}
+				if(tempName.contains("thai green curry")){
+					ingredients.get(chicken).addQuantity(quantities.get(sku), 120);
+					ingredients.get(cauliflower).addQuantity(quantities.get(sku), 150);
+				}
+				if(tempName.contains("sunday roast chicken")){
+					ingredients.get(capsicum).addQuantity(quantities.get(sku), 30);
+					ingredients.get(zuchini).addQuantity(quantities.get(sku), 30);
+					ingredients.get(eggplant).addQuantity(quantities.get(sku), 30);
+					ingredients.get(carrot).addQuantity(quantities.get(sku), 30);
+				}
+				
 				
 				
 				if((tempName.contains("veg"))&&(tempName.contains("brown rice"))){
