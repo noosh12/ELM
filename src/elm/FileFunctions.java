@@ -796,6 +796,8 @@ public class FileFunctions
 			// the flag set to 'true' tells it to append a file if file exists. 'false' creates/recreates the file
 			BufferedWriter shipping = new BufferedWriter(new FileWriter("_shipping.csv", false));
 			BufferedWriter notes = new BufferedWriter(new FileWriter("_delivery_notes.csv", false));
+			BufferedWriter deliveries = new BufferedWriter(new FileWriter("_deliveries.csv", false));
+			
 			shipping.write("SHIPPING METHODS: " + ordersByShippingMethod.keySet().size());
 			shipping.newLine();	shipping.newLine();	shipping.newLine();	shipping.newLine();	shipping.newLine();
 			
@@ -803,6 +805,9 @@ public class FileFunctions
 			notes.newLine();
 			notes.write("EMAIL,NOTE,METHOD");
 			notes.newLine();notes.newLine();notes.newLine();
+			
+			deliveries.write("Order ID"+","+"Shipping Name"+","+"Shipping Street"+","+"Shipping City"+","+"Notes");
+			deliveries.newLine();
 
 
 			//Looping through all shipping methods and within that, looping through all orders while printing
@@ -825,7 +830,12 @@ public class FileFunctions
 							notes.newLine();
 							notes.write(order.getEmail()+","+order.getNotes()+","+shippingMethod);
 							notes.newLine();notes.newLine();notes.newLine();
+							
 						}
+						
+						deliveries.write(order.getFullShippingString());
+						deliveries.newLine();
+						
 					}					
 				}
 				
@@ -833,6 +843,7 @@ public class FileFunctions
 				shipping.newLine();	shipping.newLine();	shipping.newLine();
 			}
 
+			deliveries.close();
 			shipping.close();
 			notes.close();
 			System.out.println(" Done!");
