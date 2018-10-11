@@ -664,6 +664,12 @@ public class FileFunctions
 					ingredients.get(eggplant).addQuantity(quantities.get(sku), 50);
 					ingredients.get(carrot).addQuantity(quantities.get(sku), 50);
 				}
+				if(tempName.contains("lemon chicken")){
+					ingredients.get(capsicum).addQuantity(quantities.get(sku), 50);
+					ingredients.get(zuchini).addQuantity(quantities.get(sku), 50);
+					ingredients.get(eggplant).addQuantity(quantities.get(sku), 50);
+					ingredients.get(carrot).addQuantity(quantities.get(sku), 50);
+				}
 				
 				
 				if((tempName.contains("veg"))&&(tempName.contains("brown rice"))){
@@ -759,6 +765,12 @@ public class FileFunctions
 					ingredients.get(cauliflower).addQuantity(quantities.get(sku), 150);
 				}
 				if(tempName.contains("sunday roast chicken")){
+					ingredients.get(capsicum).addQuantity(quantities.get(sku), 30);
+					ingredients.get(zuchini).addQuantity(quantities.get(sku), 30);
+					ingredients.get(eggplant).addQuantity(quantities.get(sku), 30);
+					ingredients.get(carrot).addQuantity(quantities.get(sku), 30);
+				}
+				if(tempName.contains("lemon chicken")){
 					ingredients.get(capsicum).addQuantity(quantities.get(sku), 30);
 					ingredients.get(zuchini).addQuantity(quantities.get(sku), 30);
 					ingredients.get(eggplant).addQuantity(quantities.get(sku), 30);
