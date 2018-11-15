@@ -63,14 +63,22 @@ public class FileFunctions
 				String shippingName = tokenize[34];						//Shipping Name provided by customer
 				String shippingAddress1 = tokenize[36];					//Shipping Address provided
 				String shippingCity = tokenize[39];						//Shipping city provided (suburb)
-				String shippingPostcode = tokenize[40];
-				String shippingPhone = tokenize[43];
+				String shippingPostcode = tokenize[40].replaceAll("[\\D]", "");
+				String shippingPhone = tokenize[43].replaceAll("[\\D]", "");
 				String notes=tokenize[44];								//notes provided by customer regarding shipping
 				
 				//if customer has not ticked shipping is same as billing, and has left shipping blank
 				if(shippingName != null && !shippingName.isEmpty()){
 					shippingName = billingName;
 				}
+				//remove apostrophe from postcode from shopify output
+//				if(shippingPostcode.contains("'")){
+//					shippingPostcode = shippingPostcode.replace("'", "");
+//				}
+//				//remove special characters from mobile from shopify output
+//				if(shippingPhone.contains("'")){
+//					shippingPhone = shippingPhone.replace("'", "");
+//				}
 				
 				//indenting protein ball names so they're seperated from the ordinary meals
 				if(lineItemName.toLowerCase().contains("protein balls")){
