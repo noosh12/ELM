@@ -13,8 +13,9 @@ public class OrderItem {
 	private String notes;
 	private String shippingPhone;
 	private String email;
+	private String shippingPostcode;
 	
-	public OrderItem(String orderID, String discountCode, String shippingMethod, int lineItemQuantity, String lineItemName, String lineItemSKU, String shippingName, String shippingAddress1, String shippingCity, String notes, String shippingPhone, String email){
+	public OrderItem(String orderID, String discountCode, String shippingMethod, int lineItemQuantity, String lineItemName, String lineItemSKU, String shippingName, String shippingAddress1, String shippingCity, String shippingPostcode, String notes, String shippingPhone, String email){
 		
 		this.orderID=orderID;
 		this.discountCode=discountCode;
@@ -25,6 +26,7 @@ public class OrderItem {
 		this.shippingName=shippingName;
 		this.shippingAddress1=shippingAddress1;
 		this.shippingCity=shippingCity;
+		this.shippingPostcode=shippingPostcode;
 		this.notes=notes;
 		this.shippingPhone=shippingPhone;
 		this.email=email;
@@ -79,7 +81,7 @@ public class OrderItem {
 	}
 	
 	public String getFullShippingString(){
-		return orderID + "," + shippingName + "," + shippingAddress1 + "," + shippingCity + "," + notes;
+		return orderID + "," + shippingName + "," + shippingAddress1 + "," + shippingCity + "," + shippingPostcode + "," + shippingPhone  + "," + notes;
 	}
 
 }

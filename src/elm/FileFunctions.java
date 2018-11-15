@@ -63,6 +63,7 @@ public class FileFunctions
 				String shippingName = tokenize[34];						//Shipping Name provided by customer
 				String shippingAddress1 = tokenize[36];					//Shipping Address provided
 				String shippingCity = tokenize[39];						//Shipping city provided (suburb)
+				String shippingPostcode = tokenize[40];
 				String shippingPhone = tokenize[43];
 				String notes=tokenize[44];								//notes provided by customer regarding shipping
 				
@@ -83,7 +84,7 @@ public class FileFunctions
 				//build orderLine object from chosen extracted values
 				orderLine.add(
 					new OrderItem(orderID, discountCode, shippingMethod, lineItemQuantity, lineItemName,
-						lineItemSKU, billingName, shippingAddress1, shippingCity, notes, shippingPhone, email)
+						lineItemSKU, billingName, shippingAddress1, shippingCity, shippingPostcode, notes, shippingPhone, email)
 				);
 				
 				//System.out.println("Built Order "+count);
@@ -825,7 +826,7 @@ public class FileFunctions
 			notes.write("EMAIL,NOTE,METHOD");
 			notes.newLine();notes.newLine();notes.newLine();
 			
-			deliveries.write("Order ID"+","+"Shipping Name"+","+"Shipping Street"+","+"Shipping City"+","+"Notes");
+			deliveries.write("Order ID"+","+"Shipping Name"+","+"Shipping Street"+","+"Shipping City"+","+"Postcode"+","+"Mobile"+","+"Notes");
 			deliveries.newLine();
 
 
