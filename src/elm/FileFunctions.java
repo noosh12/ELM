@@ -602,6 +602,7 @@ public class FileFunctions
 		ingredients.add(new Ingredient("Cauliflower"));	int cauliflower = 28;
 		ingredients.add(new Ingredient("Zuchini"));		int zuchini = 29;
 		ingredients.add(new Ingredient("Eggplant"));	int eggplant = 30;
+		ingredients.add(new Ingredient("Tenderloin"));	int tenderloin = 31;
 		
 		/*
 		 * Totalling Ingredient Quantities
@@ -611,7 +612,10 @@ public class FileFunctions
 		for(String sku : quantities.keySet()){
 			String tempName = names.get(sku).toLowerCase();
 
-			if(tempName.contains("large")){
+			if(tempName.contains("supabarn")){
+				ingredients.get(tenderloin).addQuantity(quantities.get(sku), 120);
+			}
+			else if(tempName.contains("large")){
 				if(tempName.contains("chicken"))
 					ingredients.get(chicken).addQuantity(quantities.get(sku), 200);	
 				if(tempName.contains("steak"))
@@ -715,7 +719,7 @@ public class FileFunctions
 					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 200);
 				
 			}
-			if(tempName.contains("small")){
+			else if(tempName.contains("small")){
 				if(tempName.contains("chicken"))
 					ingredients.get(chicken).addQuantity(quantities.get(sku), 150);				
 				if(tempName.contains("steak"))
