@@ -569,17 +569,17 @@ public class FileFunctions
 	 */
 	public static void CalcPrintIngredients(HashMap<String, Integer> quantities, HashMap<String, String> names){
 		
-		List<Ingredient> ingredients = new ArrayList<>();	
-		
+		List<Ingredient> ingredients = new ArrayList<>();
+
 		ingredients.add(new Ingredient("Chicken"));		int chicken = 0;
 		ingredients.add(new Ingredient("Steak"));		int steak = 1;
 		ingredients.add(new Ingredient("Mince"));		int mince = 2;
-		ingredients.add(new Ingredient("Lamb"));		int lamb = 3;
+		ingredients.add(new Ingredient("Lamb Backstrap"));		int lambBackstrap = 3;
 		ingredients.add(new Ingredient("Barramundi"));	int barramundi = 4;
 		ingredients.add(new Ingredient("Basa"));		int basa = 5;
 		ingredients.add(new Ingredient("Rice"));		int rice = 6;
 		ingredients.add(new Ingredient("Sweet Potato"));int sweetPotato = 7;
-		ingredients.add(new Ingredient("Veg"));			int veg = 8;	
+		ingredients.add(new Ingredient("Veg"));			int veg = 8;
 		ingredients.add(new Ingredient("White Potato Mash"));	int mashPotato = 9;
 		ingredients.add(new Ingredient("Cous Cous"));	int cousCous = 10;
 		ingredients.add(new Ingredient("Tikka Rice"));	int tikka = 11;
@@ -602,8 +602,12 @@ public class FileFunctions
 		ingredients.add(new Ingredient("Cauliflower"));	int cauliflower = 28;
 		ingredients.add(new Ingredient("Zuchini"));		int zuchini = 29;
 		ingredients.add(new Ingredient("Eggplant"));	int eggplant = 30;
-		ingredients.add(new Ingredient("Tenderloin"));	int tenderloin = 31;
-		
+		ingredients.add(new Ingredient("Tenderloin"));		int tenderloin = 31;
+		ingredients.add(new Ingredient("Lamb Shoulder"));		int lambShoulder = 32;
+		ingredients.add(new Ingredient("Pumpkin"));		int pumpkin = 33;
+		ingredients.add(new Ingredient("Penne"));		int penne = 33;
+		ingredients.add(new Ingredient("Wholemeal Penne"));		int wholemealPenne = 33;
+
 		/*
 		 * Totalling Ingredient Quantities
 		 * This is accomplished by searching the menu item name for keywords like large, chicken, rice, etc
@@ -613,38 +617,43 @@ public class FileFunctions
 			String tempName = names.get(sku).toLowerCase();
 
 			if(tempName.contains("supabarn")){
-				ingredients.get(tenderloin).addQuantity(quantities.get(sku), 120);
+				ingredients.get(chicken).addQuantity(quantities.get(sku), 100);
 			}
-			else if(tempName.contains("large")){
+			if(tempName.contains("large")){
 				if(tempName.contains("chicken"))
-					ingredients.get(chicken).addQuantity(quantities.get(sku), 200);	
+					ingredients.get(chicken).addQuantity(quantities.get(sku), 150);
 				if(tempName.contains("steak"))
-					ingredients.get(steak).addQuantity(quantities.get(sku), 200);	
-				if(tempName.contains("meatballs"))
-					ingredients.get(mince).addQuantity(quantities.get(sku), 200);
+					ingredients.get(steak).addQuantity(quantities.get(sku), 150);
+				if(tempName.contains("meatballs")){
+					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
+					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 200);
+				}
 				if(tempName.contains("con carne")){
-					ingredients.get(mince).addQuantity(quantities.get(sku), 200);
+					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
 					ingredients.get(rice).addQuantity(quantities.get(sku), 200);
-				}				
+				}
 				if(tempName.contains("barra"))
 					ingredients.get(barramundi).addQuantity(quantities.get(sku), 160);
 				if(tempName.contains("basa"))
-					ingredients.get(basa).addQuantity(quantities.get(sku), 160);
-				if(tempName.contains("lamb"))
-					ingredients.get(lamb).addQuantity(quantities.get(sku), 160);
+					ingredients.get(basa).addQuantity(quantities.get(sku), 150);
+				if(tempName.contains("moroccan lamb"))
+					ingredients.get(lambBackstrap).addQuantity(quantities.get(sku), 150);
+				else if(tempName.contains("slow roasted lamb")){
+					ingredients.get(lambShoulder).addQuantity(quantities.get(sku), 150);
+				}
 				if(tempName.contains("cottage pie")){
-					ingredients.get(mince).addQuantity(quantities.get(sku), 200);
-					ingredients.get(mashPotato).addQuantity(quantities.get(sku), 200);
+					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
+					ingredients.get(mashPotato).addQuantity(quantities.get(sku), 150);
 				}
 				if(tempName.contains("beef goulash")){
-					ingredients.get(beef).addQuantity(quantities.get(sku), 200);
-					ingredients.get(potato).addQuantity(quantities.get(sku), 200);
+					ingredients.get(steak).addQuantity(quantities.get(sku), 150);
+					ingredients.get(potato).addQuantity(quantities.get(sku), 150);
 				}
 				if(tempName.contains("coconut curry lentils")){
 					ingredients.get(lentil).addQuantity(quantities.get(sku), 150);
 					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 40);
-					ingredients.get(peas).addQuantity(quantities.get(sku), 40);		
+					ingredients.get(peas).addQuantity(quantities.get(sku), 40);
 				}
 				if(tempName.contains("tofu pad thai")){
 					ingredients.get(riceNoodles).addQuantity(quantities.get(sku), 100);
@@ -665,10 +674,10 @@ public class FileFunctions
 					ingredients.get(capsicum).addQuantity(quantities.get(sku), 80);
 					ingredients.get(quinoa).addQuantity(quantities.get(sku), 150);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 120);
-					ingredients.get(corn).addQuantity(quantities.get(sku), 25);					
+					ingredients.get(corn).addQuantity(quantities.get(sku), 25);
 				}
 				if(tempName.contains("thai green curry")){
-					ingredients.get(chicken).addQuantity(quantities.get(sku), 200);
+					ingredients.get(chicken).addQuantity(quantities.get(sku), 150);
 					ingredients.get(cauliflower).addQuantity(quantities.get(sku), 200);
 				}
 				if(tempName.contains("sunday roast chicken")){
@@ -683,26 +692,45 @@ public class FileFunctions
 					ingredients.get(eggplant).addQuantity(quantities.get(sku), 50);
 					ingredients.get(carrot).addQuantity(quantities.get(sku), 50);
 				}
-				
-				
+				if(tempName.contains("pesto penne")){
+					ingredients.get(penne).addQuantity(quantities.get(sku), 200);
+				}
+
+
 				if((tempName.contains("veg"))&&(tempName.contains("brown rice"))){
 					ingredients.get(brownRice).addQuantity(quantities.get(sku), 100);
-					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
+					//					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 				else if((tempName.contains("veg"))&&(tempName.contains("rice"))){
 					ingredients.get(rice).addQuantity(quantities.get(sku), 100);
-					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
+					//					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 				else if((tempName.contains("veg"))&&(tempName.contains("sweet potato"))){
 					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 100);
-					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
+					//					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 				else if((tempName.contains("sweet potato mash"))&&(tempName.contains("broccoli"))){
 					ingredients.get(mashSweetPotato).addQuantity(quantities.get(sku), 150);
 					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
 				}
-				else if(tempName.contains("salsa"))
-					ingredients.get(cousCous).addQuantity(quantities.get(sku), 200);
+				else if((tempName.contains("pumpkin"))&&(tempName.contains("cauliflower"))&&(tempName.contains("brown rice"))){
+					ingredients.get(brownRice).addQuantity(quantities.get(sku), 150);
+					ingredients.get(pumpkin).addQuantity(quantities.get(sku), 50);
+					ingredients.get(cauliflower).addQuantity(quantities.get(sku), 50);
+				}
+				else if(tempName.contains("salsa")){
+					ingredients.get(brownRice).addQuantity(quantities.get(sku), 100);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 60);
+				}
 				else if(tempName.contains("fajita"))
 					ingredients.get(rice).addQuantity(quantities.get(sku), 150);
 				else if(tempName.contains("tikka"))
@@ -714,42 +742,52 @@ public class FileFunctions
 				else if(tempName.contains("rice"))
 					ingredients.get(rice).addQuantity(quantities.get(sku), 200);
 				else if(tempName.contains("veg"))
-					ingredients.get(veg).addQuantity(quantities.get(sku), 180);
+				{
+					//					ingredients.get(veg).addQuantity(quantities.get(sku), 180);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 140);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
+				}
 				else if(tempName.contains("sweet potato"))
 					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 200);
-				
+
 			}
-			else if(tempName.contains("small")){
+			if(tempName.contains("small")){
 				if(tempName.contains("chicken"))
-					ingredients.get(chicken).addQuantity(quantities.get(sku), 150);				
+					ingredients.get(chicken).addQuantity(quantities.get(sku), 100);
 				if(tempName.contains("steak"))
-					ingredients.get(steak).addQuantity(quantities.get(sku), 150);	
-				if(tempName.contains("meatballs"))
-					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
+					ingredients.get(steak).addQuantity(quantities.get(sku), 100);
+				if(tempName.contains("meatballs")){
+					ingredients.get(mince).addQuantity(quantities.get(sku), 100);
+					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 150);
+				}
 				if(tempName.contains("con carne")){
-					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
+					ingredients.get(mince).addQuantity(quantities.get(sku), 100);
 					ingredients.get(rice).addQuantity(quantities.get(sku), 150);
-				}				
+				}
 				if(tempName.contains("barra"))
-					ingredients.get(barramundi).addQuantity(quantities.get(sku), 110);
+					ingredients.get(barramundi).addQuantity(quantities.get(sku), 100);
 				if(tempName.contains("basa"))
-					ingredients.get(basa).addQuantity(quantities.get(sku), 110);
-				if(tempName.contains("lamb"))
-					ingredients.get(lamb).addQuantity(quantities.get(sku), 120);
+					ingredients.get(basa).addQuantity(quantities.get(sku), 100);
+				if(tempName.contains("moroccan lamb"))
+					ingredients.get(lambBackstrap).addQuantity(quantities.get(sku), 100);
+				else if(tempName.contains("slow roasted lamb")){
+					ingredients.get(lambShoulder).addQuantity(quantities.get(sku), 100);
+				}
 				if(tempName.contains("cottage pie")){
-					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
+					ingredients.get(mince).addQuantity(quantities.get(sku), 100);
 					ingredients.get(mashPotato).addQuantity(quantities.get(sku), 150);
 				}
 				if(tempName.contains("beef goulash")){
-					ingredients.get(beef).addQuantity(quantities.get(sku), 150);
-					ingredients.get(potato).addQuantity(quantities.get(sku), 150);
+					ingredients.get(steak).addQuantity(quantities.get(sku), 100);
+					ingredients.get(potato).addQuantity(quantities.get(sku), 100);
 				}
 				if(tempName.contains("coconut curry lentils")){
 					ingredients.get(lentil).addQuantity(quantities.get(sku), 120);
 					ingredients.get(brocolli).addQuantity(quantities.get(sku), 60);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
-					
+
 				}
 				if(tempName.contains("tofu pad thai")){
 					ingredients.get(riceNoodles).addQuantity(quantities.get(sku), 80);
@@ -771,59 +809,83 @@ public class FileFunctions
 					ingredients.get(quinoa).addQuantity(quantities.get(sku), 100);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 80);
 					ingredients.get(corn).addQuantity(quantities.get(sku), 20);
-					
+
 				}
 				if(tempName.contains("thai green curry")){
-					ingredients.get(chicken).addQuantity(quantities.get(sku), 120);
-					ingredients.get(cauliflower).addQuantity(quantities.get(sku), 150);
+					ingredients.get(chicken).addQuantity(quantities.get(sku), 100);
+					ingredients.get(cauliflower).addQuantity(quantities.get(sku), 120);
 				}
 				if(tempName.contains("sunday roast chicken")){
-					ingredients.get(capsicum).addQuantity(quantities.get(sku), 30);
-					ingredients.get(zuchini).addQuantity(quantities.get(sku), 30);
-					ingredients.get(eggplant).addQuantity(quantities.get(sku), 30);
-					ingredients.get(carrot).addQuantity(quantities.get(sku), 30);
+					ingredients.get(capsicum).addQuantity(quantities.get(sku), 40);
+					ingredients.get(zuchini).addQuantity(quantities.get(sku), 40);
+					ingredients.get(eggplant).addQuantity(quantities.get(sku), 40);
+					ingredients.get(carrot).addQuantity(quantities.get(sku), 40);
 				}
 				if(tempName.contains("lemon chicken")){
-					ingredients.get(capsicum).addQuantity(quantities.get(sku), 30);
-					ingredients.get(zuchini).addQuantity(quantities.get(sku), 30);
-					ingredients.get(eggplant).addQuantity(quantities.get(sku), 30);
-					ingredients.get(carrot).addQuantity(quantities.get(sku), 30);
+					ingredients.get(capsicum).addQuantity(quantities.get(sku), 40);
+					ingredients.get(zuchini).addQuantity(quantities.get(sku), 40);
+					ingredients.get(eggplant).addQuantity(quantities.get(sku), 40);
+					ingredients.get(carrot).addQuantity(quantities.get(sku), 40);
 				}
-				
-				
-				
+				if(tempName.contains("pesto penne")){
+					ingredients.get(penne).addQuantity(quantities.get(sku), 150);
+				}
+
+
+
 				if((tempName.contains("veg"))&&(tempName.contains("brown rice"))){
-					ingredients.get(brownRice).addQuantity(quantities.get(sku), 70);
-					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
+					ingredients.get(brownRice).addQuantity(quantities.get(sku), 75);
+					//					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 75);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 				else if((tempName.contains("veg"))&&(tempName.contains("rice"))){
-					ingredients.get(rice).addQuantity(quantities.get(sku), 70);
-					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
+					ingredients.get(rice).addQuantity(quantities.get(sku), 75);
+					//					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 75);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 				else if((tempName.contains("veg"))&&(tempName.contains("sweet potato"))){
-					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 70);
-					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
+					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 75);
+					//					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 75);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 				else if((tempName.contains("sweet potato mash"))&&(tempName.contains("broccoli"))){
 					ingredients.get(mashSweetPotato).addQuantity(quantities.get(sku), 60);
 					ingredients.get(brocolli).addQuantity(quantities.get(sku), 60);
 				}
-				else if(tempName.contains("salsa"))
-					ingredients.get(cousCous).addQuantity(quantities.get(sku), 200);
+				else if((tempName.contains("pumpkin"))&&(tempName.contains("cauliflower"))&&(tempName.contains("brown rice"))){
+					ingredients.get(brownRice).addQuantity(quantities.get(sku), 75);
+					ingredients.get(pumpkin).addQuantity(quantities.get(sku), 40);
+					ingredients.get(cauliflower).addQuantity(quantities.get(sku), 35);
+				}
+				else if(tempName.contains("salsa")){
+					ingredients.get(brownRice).addQuantity(quantities.get(sku), 100);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 40);
+				}
+
 				else if(tempName.contains("fajita"))
 					ingredients.get(rice).addQuantity(quantities.get(sku), 100);
 				else if(tempName.contains("tikka"))
 					ingredients.get(tikka).addQuantity(quantities.get(sku), 120);
 				else if(tempName.contains("tuscan")){
-					ingredients.get(potato).addQuantity(quantities.get(sku), 60);
-					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 60);
+					ingredients.get(potato).addQuantity(quantities.get(sku), 75);
+					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 75);
 				}
 				else if(tempName.contains("rice"))
 					ingredients.get(rice).addQuantity(quantities.get(sku), 120);
-				else if(tempName.contains("veg"))
-					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
+				else if(tempName.contains("veg")){
+					//					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
+					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
+					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
+				}
 				else if(tempName.contains("sweet potato"))
-					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 120);
+					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 150);
 			}
 		}
 
