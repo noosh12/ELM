@@ -570,43 +570,80 @@ public class FileFunctions
 	public static void CalcPrintIngredients(HashMap<String, Integer> quantities, HashMap<String, String> names){
 		
 		List<Ingredient> ingredients = new ArrayList<>();
+		HashMap<String, Double> ingredientsRawMultiplier = new HashMap<>();
 
 		ingredients.add(new Ingredient("Chicken"));		int chicken = 0;
+		ingredientsRawMultiplier.put("Chicken", 1.291);
 		ingredients.add(new Ingredient("Steak"));		int steak = 1;
+		ingredientsRawMultiplier.put("Steak", 1.4579);
 		ingredients.add(new Ingredient("Mince"));		int mince = 2;
+		ingredientsRawMultiplier.put("Mince", 1.3);
 		ingredients.add(new Ingredient("Lamb Backstrap"));		int lambBackstrap = 3;
+//		ingredientsRawMultiplier.put("Lamb Backstrap", 1.0);
 		ingredients.add(new Ingredient("Barramundi"));	int barramundi = 4;
+//		ingredientsRawMultiplier.put("Barramundi", 1.0);
 		ingredients.add(new Ingredient("Basa"));		int basa = 5;
+		ingredientsRawMultiplier.put("Basa", 1.08);
 		ingredients.add(new Ingredient("Rice"));		int rice = 6;
+		ingredientsRawMultiplier.put("Rice", 0.39);
 		ingredients.add(new Ingredient("Sweet Potato"));int sweetPotato = 7;
+		ingredientsRawMultiplier.put("Sweet Potato", 1.2);
 		ingredients.add(new Ingredient("Veg"));			int veg = 8;
+//		ingredientsRawMultiplier.put("Veg", 1.0);
 		ingredients.add(new Ingredient("White Potato Mash"));	int mashPotato = 9;
+		ingredientsRawMultiplier.put("White Potato Mash", 1.01);
 		ingredients.add(new Ingredient("Cous Cous"));	int cousCous = 10;
+//		ingredientsRawMultiplier.put("Cous Cous", 1.0);
 		ingredients.add(new Ingredient("Tikka Rice"));	int tikka = 11;
+		ingredientsRawMultiplier.put("Tikka Rice", 0.39);
 		ingredients.add(new Ingredient("White Potato"));		int potato = 12;
+		ingredientsRawMultiplier.put("White Potato", 1.28);
 		ingredients.add(new Ingredient("Diced Beef"));	int beef = 13;
+//		ingredientsRawMultiplier.put("Diced Beef", 1.0);
 		ingredients.add(new Ingredient("Brown Rice"));	int brownRice = 14;
+		ingredientsRawMultiplier.put("Brown Rice", 0.42735);
 		ingredients.add(new Ingredient("Lentils"));		int lentil = 15;
+//		ingredientsRawMultiplier.put("Lentils", 1.0);
 		ingredients.add(new Ingredient("Brocolli"));	int brocolli = 16;
+		ingredientsRawMultiplier.put("Brocolli", 1.5);
 		ingredients.add(new Ingredient("Beans"));		int beans = 17;
+		ingredientsRawMultiplier.put("Beans", 1.10);
 		ingredients.add(new Ingredient("Peas"));		int peas = 18;
+		ingredientsRawMultiplier.put("Peas", 1.09);
 		ingredients.add(new Ingredient("Rice Noodles"));int riceNoodles = 19;
+//		ingredientsRawMultiplier.put("Rice Noodles", 1.0);
 		ingredients.add(new Ingredient("Tofu"));		int tofu = 20;
+//		ingredientsRawMultiplier.put("Tofu", 1.0);
 		ingredients.add(new Ingredient("Capsicum"));	int capsicum = 21;
+		ingredientsRawMultiplier.put("Capsicum", 1.30);
 		ingredients.add(new Ingredient("Carrot"));		int carrot = 22;
+		ingredientsRawMultiplier.put("Carrot", 1.12);
 		ingredients.add(new Ingredient("Mushroom"));	int mushroom = 23;
+//		ingredientsRawMultiplier.put("Mushroom", 1.0);
 		ingredients.add(new Ingredient("Risotto Rice"));int risottoRice = 24;
+		ingredientsRawMultiplier.put("Risotto Rice", 0.33);
 		ingredients.add(new Ingredient("Quinoa"));		int quinoa = 25;
+//		ingredientsRawMultiplier.put("Quinoa", 1.0);
 		ingredients.add(new Ingredient("Corn"));		int corn = 26;
+//		ingredientsRawMultiplier.put("Corn", 1.0);
 		ingredients.add(new Ingredient("Sweet Potato Mash"));		int mashSweetPotato = 27;
-		ingredients.add(new Ingredient("Cauliflower"));	int cauliflower = 28;
+//		ingredientsRawMultiplier.put("Sweet Potato Mash", 1.0);
+		ingredients.add(new Ingredient("Cauliflower Rice"));	int cauliflower = 28;
+		ingredientsRawMultiplier.put("Cauliflower Rice", 1.08);
 		ingredients.add(new Ingredient("Zuchini"));		int zuchini = 29;
+		ingredientsRawMultiplier.put("Zuchini", 1.15);
 		ingredients.add(new Ingredient("Eggplant"));	int eggplant = 30;
+		ingredientsRawMultiplier.put("Eggplant", 1.5151);
 		ingredients.add(new Ingredient("Tenderloin"));		int tenderloin = 31;
+		ingredientsRawMultiplier.put("Tenderloin", 1.29);
 		ingredients.add(new Ingredient("Lamb Shoulder"));		int lambShoulder = 32;
+		ingredientsRawMultiplier.put("Lamb Shoulder", 1.48);
 		ingredients.add(new Ingredient("Pumpkin"));		int pumpkin = 33;
-		ingredients.add(new Ingredient("Penne"));		int penne = 33;
-		ingredients.add(new Ingredient("Wholemeal Penne"));		int wholemealPenne = 33;
+		ingredientsRawMultiplier.put("Pumpkin", 1.19);
+		ingredients.add(new Ingredient("Penne"));		int penne = 34;
+		ingredientsRawMultiplier.put("Penne", 0.47);
+		ingredients.add(new Ingredient("Wholemeal Penne"));		int wholemealPenne = 35;
+		ingredientsRawMultiplier.put("Wholemeal Penne", 0.47);
 
 		/*
 		 * Totalling Ingredient Quantities
@@ -888,6 +925,7 @@ public class FileFunctions
 					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 150);
 			}
 		}
+		
 
 		// Writing ingredient quantities to file
 		try
@@ -896,13 +934,19 @@ public class FileFunctions
 			// the flag set to 'true' tells it to append a file if file exists. 'false' creates/recreates the file
 			BufferedWriter ingredientsFile = new BufferedWriter(new FileWriter("_ingredients.csv", false));
 
-			ingredientsFile.write("INGREDIENT"+","+"kg");
+			ingredientsFile.write("INGREDIENT"+","+"COOKED (kg)"+","+"RAW (kg)");
 			ingredientsFile.newLine();
 
 			for (Ingredient ingri : ingredients)
 			{
+				if(ingri.getQuantity() == 0)
+					continue;
+				
 				ingredientsFile.newLine();
 				ingredientsFile.write(ingri.getName()+","+(float)ingri.getQuantity()/1000);
+				if(ingredientsRawMultiplier.containsKey(ingri.getName())){
+					ingredientsFile.write(","+((float)ingri.getQuantity()*ingredientsRawMultiplier.get(ingri.getName()))/1000);
+				}
 			}
 
 			ingredientsFile.close();
