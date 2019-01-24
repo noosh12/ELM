@@ -644,6 +644,8 @@ public class FileFunctions
 		ingredientsRawMultiplier.put("Penne", 0.47);
 		ingredients.add(new Ingredient("Wholemeal Penne"));		int wholemealPenne = 35;
 		ingredientsRawMultiplier.put("Wholemeal Penne", 0.47);
+		ingredients.add(new Ingredient("Spaghetti"));		int spaghetti = 36;
+		ingredientsRawMultiplier.put("Spaghetti", 0.44);
 
 		/*
 		 * Totalling Ingredient Quantities
@@ -663,7 +665,7 @@ public class FileFunctions
 					ingredients.get(steak).addQuantity(quantities.get(sku), 150);
 				if(tempName.contains("meatballs")){
 					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
-					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 200);
+					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 350);
 				}
 				if(tempName.contains("con carne")){
 					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
@@ -730,7 +732,14 @@ public class FileFunctions
 					ingredients.get(carrot).addQuantity(quantities.get(sku), 50);
 				}
 				if(tempName.contains("pesto penne")){
-					ingredients.get(penne).addQuantity(quantities.get(sku), 200);
+					ingredients.get(penne).addQuantity(quantities.get(sku), 350);
+				}
+				if(tempName.contains("spaghetti bolognese")){
+					ingredients.get(spaghetti).addQuantity(quantities.get(sku), 350);
+					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
+				}
+				if((tempName.contains("supabarn"))&&(tempName.contains("coconut curry"))&&(!tempName.contains("chicken"))){
+					ingredients.get(chicken).addQuantity(quantities.get(sku), 150);
 				}
 
 
@@ -796,7 +805,7 @@ public class FileFunctions
 					ingredients.get(steak).addQuantity(quantities.get(sku), 100);
 				if(tempName.contains("meatballs")){
 					ingredients.get(mince).addQuantity(quantities.get(sku), 100);
-					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 150);
+					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 250);
 				}
 				if(tempName.contains("con carne")){
 					ingredients.get(mince).addQuantity(quantities.get(sku), 100);
@@ -865,7 +874,14 @@ public class FileFunctions
 					ingredients.get(carrot).addQuantity(quantities.get(sku), 40);
 				}
 				if(tempName.contains("pesto penne")){
-					ingredients.get(penne).addQuantity(quantities.get(sku), 150);
+					ingredients.get(penne).addQuantity(quantities.get(sku), 250);
+				}
+				if(tempName.contains("spaghetti bolognese")){
+					ingredients.get(spaghetti).addQuantity(quantities.get(sku), 250);
+					ingredients.get(mince).addQuantity(quantities.get(sku), 100);
+				}
+				if((tempName.contains("supabarn"))&&(tempName.contains("coconut curry"))&&(!tempName.contains("chicken"))){
+					ingredients.get(chicken).addQuantity(quantities.get(sku), 100);
 				}
 
 
