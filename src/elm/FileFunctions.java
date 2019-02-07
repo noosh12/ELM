@@ -646,6 +646,10 @@ public class FileFunctions
 		ingredientsRawMultiplier.put("Wholemeal Penne", 0.47);
 		ingredients.add(new Ingredient("Spaghetti"));		int spaghetti = 36;
 		ingredientsRawMultiplier.put("Spaghetti", 0.44);
+		ingredients.add(new Ingredient("Vegetable Rice"));		int vegeRice = 37;
+		ingredientsRawMultiplier.put("Vegetable Rice", 0.39);
+		ingredients.add(new Ingredient("Broccoli Rice"));		int broccoliRice = 38;
+		ingredientsRawMultiplier.put("Broccoli Rice", 0.39);
 
 		/*
 		 * Totalling Ingredient Quantities
@@ -740,6 +744,13 @@ public class FileFunctions
 				}
 				if((tempName.contains("supabarn"))&&(tempName.contains("coconut curry"))&&(!tempName.contains("chicken"))){
 					ingredients.get(chicken).addQuantity(quantities.get(sku), 150);
+				}
+				if(tempName.contains("honey soy chicken")){
+					ingredients.get(vegeRice).addQuantity(quantities.get(sku), 200);
+				}
+				if((tempName.contains("sweet chilli"))&&(tempName.contains("lime chicken"))){
+					ingredients.get(rice).addQuantity(quantities.get(sku), 100);
+					ingredients.get(broccoliRice).addQuantity(quantities.get(sku), 100);
 				}
 
 
@@ -882,6 +893,13 @@ public class FileFunctions
 				}
 				if((tempName.contains("supabarn"))&&(tempName.contains("coconut curry"))&&(!tempName.contains("chicken"))){
 					ingredients.get(chicken).addQuantity(quantities.get(sku), 100);
+				}
+				if(tempName.contains("honey soy chicken")){
+					ingredients.get(vegeRice).addQuantity(quantities.get(sku), 150);
+				}
+				if((tempName.contains("sweet chilli"))&&(tempName.contains("lime chicken"))){
+					ingredients.get(rice).addQuantity(quantities.get(sku), 75);
+					ingredients.get(broccoliRice).addQuantity(quantities.get(sku), 75);
 				}
 
 
