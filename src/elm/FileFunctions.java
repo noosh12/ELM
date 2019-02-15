@@ -604,8 +604,8 @@ public class FileFunctions
 		ingredientsRawMultiplier.put("Brown Rice", 0.42735);
 		ingredients.add(new Ingredient("Lentils"));		int lentil = 15;
 //		ingredientsRawMultiplier.put("Lentils", 1.0);
-		ingredients.add(new Ingredient("Brocolli"));	int brocolli = 16;
-		ingredientsRawMultiplier.put("Brocolli", 1.5);
+		ingredients.add(new Ingredient("broccolii"));	int broccolii = 16;
+		ingredientsRawMultiplier.put("broccolii", 1.5);
 		ingredients.add(new Ingredient("Beans"));		int beans = 17;
 		ingredientsRawMultiplier.put("Beans", 1.10);
 		ingredients.add(new Ingredient("Peas"));		int peas = 18;
@@ -649,7 +649,7 @@ public class FileFunctions
 		ingredients.add(new Ingredient("Vegetable Rice"));		int vegeRice = 37;
 		ingredientsRawMultiplier.put("Vegetable Rice", 0.39);
 		ingredients.add(new Ingredient("Broccoli Rice"));		int broccoliRice = 38;
-		ingredientsRawMultiplier.put("Broccoli Rice", 0.39);
+		ingredientsRawMultiplier.put("Broccoli Rice", 1.1);
 
 		/*
 		 * Totalling Ingredient Quantities
@@ -694,7 +694,7 @@ public class FileFunctions
 				}
 				if(tempName.contains("coconut curry lentils")){
 					ingredients.get(lentil).addQuantity(quantities.get(sku), 150);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 100);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 40);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 40);
 				}
@@ -711,7 +711,7 @@ public class FileFunctions
 					ingredients.get(peas).addQuantity(quantities.get(sku), 50);
 					ingredients.get(quinoa).addQuantity(quantities.get(sku), 20);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 30);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 80);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 80);
 				}
 				if(tempName.contains("burrito bowl")){
 					ingredients.get(capsicum).addQuantity(quantities.get(sku), 80);
@@ -749,35 +749,46 @@ public class FileFunctions
 					ingredients.get(vegeRice).addQuantity(quantities.get(sku), 200);
 				}
 				if((tempName.contains("sweet chilli"))&&(tempName.contains("lime chicken"))){
-					ingredients.get(rice).addQuantity(quantities.get(sku), 100);
+					ingredients.get(brownRice).addQuantity(quantities.get(sku), 100);
 					ingredients.get(broccoliRice).addQuantity(quantities.get(sku), 100);
 				}
+				if((tempName.contains("cajun chicken"))&&(tempName.contains("cauli"))){
+					ingredients.get(cauliflower).addQuantity(quantities.get(sku), 100);
+					ingredients.get(pumpkin).addQuantity(quantities.get(sku), 70);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 30);
+				}
+				if((tempName.contains("cajun chicken"))&&(tempName.contains("cous"))){
+					ingredients.get(cousCous).addQuantity(quantities.get(sku), 100);
+					ingredients.get(pumpkin).addQuantity(quantities.get(sku), 70);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 30);
+				}
+				
 
 
 				if((tempName.contains("veg"))&&(tempName.contains("brown rice"))){
 					ingredients.get(brownRice).addQuantity(quantities.get(sku), 100);
 					//					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 100);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 				else if((tempName.contains("veg"))&&(tempName.contains("rice"))){
 					ingredients.get(rice).addQuantity(quantities.get(sku), 100);
 					//					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 100);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 				else if((tempName.contains("veg"))&&(tempName.contains("sweet potato"))){
 					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 100);
 					//					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 100);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 				else if((tempName.contains("sweet potato mash"))&&(tempName.contains("broccoli"))){
 					ingredients.get(mashSweetPotato).addQuantity(quantities.get(sku), 150);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 100);
 				}
 				else if((tempName.contains("pumpkin"))&&(tempName.contains("cauliflower"))&&(tempName.contains("brown rice"))){
 					ingredients.get(brownRice).addQuantity(quantities.get(sku), 150);
@@ -801,7 +812,7 @@ public class FileFunctions
 				else if(tempName.contains("veg"))
 				{
 					//					ingredients.get(veg).addQuantity(quantities.get(sku), 180);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 140);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 140);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
@@ -841,7 +852,7 @@ public class FileFunctions
 				}
 				if(tempName.contains("coconut curry lentils")){
 					ingredients.get(lentil).addQuantity(quantities.get(sku), 120);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 60);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 60);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 
@@ -859,7 +870,7 @@ public class FileFunctions
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 					ingredients.get(quinoa).addQuantity(quantities.get(sku), 20);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 60);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 60);
 				}
 				if(tempName.contains("burrito bowl")){
 					ingredients.get(capsicum).addQuantity(quantities.get(sku), 60);
@@ -898,8 +909,18 @@ public class FileFunctions
 					ingredients.get(vegeRice).addQuantity(quantities.get(sku), 150);
 				}
 				if((tempName.contains("sweet chilli"))&&(tempName.contains("lime chicken"))){
-					ingredients.get(rice).addQuantity(quantities.get(sku), 75);
+					ingredients.get(brownRice).addQuantity(quantities.get(sku), 75);
 					ingredients.get(broccoliRice).addQuantity(quantities.get(sku), 75);
+				}
+				if((tempName.contains("cajun chicken"))&&(tempName.contains("cauli"))){
+					ingredients.get(cauliflower).addQuantity(quantities.get(sku), 75);
+					ingredients.get(pumpkin).addQuantity(quantities.get(sku), 50);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
+				}
+				if((tempName.contains("cajun chicken"))&&(tempName.contains("cous"))){
+					ingredients.get(cousCous).addQuantity(quantities.get(sku), 75);
+					ingredients.get(pumpkin).addQuantity(quantities.get(sku), 50);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 
 
@@ -907,27 +928,27 @@ public class FileFunctions
 				if((tempName.contains("veg"))&&(tempName.contains("brown rice"))){
 					ingredients.get(brownRice).addQuantity(quantities.get(sku), 75);
 					//					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 75);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 75);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 				else if((tempName.contains("veg"))&&(tempName.contains("rice"))){
 					ingredients.get(rice).addQuantity(quantities.get(sku), 75);
 					//					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 75);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 75);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 				else if((tempName.contains("veg"))&&(tempName.contains("sweet potato"))){
 					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 75);
 					//					ingredients.get(veg).addQuantity(quantities.get(sku), 70);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 75);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 75);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 				else if((tempName.contains("sweet potato mash"))&&(tempName.contains("broccoli"))){
 					ingredients.get(mashSweetPotato).addQuantity(quantities.get(sku), 60);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 60);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 60);
 				}
 				else if((tempName.contains("pumpkin"))&&(tempName.contains("cauliflower"))&&(tempName.contains("brown rice"))){
 					ingredients.get(brownRice).addQuantity(quantities.get(sku), 75);
@@ -951,7 +972,7 @@ public class FileFunctions
 					ingredients.get(rice).addQuantity(quantities.get(sku), 120);
 				else if(tempName.contains("veg")){
 					//					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
-					ingredients.get(brocolli).addQuantity(quantities.get(sku), 100);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 100);
 					ingredients.get(beans).addQuantity(quantities.get(sku), 20);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
