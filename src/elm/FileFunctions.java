@@ -772,6 +772,11 @@ public class FileFunctions
 					ingredients.get(capsicumRed).addQuantity(quantities.get(sku), 20);
 					ingredients.get(chickPeas).addQuantity(quantities.get(sku), 40);
 				}
+				if(tempName.contains("parmesan & herb")){
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
+					ingredients.get(zuchini).addQuantity(quantities.get(sku), 120);
+					ingredients.get(pumpkin).addQuantity(quantities.get(sku), 120);
+				}
 				
 				
 
@@ -938,6 +943,11 @@ public class FileFunctions
 					ingredients.get(quinoa).addQuantity(quantities.get(sku), 30);
 					ingredients.get(capsicumRed).addQuantity(quantities.get(sku), 15);
 					ingredients.get(chickPeas).addQuantity(quantities.get(sku), 30);
+				}
+				if(tempName.contains("parmesan & herb")){
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
+					ingredients.get(zuchini).addQuantity(quantities.get(sku), 80);
+					ingredients.get(pumpkin).addQuantity(quantities.get(sku), 80);
 				}
 
 
