@@ -654,6 +654,10 @@ public class FileFunctions
 		ingredientsRawMultiplier.put("Red Capsicum", 1.30);
 		ingredients.add(new Ingredient("Chick Peas"));	int chickPeas = 40;
 		ingredientsRawMultiplier.put("Chick Peas", 1.0);
+		ingredients.add(new Ingredient("Soba Noodles"));	int soba = 41;
+		ingredientsRawMultiplier.put("Soba Noodles", 0.50);
+		ingredients.add(new Ingredient("Shredded Carrot"));	int shreddedCarrot = 42;
+		ingredientsRawMultiplier.put("Shredded Carrot", 1.12);
 
 		/*
 		 * Totalling Ingredient Quantities
@@ -777,10 +781,13 @@ public class FileFunctions
 					ingredients.get(zuchini).addQuantity(quantities.get(sku), 120);
 					ingredients.get(pumpkin).addQuantity(quantities.get(sku), 120);
 				}
+				if(tempName.contains("oriental chicken")){
+					ingredients.get(soba).addQuantity(quantities.get(sku), 200);
+					ingredients.get(shreddedCarrot).addQuantity(quantities.get(sku), 50);
+				}
 				
 				
-
-
+				
 				if((tempName.contains("veg"))&&(tempName.contains("brown rice"))){
 					ingredients.get(brownRice).addQuantity(quantities.get(sku), 100);
 					//					ingredients.get(veg).addQuantity(quantities.get(sku), 100);
@@ -948,6 +955,10 @@ public class FileFunctions
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 					ingredients.get(zuchini).addQuantity(quantities.get(sku), 80);
 					ingredients.get(pumpkin).addQuantity(quantities.get(sku), 80);
+				}
+				if(tempName.contains("oriental chicken")){
+					ingredients.get(soba).addQuantity(quantities.get(sku), 160);
+					ingredients.get(shreddedCarrot).addQuantity(quantities.get(sku), 40);
 				}
 
 
