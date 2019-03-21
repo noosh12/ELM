@@ -658,6 +658,8 @@ public class FileFunctions
 		ingredientsRawMultiplier.put("Soba Noodles", 0.50);
 		ingredients.add(new Ingredient("Shredded Carrot"));	int shreddedCarrot = 42;
 		ingredientsRawMultiplier.put("Shredded Carrot", 1.12);
+		ingredients.add(new Ingredient("Chicken Mince"));	int chickenMince = 43;
+		ingredientsRawMultiplier.put("Chicken Mince", 1.3);
 
 		/*
 		 * Totalling Ingredient Quantities
@@ -843,7 +845,7 @@ public class FileFunctions
 					ingredients.get(sweetPotato).addQuantity(quantities.get(sku), 200);
 
 			}
-			if(tempName.contains("small")){
+			if(tempName.contains("small") || tempName.contains("medium")){
 				if(tempName.contains("chicken"))
 					ingredients.get(chicken).addQuantity(quantities.get(sku), 100);
 				if(tempName.contains("steak"))
@@ -959,6 +961,9 @@ public class FileFunctions
 				if(tempName.contains("oriental chicken")){
 					ingredients.get(soba).addQuantity(quantities.get(sku), 160);
 					ingredients.get(shreddedCarrot).addQuantity(quantities.get(sku), 40);
+				}
+				if(tempName.contains("lasagne")){
+					ingredients.get(chickenMince).addQuantity(quantities.get(sku), 50);
 				}
 
 
