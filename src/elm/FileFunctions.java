@@ -787,6 +787,11 @@ public class FileFunctions
 					ingredients.get(soba).addQuantity(quantities.get(sku), 200);
 					ingredients.get(shreddedCarrot).addQuantity(quantities.get(sku), 50);
 				}
+				if(tempName.contains("rosemary roast")){
+					ingredients.get(mashPotato).addQuantity(quantities.get(sku), 150);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 75);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
+				}
 				
 				
 				
@@ -964,6 +969,11 @@ public class FileFunctions
 				}
 				if(tempName.contains("lasagne")){
 					ingredients.get(chickenMince).addQuantity(quantities.get(sku), 50);
+				}
+				if(tempName.contains("rosemary roast")){
+					ingredients.get(mashPotato).addQuantity(quantities.get(sku), 150);
+					ingredients.get(broccolii).addQuantity(quantities.get(sku), 75);
+					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
 
 
