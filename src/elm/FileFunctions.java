@@ -677,9 +677,9 @@ public class FileFunctions
 					ingredients.get(chicken).addQuantity(quantities.get(sku), 150);
 				if(tempName.contains("steak"))
 					ingredients.get(steak).addQuantity(quantities.get(sku), 150);
-				if(tempName.contains("meatballs")){
+				if(tempName.contains("italian meatballs")){
 					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
-					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 350);
+					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 250);
 				}
 				if(tempName.contains("con carne")){
 					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
@@ -792,6 +792,10 @@ public class FileFunctions
 					ingredients.get(broccolii).addQuantity(quantities.get(sku), 75);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
 				}
+				if(tempName.contains("chicken & spinach meatballs")){
+					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
+					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 250);
+				}
 				
 				
 				
@@ -855,9 +859,9 @@ public class FileFunctions
 					ingredients.get(chicken).addQuantity(quantities.get(sku), 100);
 				if(tempName.contains("steak"))
 					ingredients.get(steak).addQuantity(quantities.get(sku), 100);
-				if(tempName.contains("meatballs")){
+				if(tempName.contains("italian meatballs")){
 					ingredients.get(mince).addQuantity(quantities.get(sku), 100);
-					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 250);
+					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 200);
 				}
 				if(tempName.contains("con carne")){
 					ingredients.get(mince).addQuantity(quantities.get(sku), 100);
@@ -974,6 +978,10 @@ public class FileFunctions
 					ingredients.get(mashPotato).addQuantity(quantities.get(sku), 150);
 					ingredients.get(broccolii).addQuantity(quantities.get(sku), 75);
 					ingredients.get(peas).addQuantity(quantities.get(sku), 20);
+				}
+				if(tempName.contains("chicken & spinach meatballs")){
+					ingredients.get(chickenMince).addQuantity(quantities.get(sku), 100);
+					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 200);
 				}
 
 
