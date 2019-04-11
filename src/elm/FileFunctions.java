@@ -795,6 +795,7 @@ public class FileFunctions
 				if(tempName.contains("chicken & spinach meatballs")){
 					ingredients.get(mince).addQuantity(quantities.get(sku), 150);
 					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 250);
+					ingredients.get(chicken).addQuantity(quantities.get(sku), -150);
 				}
 				if(tempName.contains("teriyaki steak soba")){
 					ingredients.get(soba).addQuantity(quantities.get(sku), 250);
@@ -985,6 +986,7 @@ public class FileFunctions
 				if(tempName.contains("chicken & spinach meatballs")){
 					ingredients.get(chickenMince).addQuantity(quantities.get(sku), 100);
 					ingredients.get(wholemealPenne).addQuantity(quantities.get(sku), 200);
+					ingredients.get(chicken).addQuantity(quantities.get(sku), -100);
 				}
 				if(tempName.contains("teriyaki steak soba")){
 					ingredients.get(soba).addQuantity(quantities.get(sku), 200);
