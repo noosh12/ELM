@@ -476,7 +476,7 @@ public class FileFunctions
 					String[] mealNameSplit = names.get(sku).split(" - ");
 					sauceName = mealNameSplit[0];
 					
-					if (!(sku.contains("BALL")||(sku.contains("BAR"))))
+					if (sku.contains("LGE")||sku.contains("SML"))
 					{
 						if (sauceTotals.containsKey(sauceName)){ //if item already exists in hashMap
 							sauceTotals.put(sauceName, sauceTotals.get(sauceName)+quantities.get(sku));					
