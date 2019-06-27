@@ -121,38 +121,38 @@ public class FileFunctions
 		int smalls = 0, larges = 0, snacks = 0;
 		String oldOrderID = "NOTAREALID";
 		
-		//Preliminary run to build hashmaps skipping first 1/4 of lines
-		//This is because the first and last lines could be problematic
-		//if customer ordered before/after menu changed
-		for (OrderItem order : orderLine)
-		{
-			if (orderCount>count/4){ 
-				//skipping first quarter of lines in case customer ordered before menu changed
-				
-				//Skip to next orderLine object if order is a gift card
-				//This is because gift cards don't contain a sku, and as such, give us problems later on if we process it
-				//this is because the blank sku isn't really blank, but is "" which cannot be identified easily
-				if(order.getLineItemName().toLowerCase().contains("gift card")){
-					giftCardCount++;
-					continue;
-				}
-				
-				String sku = order.getLineItemSKU();
-				String name = order.getLineItemName();
-				if(!reverseNames.containsKey(name)){
-					if(!skuNames.containsKey(sku)){
-						skuNames.put(sku, name);
-						skuQuantities.put(sku, 0);
-						skus.add(sku);
-						reverseNames.put(name, sku);
-					}
-				}
-			}
-			orderCount++;	
-		}
-		System.out.println("Preliminary run completed on line "+count/4+" to "+orderCount);
-		
-		orderCount=0;
+//		//Preliminary run to build hashmaps skipping first 1/4 of lines
+//		//This is because the first and last lines could be problematic
+//		//if customer ordered before/after menu changed
+//		for (OrderItem order : orderLine)
+//		{
+//			if (orderCount>count/4){ 
+//				//skipping first quarter of lines in case customer ordered before menu changed
+//				
+//				//Skip to next orderLine object if order is a gift card
+//				//This is because gift cards don't contain a sku, and as such, give us problems later on if we process it
+//				//this is because the blank sku isn't really blank, but is "" which cannot be identified easily
+//				if(order.getLineItemName().toLowerCase().contains("gift card")){
+//					giftCardCount++;
+//					continue;
+//				}
+//				
+//				String sku = order.getLineItemSKU();
+//				String name = order.getLineItemName();
+//				if(!reverseNames.containsKey(name)){
+//					if(!skuNames.containsKey(sku)){
+//						skuNames.put(sku, name);
+//						skuQuantities.put(sku, 0);
+//						skus.add(sku);
+//						reverseNames.put(name, sku);
+//					}
+//				}
+//			}
+//			orderCount++;	
+//		}
+//		System.out.println("Preliminary run completed on line "+count/4+" to "+orderCount);
+//		
+//		orderCount=0;
 		
 		// Here we loop through all of our order objects to fully build our hashmaps
 		for (OrderItem order : orderLine)
@@ -190,50 +190,50 @@ public class FileFunctions
 				if (name.equals(skuNames.get(sku))){ //if name matches sku value
 					skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
 				}
-				else if (reverseNames.containsKey(name)){
-					//if hashmap contains this name under a dif sku (extremely rare)
-					//occurs when someone orders in between weekly cutoff and menu changed (skus+names)
-					//this part covers the use case when the intended sku is already in-use
-					//(Part 1 of 2)
-					sku = reverseNames.get(name); //set sku to the recorded sku of that menu item
-					skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());					
-				}
-				else{ 
-					//if name does not match recorded sku value (less rare) and item name not in hashmap already
-					//happens when customer manually orders items not on current menu
-
-					extraSku = Integer.parseInt(sku.replaceAll("[\\D]", "")); //extract integer component of sku
-					if(extraSku<10)
-					{
-						sku = "OLD-0"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> OLD-12
-					}
-					else{
-						sku = "OLD-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> OLD-12
-					}
-					
-					if(!skusOld.contains(extraSku)){
-						skusOld.add(extraSku);
-						skusOldNames.add(name);
-					}
-					
-					
-//					if(skuQuantities.containsKey(sku)){
-//						skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
+//				else if (reverseNames.containsKey(name)){
+//					//if hashmap contains this name under a dif sku (extremely rare)
+//					//occurs when someone orders in between weekly cutoff and menu changed (skus+names)
+//					//this part covers the use case when the intended sku is already in-use
+//					//(Part 1 of 2)
+//					sku = reverseNames.get(name); //set sku to the recorded sku of that menu item
+//					skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());					
+//				}
+//				else{ 
+//					//if name does not match recorded sku value (less rare) and item name not in hashmap already
+//					//happens when customer manually orders items not on current menu
+//					System.out.println(sku);
+//					extraSku = Integer.parseInt(sku.replaceAll("[\\D]", "")); //extract integer component of sku
+//					if(extraSku<10)
+//					{
+//						sku = "OLD-0"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> OLD-12
 //					}
 //					else{
-//						skuQuantities.put(sku, order.getLineItemQuantity());
-//						skuNames.put(sku, order.getLineItemName());
-//						skus.add(sku);
-//						
+//						sku = "OLD-"+extraSku; //duplicate sku item changes prefix to ZZZ i.e GMD-12 -> OLD-12
 //					}
-					//Shouldn't need the above because items that already exist should be caught in the above else if
-					skuQuantities.put(sku, order.getLineItemQuantity());
-					skuNames.put(sku, order.getLineItemName());
-					skus.add(sku);
-					reverseNames.put(order.getLineItemName(), sku); //add name and sku
-					
-					//orderedOld.add(order.getOrderID()); //Recording order ID of current order
-				}				
+//					
+//					if(!skusOld.contains(extraSku)){
+//						skusOld.add(extraSku);
+//						skusOldNames.add(name);
+//					}
+//					
+//					
+////					if(skuQuantities.containsKey(sku)){
+////						skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
+////					}
+////					else{
+////						skuQuantities.put(sku, order.getLineItemQuantity());
+////						skuNames.put(sku, order.getLineItemName());
+////						skus.add(sku);
+////						
+////					}
+//					//Shouldn't need the above because items that already exist should be caught in the above else if
+//					skuQuantities.put(sku, order.getLineItemQuantity());
+//					skuNames.put(sku, order.getLineItemName());
+//					skus.add(sku);
+//					reverseNames.put(order.getLineItemName(), sku); //add name and sku
+//					
+//					//orderedOld.add(order.getOrderID()); //Recording order ID of current order
+//				}				
 			} else if (reverseNames.containsKey(name)){ //hashmaps contain name but not line sku
 				
 				sku = reverseNames.get(name); //set sku to the recorded sku of that menu item
@@ -270,73 +270,73 @@ public class FileFunctions
 //		}
 //		System.out.println();
 		
-		//If hashmaps contain old meals, looping through them to determine the real old
-		//the sku with the lowest quantity is determined to be the correct old item
-		//i.e. if GMD-12 quantity = 10, and OLD-12 has quantity of 100, skus are swapped
-		if (!skusOld.isEmpty()){
-			System.out.print("Orders contains OLD meals! Determining true OLD meals...");
-			for (Integer sku : skusOld){
-				String gmdSku="", oldSku="";
-				
-				if(sku<10)
-				{
-					gmdSku="GMD-0"+sku;
-					oldSku="OLD-0"+sku;
-				}
-				else{
-					gmdSku="GMD-"+sku;
-					oldSku="OLD-"+sku;
-				}
-				
-				int gmdQuantity = skuQuantities.get(gmdSku);
-				int oldQuantity = skuQuantities.get(oldSku);
-				String gmdName = skuNames.get(gmdSku);
-				String oldName = skuNames.get(oldSku);
-//				System.out.println("current");
-//				System.out.println(gmdSku+": "+gmdName+" - "+gmdQuantity);
-//				System.out.println(oldSku+": "+oldName+" - "+oldQuantity);						
-				
-				if (gmdQuantity<oldQuantity){ //Old is the real gmd
-					skuQuantities.remove(gmdSku);
-					skuNames.remove(gmdSku);
-					skuQuantities.remove(oldSku);
-					skuNames.remove(oldSku);
-
-					skuQuantities.put(gmdSku, oldQuantity);//making old the real gmd
-					skuNames.put(gmdSku, oldName);
-					
-					skuQuantities.put(oldSku, gmdQuantity);//making gmd the real old
-					skuNames.put(oldSku, gmdName);
-//					System.out.println("new");
-//					System.out.println(gmdSku+": "+oldName+" - "+oldQuantity);
-//					System.out.println(oldSku+": "+gmdName+" - "+gmdQuantity);				
-					
-					if(!skusOldNames.contains(gmdName)){
-						skusOldNames.add(gmdName);
-					}
-					skusOldNames.remove(oldName);
-					
-				}	
-			}
-			System.out.println(" Done!");
-		}
-		
-		
-		System.out.print("Finding Orders containing OLD meals or mismatched SKU meals... ");
-		for (OrderItem order : orderLine){
-			if(skusOldNames.contains(order.getLineItemName())){
-				if(!orderedOld.contains(order.getOrderID())){
-					orderedOld.add(order.getOrderID());
-				}
-			}
-			if(!(order.getLineItemName().equals(skuNames.get(order.getLineItemSKU())))){
-				if(!(order.getNotes().contains("**DIF SKUs**"))){
-					order.setNotes("**DIF SKUs**"+ order.getNotes());
-				}
-			}
-				
-		}
-		System.out.println(" Done!");
+//		//If hashmaps contain old meals, looping through them to determine the real old
+//		//the sku with the lowest quantity is determined to be the correct old item
+//		//i.e. if GMD-12 quantity = 10, and OLD-12 has quantity of 100, skus are swapped
+//		if (!skusOld.isEmpty()){
+//			System.out.print("Orders contains OLD meals! Determining true OLD meals...");
+//			for (Integer sku : skusOld){
+//				String gmdSku="", oldSku="";
+//				
+//				if(sku<10)
+//				{
+//					gmdSku="GMD-0"+sku;
+//					oldSku="OLD-0"+sku;
+//				}
+//				else{
+//					gmdSku="GMD-"+sku;
+//					oldSku="OLD-"+sku;
+//				}
+//				
+//				int gmdQuantity = skuQuantities.get(gmdSku);
+//				int oldQuantity = skuQuantities.get(oldSku);
+//				String gmdName = skuNames.get(gmdSku);
+//				String oldName = skuNames.get(oldSku);
+////				System.out.println("current");
+////				System.out.println(gmdSku+": "+gmdName+" - "+gmdQuantity);
+////				System.out.println(oldSku+": "+oldName+" - "+oldQuantity);						
+//				
+//				if (gmdQuantity<oldQuantity){ //Old is the real gmd
+//					skuQuantities.remove(gmdSku);
+//					skuNames.remove(gmdSku);
+//					skuQuantities.remove(oldSku);
+//					skuNames.remove(oldSku);
+//
+//					skuQuantities.put(gmdSku, oldQuantity);//making old the real gmd
+//					skuNames.put(gmdSku, oldName);
+//					
+//					skuQuantities.put(oldSku, gmdQuantity);//making gmd the real old
+//					skuNames.put(oldSku, gmdName);
+////					System.out.println("new");
+////					System.out.println(gmdSku+": "+oldName+" - "+oldQuantity);
+////					System.out.println(oldSku+": "+gmdName+" - "+gmdQuantity);				
+//					
+//					if(!skusOldNames.contains(gmdName)){
+//						skusOldNames.add(gmdName);
+//					}
+//					skusOldNames.remove(oldName);
+//					
+//				}	
+//			}
+//			System.out.println(" Done!");
+//		}
+//		
+//		
+//		System.out.print("Finding Orders containing OLD meals or mismatched SKU meals... ");
+//		for (OrderItem order : orderLine){
+//			if(skusOldNames.contains(order.getLineItemName())){
+//				if(!orderedOld.contains(order.getOrderID())){
+//					orderedOld.add(order.getOrderID());
+//				}
+//			}
+//			if(!(order.getLineItemName().equals(skuNames.get(order.getLineItemSKU())))){
+//				if(!(order.getNotes().contains("**DIF SKUs**"))){
+//					order.setNotes("**DIF SKUs**"+ order.getNotes());
+//				}
+//			}
+//				
+//		}
+//		System.out.println(" Done!");
 		
 		System.out.print("Sorting Meal Names...");
 		for(String currentSku: skus){
