@@ -15,16 +15,11 @@ public class FileFunctions
 		List<OrderItem> orderLine = new ArrayList<>();							//stores the OrderItem objects
 		HashMap<String, Integer> skuQuantities= new HashMap<String,Integer>();	//meal quantities
 		HashMap<String, String> skuNames= new HashMap<String,String>();			//meal names
-		HashMap<String, String> reverseNames = new HashMap<String, String>();
 		HashMap<String, ArrayList<OrderItem>> ordersByShippingMethod = new HashMap<String, ArrayList<OrderItem>> (); // Orders by shipping method
 		
 		ArrayList<String> skus = new ArrayList<String>(); //Arraylist that holds skus - for sorting
 		ArrayList<String> names = new ArrayList<String>(); //Arraylist that holds names - for sorting
 		HashMap<String, String> Names= new HashMap<String,String>(); //Arraylist for sorted Names
-		
-		ArrayList<String> orderedOld = new ArrayList<String>(); //order IDs of orders that contain old/discontinued items
-		ArrayList<Integer> skusOld = new ArrayList<Integer>(); //skus of old/discontinued items
-		ArrayList<String> skusOldNames = new ArrayList<String>(); //skus of old/discontinued items
 		
 		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
 		System.out.println();
@@ -152,16 +147,11 @@ public class FileFunctions
 				if (name.equals(skuNames.get(sku))){ //if name matches sku value
 					skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
 				}			
-			} else if (reverseNames.containsKey(name)){ //hashmaps contain name but not line sku
-				sku = reverseNames.get(name); //set sku to the recorded sku of that menu item
-				skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
-				
 			} else { //if item does not exist in hashmap yet
 				
 				skuQuantities.put(sku, order.getLineItemQuantity()); //Add sku and initial quantity
 				skuNames.put(sku, order.getLineItemName()); //Add sku and name
 				skus.add(sku); //add sku
-				reverseNames.put(order.getLineItemName(), sku); //add name and sku
 			}		
 
 			// Storing the different shipping methods and the different orders to each shipping method
@@ -203,7 +193,7 @@ public class FileFunctions
 		CalcPrintIngredients(skuQuantities,skuNames); //Calculate the ingredients required
 		
 		System.out.print("Printing sorted delivery methods...");
-		PrintShipping(ordersByShippingMethod, orderedOld); //Print the shipping details of each order of each method
+		PrintShipping(ordersByShippingMethod); //Print the shipping details of each order of each method
 	}
 
 	/*
@@ -218,7 +208,6 @@ public class FileFunctions
 			BufferedWriter totals = new BufferedWriter(new FileWriter("_meal_totals.csv", false));
 			String mealName;
 			String sauceName;
-			boolean duplicates = false;			
 			
 			int[] typeTotals = new int[20];
 			HashMap<String, Integer> sauceTotals = new HashMap<String,Integer>();	//sauce totals
@@ -236,10 +225,6 @@ public class FileFunctions
 
 			// Write the quantities of each meal to file
 			for(String sku : skus){
-				
-				if (itemSkus.contains(sku)||itemNames.contains(names.get(sku)))
-					duplicates = true;
-				
 					
 				itemSkus.add(sku);
 				itemNames.add(names.get(sku));
@@ -247,96 +232,88 @@ public class FileFunctions
 				totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
 				totals.newLine();
 				
+				mealName = names.get(sku).toLowerCase();
+				if (mealName.contains("steak")){
+					if((mealName.contains("brown rice"))&&(mealName.contains("veg"))){
+						if(mealName.contains("large"))
+							typeTotals[12]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[13]+=quantities.get(sku);
+					}
+					else if((mealName.contains("sweet potato"))&&(mealName.contains("veg"))){
+						if(mealName.contains("large"))
+							typeTotals[16]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[17]+=quantities.get(sku);
+					}
+					else if(mealName.contains("rice")&&(!mealName.contains("brown"))&&(!mealName.contains("noodles"))){
+						if(mealName.contains("large"))
+							typeTotals[0]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[1]+=quantities.get(sku);
+					}
+					else if(mealName.contains("sweet potato")&&(!mealName.contains("mash"))){
+						if(mealName.contains("large"))
+							typeTotals[2]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[3]+=quantities.get(sku);
+					}
+					else if(mealName.contains("veg")){
+						if(mealName.contains("large"))
+							typeTotals[4]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[5]+=quantities.get(sku);
+					}
+				}
+				if (mealName.contains("chicken")){
+					if((mealName.contains("brown rice"))&&(mealName.contains("veg"))){
+						if(mealName.contains("large"))
+							typeTotals[14]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[15]+=quantities.get(sku);
+					}
+					else if((mealName.contains("sweet potato"))&&(mealName.contains("veg"))){
+						if(mealName.contains("large"))
+							typeTotals[18]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[19]+=quantities.get(sku);
+					}
+					else if(mealName.contains("rice")&&(!mealName.contains("brown"))&&(!mealName.contains("noodles"))){
+						if(mealName.contains("large"))
+							typeTotals[6]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[7]+=quantities.get(sku);
+					}
+					else if(mealName.contains("sweet potato")&&(!mealName.contains("mash"))){
+						if(mealName.contains("large"))
+							typeTotals[8]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[9]+=quantities.get(sku);
+					}
+					else if(mealName.contains("veg")){
+						if(mealName.contains("large"))
+							typeTotals[10]+=quantities.get(sku);
+						if(mealName.contains("small"))
+							typeTotals[11]+=quantities.get(sku);
+					}
+				}
 				
-				//if (sku.contains("GMD")||sku.contains("OLD")){
-					//Totaling the totals for each meal type
-					mealName = names.get(sku).toLowerCase();
-					if (mealName.contains("steak")){
-						if((mealName.contains("brown rice"))&&(mealName.contains("veg"))){
-							if(mealName.contains("large"))
-								typeTotals[12]+=quantities.get(sku);
-							if(mealName.contains("small"))
-								typeTotals[13]+=quantities.get(sku);
-						}
-						else if((mealName.contains("sweet potato"))&&(mealName.contains("veg"))){
-							if(mealName.contains("large"))
-								typeTotals[16]+=quantities.get(sku);
-							if(mealName.contains("small"))
-								typeTotals[17]+=quantities.get(sku);
-						}
-						else if(mealName.contains("rice")&&(!mealName.contains("brown"))&&(!mealName.contains("noodles"))){
-							if(mealName.contains("large"))
-								typeTotals[0]+=quantities.get(sku);
-							if(mealName.contains("small"))
-								typeTotals[1]+=quantities.get(sku);
-						}
-						else if(mealName.contains("sweet potato")&&(!mealName.contains("mash"))){
-							if(mealName.contains("large"))
-								typeTotals[2]+=quantities.get(sku);
-							if(mealName.contains("small"))
-								typeTotals[3]+=quantities.get(sku);
-						}
-						else if(mealName.contains("veg")){
-							if(mealName.contains("large"))
-								typeTotals[4]+=quantities.get(sku);
-							if(mealName.contains("small"))
-								typeTotals[5]+=quantities.get(sku);
-						}
+				
+				
+				String[] mealNameSplit = names.get(sku).split(" - ");
+				sauceName = mealNameSplit[0];
+				
+				if (sku.contains("LGE")||sku.contains("SML"))
+				{
+					if (sauceTotals.containsKey(sauceName)){ //if item already exists in hashMap
+						sauceTotals.put(sauceName, sauceTotals.get(sauceName)+quantities.get(sku));					
 					}
-					if (mealName.contains("chicken")){
-						if((mealName.contains("brown rice"))&&(mealName.contains("veg"))){
-							if(mealName.contains("large"))
-								typeTotals[14]+=quantities.get(sku);
-							if(mealName.contains("small"))
-								typeTotals[15]+=quantities.get(sku);
-						}
-						else if((mealName.contains("sweet potato"))&&(mealName.contains("veg"))){
-							if(mealName.contains("large"))
-								typeTotals[18]+=quantities.get(sku);
-							if(mealName.contains("small"))
-								typeTotals[19]+=quantities.get(sku);
-						}
-						else if(mealName.contains("rice")&&(!mealName.contains("brown"))&&(!mealName.contains("noodles"))){
-							if(mealName.contains("large"))
-								typeTotals[6]+=quantities.get(sku);
-							if(mealName.contains("small"))
-								typeTotals[7]+=quantities.get(sku);
-						}
-						else if(mealName.contains("sweet potato")&&(!mealName.contains("mash"))){
-							if(mealName.contains("large"))
-								typeTotals[8]+=quantities.get(sku);
-							if(mealName.contains("small"))
-								typeTotals[9]+=quantities.get(sku);
-						}
-						else if(mealName.contains("veg")){
-							if(mealName.contains("large"))
-								typeTotals[10]+=quantities.get(sku);
-							if(mealName.contains("small"))
-								typeTotals[11]+=quantities.get(sku);
-						}
+					else {
+						sauceTotals.put(sauceName, quantities.get(sku));
+						sauces.add(sauceName);
 					}
+				}
 					
-					
-					
-					String[] mealNameSplit = names.get(sku).split(" - ");
-					sauceName = mealNameSplit[0];
-					
-					if (sku.contains("LGE")||sku.contains("SML"))
-					{
-						if (sauceTotals.containsKey(sauceName)){ //if item already exists in hashMap
-							sauceTotals.put(sauceName, sauceTotals.get(sauceName)+quantities.get(sku));					
-						}
-						else {
-							sauceTotals.put(sauceName, quantities.get(sku));
-							sauces.add(sauceName);
-						}
-					}
-					
-			}
-			if(duplicates){
-				totals.newLine();
-				totals.write("ERROR! Duplicates found. File may be incorrect!");
-				totals.newLine();
 			}
 					
 			if (!sauceTotals.isEmpty()){
@@ -924,7 +901,7 @@ public class FileFunctions
 	/*
 	 * Prints the orders of each shipping method
 	 */
-	public static void PrintShipping(HashMap<String, ArrayList<OrderItem>> ordersByShippingMethod, ArrayList <String> old){
+	public static void PrintShipping(HashMap<String, ArrayList<OrderItem>> ordersByShippingMethod){
 
 		try
 		{
@@ -952,11 +929,7 @@ public class FileFunctions
 				shipping.newLine();
 				for(OrderItem order : ordersByShippingMethod.get(shippingMethod)){
 					String shippingString = order.getShippingMethod() + "," + order.getShippingName() + "," + order.getShippingAddress() + ",";
-					if(old.contains(order.getOrderID()))
-						shippingString = shippingString + "**CONTAINS OLD** "+order.getNotes()+","+order.getOrderID();
-					else
-						shippingString = shippingString+order.getNotes()+","+order.getOrderID();
-								
+					shippingString = shippingString+order.getNotes()+","+order.getOrderID();				
 					shipping.write(shippingString);
 					shipping.newLine();
 					
