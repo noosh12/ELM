@@ -143,11 +143,8 @@ public class FileFunctions
 				larges+=order.getLineItemQuantity();
 			if(order.getLineItemName().toLowerCase().contains("small"))
 				smalls+=order.getLineItemQuantity();
-			if(order.getLineItemName().toLowerCase().contains("protein ball"))
+			if(order.getVendor().contains("snack") || order.getVendor().contains("macro"))
 				snacks+=order.getLineItemQuantity();
-			if(order.getLineItemName().toLowerCase().contains("raw bars"))
-				snacks+=order.getLineItemQuantity();
-			
 			
 			// Tally order quantities in a HashMap on SKU
 			if (skuQuantities.containsKey(sku)){	//if sku already exists in hashMap
@@ -156,7 +153,6 @@ public class FileFunctions
 					skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
 				}			
 			} else if (reverseNames.containsKey(name)){ //hashmaps contain name but not line sku
-				
 				sku = reverseNames.get(name); //set sku to the recorded sku of that menu item
 				skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
 				

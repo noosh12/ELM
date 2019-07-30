@@ -82,6 +82,10 @@ public class OrderItem {
 		return email;
 	}
 	
+	public String getVendor(){
+		return vendor;
+	}
+	
 	public String getFullShippingString(){
 		return orderID + "," + shippingName + "," + shippingAddress1 + "," + shippingCity + "," + shippingPostcode + "," + shippingPhone  + "," + notes;
 	}
