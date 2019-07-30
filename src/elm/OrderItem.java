@@ -14,8 +14,9 @@ public class OrderItem {
 	private String shippingPhone;
 	private String email;
 	private String shippingPostcode;
+	private String vendor;
 	
-	public OrderItem(String orderID, String discountCode, String shippingMethod, int lineItemQuantity, String lineItemName, String lineItemSKU, String shippingName, String shippingAddress1, String shippingCity, String shippingPostcode, String notes, String shippingPhone, String email){
+	public OrderItem(String orderID, String discountCode, String shippingMethod, int lineItemQuantity, String lineItemName, String lineItemSKU, String shippingName, String shippingAddress1, String shippingCity, String shippingPostcode, String notes, String shippingPhone, String email, String vendor){
 		
 		this.orderID=orderID;
 		this.discountCode=discountCode;
@@ -30,6 +31,7 @@ public class OrderItem {
 		this.notes=notes;
 		this.shippingPhone=shippingPhone;
 		this.email=email;
+		this.vendor=vendor;
 	}
 	
 	public String getDiscountCode(){

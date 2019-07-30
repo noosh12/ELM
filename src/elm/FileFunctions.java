@@ -64,6 +64,7 @@ public class FileFunctions
 				String shippingPostcode = tokenize[40].replaceAll("[\\D]", "");
 				String shippingPhone = tokenize[43].replaceAll("[\\D]", "");
 				String notes=tokenize[44];								//notes provided by customer regarding shipping
+				String vendor=tokenize[50];
 				
 				//if customer has not ticked shipping is same as billing, and has left shipping blank
 				if(shippingName != null && !shippingName.isEmpty()){
@@ -90,7 +91,7 @@ public class FileFunctions
 				//build orderLine object from chosen extracted values
 				orderLine.add(
 					new OrderItem(orderID, discountCode, shippingMethod, lineItemQuantity, lineItemName,
-						lineItemSKU, billingName, shippingAddress1, shippingCity, shippingPostcode, notes, shippingPhone, email)
+						lineItemSKU, billingName, shippingAddress1, shippingCity, shippingPostcode, notes, shippingPhone, email, vendor)
 				);
 				
 				//System.out.println("Built Order "+count);
