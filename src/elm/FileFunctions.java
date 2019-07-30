@@ -47,7 +47,7 @@ public class FileFunctions
 				while(tokenize.length<56){
 					fileRead = fileRead + input.readLine();
 					tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-					System.out.println("line size = "+tokenize.length);
+//					System.out.println("line size = "+tokenize.length);
 				}		
 
 				String orderID = tokenize[0];							//OrderID
@@ -143,7 +143,7 @@ public class FileFunctions
 				larges+=order.getLineItemQuantity();
 			if(order.getLineItemName().toLowerCase().contains("small"))
 				smalls+=order.getLineItemQuantity();
-			if(order.getVendor().contains("snack") || order.getVendor().contains("macro"))
+			if(order.getVendor().toLowerCase().contains("snack") || order.getVendor().toLowerCase().contains("macro"))
 				snacks+=order.getLineItemQuantity();
 			
 			// Tally order quantities in a HashMap on SKU
@@ -174,6 +174,7 @@ public class FileFunctions
 				oldOrderID=order.getOrderID();
 			}		
 		}
+		System.out.println("Total Meals Count: "+totalQuantity);
 		System.out.println("Large Meals Count: "+larges);
 		System.out.println("Small Meals Count: "+smalls);
 		System.out.println("Snacks Count: "+snacks);
