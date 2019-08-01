@@ -971,6 +971,7 @@ public class FileFunctions
 			BufferedWriter shipping = new BufferedWriter(new FileWriter("_shipping.csv", false));
 			BufferedWriter notes = new BufferedWriter(new FileWriter("_delivery_notes.csv", false));
 			BufferedWriter deliveries = new BufferedWriter(new FileWriter("_deliveries.csv", false));
+			BufferedWriter pickupTables = new BufferedWriter(new FileWriter("_pickup_tables.csv", false));
 			
 			shipping.write("SHIPPING METHODS: " + ordersByShippingMethod.keySet().size());
 			shipping.newLine();	shipping.newLine();	shipping.newLine();	shipping.newLine();	shipping.newLine();
@@ -982,7 +983,10 @@ public class FileFunctions
 			
 			deliveries.write("Order ID"+","+"Shipping Name"+","+"Shipping Street"+","+"Shipping City"+","+"Postcode"+","+"Mobile"+","+"Notes");
 			deliveries.newLine();
-
+			
+			ArrayList<Character> chars = new ArrayList<>();
+			HashMap<Character, Integer> charCounts = new HashMap<>();
+			int pickupTotal = 0;
 
 			//Looping through all shipping methods and within that, looping through all orders while printing
 			for(String shippingMethod : ordersByShippingMethod.keySet()){
@@ -1004,12 +1008,63 @@ public class FileFunctions
 						
 						deliveries.write(order.getFullShippingString());
 						deliveries.newLine();
-					}					
+					}
+					
+					if(shippingMethod.toLowerCase().contains("pick up")){
+						pickupTotal++;
+						String pickupName = (order.getShippingName()).toUpperCase();
+						int index = 0;
+						char surnameInitial = '_';
+						if(pickupName != null && !pickupName.isEmpty() && pickupName.contains(" ") &&  pickupName.lastIndexOf(' ') != pickupName.length()-1){
+							index = pickupName.lastIndexOf(' ') +1;
+//							if(index+1 == pickupName.length() && pickupName.length() > 1)
+//								index--;
+							surnameInitial = pickupName.charAt(index);
+						}
+						
+						if(!chars.contains(surnameInitial)){
+							chars.add(surnameInitial);
+							charCounts.put(surnameInitial, 0);
+						}
+						charCounts.put(surnameInitial, charCounts.get(surnameInitial)+1);
+//						System.out.println(pickupName + " -- " + surnameInitial);
+					}
+
 				}
 				
 				shipping.write("     TOTAL: " + ordersByShippingMethod.get(shippingMethod).size());
 				shipping.newLine();	shipping.newLine();	shipping.newLine();
 			}
+			Collections.sort(chars);
+			
+			String tableString = "";
+			int tables = 7;
+			int boxesPerTable = pickupTotal / tables;
+//			System.out.println(boxesPerTable);
+			int currentTableCount = 0;
+			
+			pickupTables.write("Total Pickups"+","+pickupTotal);
+			pickupTables.newLine();
+			pickupTables.write("Min per table"+","+boxesPerTable);
+			pickupTables.newLine();
+			pickupTables.newLine();
+			pickupTables.write("CHARACTERS"+","+"TOTAL");
+			pickupTables.newLine();
+			
+			for (char character: chars){ 
+//				System.out.println(character);
+				currentTableCount += charCounts.get(character);
+				tableString += character;
+				
+				if(currentTableCount >= boxesPerTable){
+					pickupTables.write(tableString + "," + currentTableCount);
+					pickupTables.newLine();
+					currentTableCount = 0;
+					tableString = "";
+				}
+				
+			}
+			pickupTables.close();
 
 			deliveries.close();
 			shipping.close();
