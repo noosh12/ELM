@@ -17,9 +17,11 @@ public class FileFunctions
 		HashMap<String, String> skuNames= new HashMap<String,String>();			//meal names
 		HashMap<String, ArrayList<OrderItem>> ordersByShippingMethod = new HashMap<String, ArrayList<OrderItem>> (); // Orders by shipping method
 		
-		ArrayList<String> skus = new ArrayList<String>(); //Arraylist that holds skus - for sorting
-		ArrayList<String> names = new ArrayList<String>(); //Arraylist that holds names - for sorting
-		HashMap<String, String> Names= new HashMap<String,String>(); //Arraylist for sorted Names
+		ArrayList<String> skuList = new ArrayList<String>(); //Arraylist that holds skus - for sorting
+		ArrayList<String> namesList = new ArrayList<String>(); //Arraylist that holds names - for sorting
+		ArrayList<String> namesListGMD = new ArrayList<String>(); //Arraylist that holds names - for sorting
+		ArrayList<String> namesListSpecials = new ArrayList<String>(); //Arraylist that holds names - for sorting
+		HashMap<String, String> namesSkus= new HashMap<String,String>(); 
 		
 		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
 		System.out.println();
@@ -138,22 +140,13 @@ public class FileFunctions
 				larges+=order.getLineItemQuantity();
 			if(order.getLineItemName().toLowerCase().contains("small"))
 				smalls+=order.getLineItemQuantity();
+			if(order.getLineItemName().toLowerCase().contains("red cross"))
+				smalls+=order.getLineItemQuantity();
+			if(order.getLineItemName().toLowerCase().contains("meals on wheels"))
+				smalls+=order.getLineItemQuantity();
 			if(order.getVendor().toLowerCase().contains("snack") || order.getVendor().toLowerCase().contains("macro"))
 				snacks+=order.getLineItemQuantity();
 			
-			// Tally order quantities in a HashMap on SKU
-			if (skuQuantities.containsKey(sku)){	//if sku already exists in hashMap
-				name = order.getLineItemName();
-				if (name.equals(skuNames.get(sku))){ //if name matches sku value
-					skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
-				}			
-			} else { //if item does not exist in hashmap yet
-				
-				skuQuantities.put(sku, order.getLineItemQuantity()); //Add sku and initial quantity
-				skuNames.put(sku, order.getLineItemName()); //Add sku and name
-				skus.add(sku); //add sku
-			}		
-
 			// Storing the different shipping methods and the different orders to each shipping method
 			if (!(order.getOrderID().equals(oldOrderID))){
 				String shippingMethod = order.getShippingMethod().toLowerCase();
@@ -162,7 +155,26 @@ public class FileFunctions
 				}
 				ordersByShippingMethod.get(shippingMethod).add(order);
 				oldOrderID=order.getOrderID();
+			}
+			
+			// Tally order quantities in a HashMap on SKU
+			if (skuQuantities.containsKey(sku)){	//if sku already exists in hashMap
+				name = order.getLineItemName();
+				if (name.equals(skuNames.get(sku))){ //if name matches sku value
+					skuQuantities.put(sku, skuQuantities.get(sku) + order.getLineItemQuantity());
+				}			
+			} else { //if item does not exist in hashmap yet
+				skuQuantities.put(sku, order.getLineItemQuantity()); //Add sku and initial quantity			
+				skuList.add(sku); //add sku
+				skuNames.put(sku, order.getLineItemName()); //Add sku and name
+				
+				if(order.getVendor().contains("Gym Meals Direct"))
+					namesListGMD.add(name);
+				if(order.getVendor().contains("Easy Life Meals"))
+					namesListSpecials.add(name);
 			}		
+
+					
 		}
 		System.out.println("Total Meals Count: "+totalQuantity);
 		System.out.println("Large Meals Count: "+larges);
@@ -174,23 +186,41 @@ public class FileFunctions
 		
 		
 		System.out.print("Sorting Meal Names...");
-		for(String currentSku: skus){
-			Names.put(skuNames.get(currentSku), currentSku);
-			names.add(skuNames.get(currentSku));			
+		for(String currentSku: skuList){
+			namesSkus.put(skuNames.get(currentSku), currentSku);
+			namesList.add(skuNames.get(currentSku));			
 		}
-		Collections.sort(names);
-		skus.clear();
-		for(String currentName : names){
-			skus.add(Names.get(currentName));
+		
+		skuList.clear();
+		Collections.sort(namesList);
+		Collections.sort(namesListGMD);
+		Collections.sort(namesListSpecials);
+		for(String currentName : namesList){
+			skuList.add(namesSkus.get(currentName));
 		}
 		System.out.println(" Done!");
 
 
-		System.out.print("Calculating meal totals...");
-		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skus, larges, smalls, snacks);//Prints the totals of each meal
+		System.out.print("Printing all meal totals...");
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, larges, smalls, snacks, false, "_meal_totals_FULL.csv");//Prints the totals of each meal
+		
+		System.out.print("Printing gmd meal totals...");
+		skuList.clear();
+		for(String currentName : namesListGMD){
+			skuList.add(namesSkus.get(currentName));
+		}
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, larges, smalls, snacks, false, "_meal_totals_GMD.csv");//Prints the totals of each meal
 
-		System.out.print("Calculating ingredient totals...");
-		CalcPrintIngredients(skuQuantities,skuNames); //Calculate the ingredients required
+		System.out.print("Calculating gmd ingredient totals...");
+		CalcPrintIngredients(skuQuantities,skuNames, skuList); //Calculate the ingredients required
+		
+		System.out.print("Printing chef specials meal totals...");
+		skuList.clear();
+		for(String currentName : namesListSpecials){
+			skuList.add(namesSkus.get(currentName));
+		}
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, larges, smalls, snacks, true, "_meal_totals_SPECIALS.csv");//Prints the totals of each meal
+		
 		
 		System.out.print("Printing sorted delivery methods...");
 		PrintShipping(ordersByShippingMethod); //Print the shipping details of each order of each method
@@ -200,12 +230,12 @@ public class FileFunctions
 	 *   Writes the total sold quantities of each menu item
 	 *   to file '_meal_totals.csv'
 	 */
-	public static void PrintMealTotals(HashMap<String, Integer> quantities, HashMap<String, String> names, int total, ArrayList<String> skus, int larges, int smalls, int snacks){
+	public static void PrintMealTotals(HashMap<String, Integer> quantities, HashMap<String, String> skuNames, int total, ArrayList<String> skus, int larges, int smalls, int snacks, boolean skip, String fileName){
 		try
 		{
 			// creating a BufferedWriter instance with FileWriter
 			// the flag set to 'true' tells it to append a file if file exists. 'false' creates/recreates the file
-			BufferedWriter totals = new BufferedWriter(new FileWriter("_meal_totals.csv", false));
+			BufferedWriter totals = new BufferedWriter(new FileWriter(fileName, false));
 			String mealName;
 			String sauceName;
 			
@@ -215,24 +245,41 @@ public class FileFunctions
 			
 			ArrayList<String> itemNames = new ArrayList<String>();
 			ArrayList<String> itemSkus = new ArrayList<String>();
+			int subtotal = 0;
+			int subtotalLarge = 0;
+			int subtotalSmall = 0;
 
-			totals.write("TOTAL MEALS: "+ (total-snacks));
-			totals.newLine();
-			totals.newLine();
-			totals.newLine();
+			if(!fileName.contains("GMD")){
+				totals.write("TOTAL MEALS: "+ (total-snacks));
+				totals.newLine();
+				totals.newLine();
+				totals.newLine();
+			}
+			
 			totals.write("NAME"+","+"TOTAL"+","+"MEAL");
 			totals.newLine();
+			
 
 			// Write the quantities of each meal to file
 			for(String sku : skus){
-					
-				itemSkus.add(sku);
-				itemNames.add(names.get(sku));
+//				String sku = namesSku.get(name);
 				
-				totals.write(names.get(sku)+ "," +quantities.get(sku)+ ","+sku);
+				itemSkus.add(sku);
+				itemNames.add(skuNames.get(sku));
+				
+				totals.write(skuNames.get(sku)+ "," +quantities.get(sku)+ ","+sku);
 				totals.newLine();
 				
-				mealName = names.get(sku).toLowerCase();
+				subtotal+=quantities.get(sku);
+				if(skuNames.get(sku).contains("LARGE"))
+					subtotalLarge += quantities.get(sku);
+				if(skuNames.get(sku).contains("SMALL") || skuNames.get(sku).contains("Red Cross") || skuNames.get(sku).contains("Meals on Wheels"))
+					subtotalSmall += quantities.get(sku);
+				
+				if(skip)
+					continue;
+				
+				mealName = skuNames.get(sku).toLowerCase();
 				if (mealName.contains("steak")){
 					if((mealName.contains("brown rice"))&&(mealName.contains("veg"))){
 						if(mealName.contains("large"))
@@ -296,11 +343,10 @@ public class FileFunctions
 						if(mealName.contains("small"))
 							typeTotals[11]+=quantities.get(sku);
 					}
-				}
+				}				
 				
 				
-				
-				String[] mealNameSplit = names.get(sku).split(" - ");
+				String[] mealNameSplit = skuNames.get(sku).split(" - ");
 				sauceName = mealNameSplit[0];
 				
 				if (sku.contains("LGE")||sku.contains("SML"))
@@ -315,8 +361,12 @@ public class FileFunctions
 				}
 					
 			}
+			
+			totals.newLine();
+			totals.write("SUBTOTAL:"+ ","+(subtotal));
+
 					
-			if (!sauceTotals.isEmpty()){
+			if (!sauceTotals.isEmpty() && !skip){
 				//Writing the totals for each meal type
 				totals.newLine();
 				totals.newLine();
@@ -364,11 +414,14 @@ public class FileFunctions
 			totals.newLine();totals.newLine();
 			totals.write(","+"QUANTITY"+","+"%");
 			totals.newLine();
-			totals.write("Large Meals"+","+larges+","+String.format("%1$,.2f", larges*100.0/total)+" %");
+			totals.write("Large Meals"+","+subtotalLarge+","+String.format("%1$,.2f", subtotalLarge*100.0/subtotal)+" %");
 			totals.newLine();
-			totals.write("Small Meals"+","+smalls+","+String.format("%1$,.2f", smalls*100.0/total)+" %");
-			totals.newLine();
-			totals.write("Snacks"+","+snacks+","+String.format("%1$,.2f", snacks*100.0/total)+" %");
+			totals.write("Small Meals"+","+subtotalSmall+","+String.format("%1$,.2f", subtotalSmall*100.0/subtotal)+" %");
+			
+			if(fileName.contains("FULL")){
+				totals.newLine();
+				totals.write("Snacks"+","+snacks+","+String.format("%1$,.2f", snacks*100.0/subtotal)+" %");
+			}
 				
 			totals.close();
 			System.out.println(" Done!");
@@ -384,7 +437,7 @@ public class FileFunctions
 	 * This method calculates the quantities of each ingredient and prints them to file.
 	 * File will be '_ingredients.csv'
 	 */
-	public static void CalcPrintIngredients(HashMap<String, Integer> quantities, HashMap<String, String> names){
+	public static void CalcPrintIngredients(HashMap<String, Integer> quantities, HashMap<String, String> names, ArrayList<String> skus){
 		
 		List<Ingredient> ingredients = new ArrayList<>();
 		HashMap<String, Double> ingredientsRawMultiplier = new HashMap<>();
@@ -483,7 +536,7 @@ public class FileFunctions
 		 * This is accomplished by searching the menu item name for keywords like large, chicken, rice, etc
 		 * i.e 'Pepperberry Steak - Large/Rice' would add 200g to the beef and rice quantities
 		 */
-		for(String sku : quantities.keySet()){
+		for(String sku : skus){
 			String tempName = names.get(sku).toLowerCase();
 
 			if(tempName.contains("supabarn")){
