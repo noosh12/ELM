@@ -83,6 +83,15 @@ public class FileFunctions
 				if(lineItemName.toLowerCase().contains("raw bars")){
 					lineItemName = "  " + lineItemName;
 				}
+				if(vendor.toLowerCase().contains("snack")){
+					lineItemName = " " + lineItemName;
+				}
+				if(lineItemName.toLowerCase().contains("pancake")){
+					lineItemName = "_" + lineItemName;
+				}
+				if(lineItemName.toLowerCase().contains("omelette")){
+					lineItemName = "__" + lineItemName;
+				}
 			
 				
 				//build orderLine object from chosen extracted values
@@ -122,7 +131,6 @@ public class FileFunctions
 		{
 			String sku = order.getLineItemSKU(); //sku of current orderLine
 			String name = order.getLineItemName();
-			int extraSku;
 			totalQuantity += order.getLineItemQuantity(); //Total items sold counter
 			//System.out.println(order.getOrderID());
 			//System.out.println(order.getLineItemSKU());
