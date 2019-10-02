@@ -12,6 +12,7 @@ public class FileFunctions
 	{
 		int totalQuantity = 0;
 		int count = 0;
+		String lastOrder = "";
 		List<OrderItem> orderLine = new ArrayList<>();							//stores the OrderItem objects
 		HashMap<String, Integer> skuQuantities= new HashMap<String,Integer>();	//meal quantities
 		HashMap<String, String> skuNames= new HashMap<String,String>();			//meal names
@@ -23,6 +24,12 @@ public class FileFunctions
 		ArrayList<String> namesListSpecials = new ArrayList<String>(); //Arraylist that holds names - for sorting
 		HashMap<String, String> namesSkus= new HashMap<String,String>(); 
 		
+		HashMap<String, String> GRTRskuNames= new HashMap<String,String>();			//meal names
+		HashMap<String, String> GRTRnamesSkus= new HashMap<String,String>(); 
+		HashMap<String, Integer> GRTRskuQuantities= new HashMap<String,Integer>(); 
+		ArrayList<String> GRTRnamesList = new ArrayList<String>(); //Arraylist that holds names - for sorting
+		
+		
 		System.out.println("EASY LIFE MEALS  |  GYM MEALS DIRECT");
 		System.out.println();
 		System.out.println("loading file input.csv ...");
@@ -33,6 +40,7 @@ public class FileFunctions
 			System.out.print("Reading...");
 			String fileRead = input.readLine(); // Headers
 			fileRead = input.readLine(); //first real line
+			lastOrder = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[14];
 			
 			while (fileRead != null)
 			{
@@ -40,11 +48,9 @@ public class FileFunctions
 				String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 				
 				//Fixing lines that are incorrectly ended prematurely due to line break in fields like 'notes'
-				// System.out.print("line size = "+tokenize.length+"   ");
 				while(tokenize.length<56){
 					fileRead = fileRead + input.readLine();
 					tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-//					System.out.println("line size = "+tokenize.length);
 				}		
 
 				String orderID = tokenize[0];							//OrderID
@@ -67,14 +73,6 @@ public class FileFunctions
 				if(shippingName == null || shippingName.isEmpty()){
 					shippingName = billingName;
 				}
-				//remove apostrophe from postcode from shopify output
-//				if(shippingPostcode.contains("'")){
-//					shippingPostcode = shippingPostcode.replace("'", "");
-//				}
-//				//remove special characters from mobile from shopify output
-//				if(shippingPhone.contains("'")){
-//					shippingPhone = shippingPhone.replace("'", "");
-//				}
 				
 				//indenting protein ball names so they're seperated from the ordinary meals
 				if(lineItemName.toLowerCase().contains("protein balls")){
@@ -92,19 +90,15 @@ public class FileFunctions
 				if(lineItemName.toLowerCase().contains("omelette")){
 					lineItemName = "__" + lineItemName;
 				}
-			
 				
 				//build orderLine object from chosen extracted values
 				orderLine.add(
 					new OrderItem(orderID, discountCode, shippingMethod, lineItemQuantity, lineItemName,
 						lineItemSKU, billingName, shippingAddress1, shippingCity, shippingPostcode, notes, shippingPhone, email, vendor)
 				);
-				
-				//System.out.println("Built Order "+count);
-				//System.out.print("reading in new line from file... ");
+
 				fileRead = input.readLine();
 				count+=1;
-				//System.out.println("line read");
 			}
 
 			input.close();
@@ -114,7 +108,98 @@ public class FileFunctions
 		catch (FileNotFoundException fnfe)
 		{
 			System.out.println("error: file not found!");
+//			System.exit(1);
+		}
+		catch (IOException ioe)
+		{
+			ioe.printStackTrace();
 			System.exit(1);
+		}
+		
+		//GRTR
+		System.out.println();
+		System.out.println("loading file input_grtr.csv ...");
+		try
+		{
+			
+//			HashMap<String, String> GRTRskuNames= new HashMap<String,String>();			//meal names
+//			HashMap<String, String> GRTRnamesSkus= new HashMap<String,String>();
+			
+			
+			BufferedReader input = new BufferedReader(new FileReader("input_grtr.csv"));//Buffered Reader object instance with FileReader
+			System.out.print("Reading...");
+			String[] GRTRmealNames = input.readLine().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");; // meal names
+			String[] GRTRskus = input.readLine().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");; // meal names
+			int firstMealIndex = 0;
+			
+			String fileRead = input.readLine(); //first real line
+			
+			for(int i = 0; i<GRTRmealNames.length; i++){
+				if(GRTRmealNames[i] == null || GRTRmealNames[i].isEmpty()){
+					firstMealIndex++;
+					continue;
+				}
+				GRTRnamesSkus.put(GRTRmealNames[i], GRTRskus[i]);
+				GRTRskuNames.put(GRTRskus[i], GRTRmealNames[i]);
+				GRTRnamesList.add(GRTRmealNames[i]);
+				GRTRskuQuantities.put(GRTRskus[i], 0);
+			}
+			
+			while (fileRead != null)
+			{
+				// split input line on commas, except those between quotes ("")
+				String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+				
+
+				String orderID = "GRTR-" + tokenize[0];							//OrderID
+				String email = "";
+				String discountCode = "";
+				String shippingMethod = "GRTR Delivery";					//shipping method that was used
+				int lineItemQuantity = 0;	//quantity of current item
+				String lineItemName = "";						//product name of current item
+				String lineItemSKU = "";						//SKU of current item (i.e. GMD-12)
+				String billingName = tokenize[1]+" "+tokenize[2];						//Billing Name provided by customer
+				String shippingName = billingName;						//Shipping Name provided by customer
+				String shippingAddress1 = tokenize[4];					//Shipping Address provided
+				String shippingCity = tokenize[6];						//Shipping city provided (suburb)
+				String shippingPostcode = tokenize[5];
+				String shippingPhone = "";
+				String notes=tokenize[7];								//notes provided by customer regarding shipping
+				String vendor="GRTR";
+			
+				
+				for(int i=firstMealIndex; i<tokenize.length; i++){
+					if(tokenize[0] == null || tokenize[0].isEmpty())
+						continue;
+					
+					if(!tokenize[i].equals("0") && tokenize[i] != null && !	tokenize[i].isEmpty()) {
+						lineItemQuantity = Integer.parseInt(tokenize[i]);
+						lineItemName = GRTRmealNames[i];
+						lineItemSKU = GRTRskus[i];
+						System.out.println("item");
+						System.out.println(lineItemName);
+						System.out.println(lineItemQuantity);
+						
+						System.out.println(GRTRskuQuantities.get(lineItemSKU));
+						GRTRskuQuantities.put(lineItemSKU, GRTRskuQuantities.get(lineItemSKU) + lineItemQuantity);
+						System.out.println(GRTRskuQuantities.get(lineItemSKU));
+						
+						orderLine.add(
+								new OrderItem(orderID, discountCode, shippingMethod, lineItemQuantity, lineItemName,
+										lineItemSKU, billingName, shippingAddress1, shippingCity, shippingPostcode, notes, shippingPhone, email, vendor)
+						);
+					}
+				}
+
+				fileRead = input.readLine();
+			}
+
+			input.close();
+			System.out.println();
+		}
+		catch (FileNotFoundException fnfe)
+		{
+			System.out.println("No GRTR input found");
 		}
 		catch (IOException ioe)
 		{
@@ -144,6 +229,19 @@ public class FileFunctions
 			}
 			orderCount++; //Processed orders (gift card orders are NOT processed
 			
+			// Storing the different shipping methods and the different orders to each shipping method
+			if (!(order.getOrderID().equals(oldOrderID))){
+				String shippingMethod = order.getShippingMethod().toLowerCase();
+				if (!ordersByShippingMethod.containsKey(shippingMethod)){
+					ordersByShippingMethod.put(shippingMethod, new ArrayList<OrderItem>());		
+				}
+				ordersByShippingMethod.get(shippingMethod).add(order);
+				oldOrderID=order.getOrderID();
+			}
+			
+			if(order.getVendor().equals("GRTR"))
+				continue;
+			
 			if(order.getLineItemName().toLowerCase().contains("large"))
 				larges+=order.getLineItemQuantity();
 			if(order.getLineItemName().toLowerCase().contains("small"))
@@ -154,16 +252,7 @@ public class FileFunctions
 				smalls+=order.getLineItemQuantity();
 			if(order.getVendor().toLowerCase().contains("snack") || order.getVendor().toLowerCase().contains("macro"))
 				snacks+=order.getLineItemQuantity();
-			
-			// Storing the different shipping methods and the different orders to each shipping method
-			if (!(order.getOrderID().equals(oldOrderID))){
-				String shippingMethod = order.getShippingMethod().toLowerCase();
-				if (!ordersByShippingMethod.containsKey(shippingMethod)){
-					ordersByShippingMethod.put(shippingMethod, new ArrayList<OrderItem>());		
-				}
-				ordersByShippingMethod.get(shippingMethod).add(order);
-				oldOrderID=order.getOrderID();
-			}
+
 			
 			// Tally order quantities in a HashMap on SKU
 			if (skuQuantities.containsKey(sku)){	//if sku already exists in hashMap
@@ -210,14 +299,23 @@ public class FileFunctions
 
 
 		System.out.print("Printing all meal totals...");
-		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, larges, smalls, snacks, false, "_meal_totals_FULL.csv");//Prints the totals of each meal
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, false, "_meal_totals_FULL.csv");//Prints the totals of each meal
+		
+		System.out.print("Printing GRTR meal totals...");
+		ArrayList<String> GRTRskuList = new ArrayList<>();
+		Collections.sort(GRTRnamesList);
+		for(String currentName : GRTRnamesList){
+			GRTRskuList.add(GRTRnamesSkus.get(currentName));
+		}
+		PrintMealTotals(GRTRskuQuantities,GRTRskuNames,totalQuantity, GRTRskuList, snacks, false, "_meal_totals_GRTR.csv");//Prints the totals of each meal
+		
 		
 		System.out.print("Printing gmd meal totals...");
 		skuList.clear();
 		for(String currentName : namesListGMD){
 			skuList.add(namesSkus.get(currentName));
 		}
-		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, larges, smalls, snacks, false, "_meal_totals_GMD.csv");//Prints the totals of each meal
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, false, "_meal_totals_GMD.csv");//Prints the totals of each meal
 
 		System.out.print("Calculating gmd ingredient totals...");
 		CalcPrintIngredients(skuQuantities,skuNames, skuList); //Calculate the ingredients required
@@ -227,7 +325,7 @@ public class FileFunctions
 		for(String currentName : namesListSpecials){
 			skuList.add(namesSkus.get(currentName));
 		}
-		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, larges, smalls, snacks, true, "_meal_totals_SPECIALS.csv");//Prints the totals of each meal
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, true, "_meal_totals_SPECIALS.csv");//Prints the totals of each meal
 		
 		
 		System.out.print("Printing sorted delivery methods...");
@@ -238,7 +336,7 @@ public class FileFunctions
 	 *   Writes the total sold quantities of each menu item
 	 *   to file '_meal_totals.csv'
 	 */
-	public static void PrintMealTotals(HashMap<String, Integer> quantities, HashMap<String, String> skuNames, int total, ArrayList<String> skus, int larges, int smalls, int snacks, boolean skip, String fileName){
+	public static void PrintMealTotals(HashMap<String, Integer> quantities, HashMap<String, String> skuNames, int total, ArrayList<String> skus, int snacks, boolean skip, String fileName){
 
 		ArrayList<String> preferredMealOrderSkus = new ArrayList<>();
 		
@@ -306,8 +404,12 @@ public class FileFunctions
 			int subtotal = 0;
 			int subtotalLarge = 0;
 			int subtotalSmall = 0;
+			
+			totals.write(fileName);
+			totals.newLine();
+			totals.newLine();
 
-			if(!fileName.contains("GMD")){
+			if(!fileName.contains("GMD") && !fileName.contains("GRTR")){
 				totals.write("TOTAL MEALS: "+ (total-snacks));
 				totals.newLine();
 				totals.newLine();
@@ -325,15 +427,16 @@ public class FileFunctions
 //				String sku = namesSku.get(name);
 				
 				itemSkus.add(sku);
+				String name = skuNames.get(sku);
 				itemNames.add(skuNames.get(sku));
 				
 				totals.write(skuNames.get(sku)+ "," +quantities.get(sku)+ ","+sku);
 				totals.newLine();
 				
 				subtotal+=quantities.get(sku);
-				if(skuNames.get(sku).contains("LARGE"))
+				if(skuNames.get(sku).toUpperCase()	.contains("LARGE"))
 					subtotalLarge += quantities.get(sku);
-				if(skuNames.get(sku).contains("SMALL") || skuNames.get(sku).contains("Red Cross") || skuNames.get(sku).contains("Meals on Wheels"))
+				if(skuNames.get(sku).toUpperCase().contains("SMALL") || skuNames.get(sku).contains("Red Cross") || skuNames.get(sku).contains("Meals on Wheels") || skuNames.get(sku).toUpperCase().contains("REGULAR"))
 					subtotalSmall += quantities.get(sku);
 				
 				if(skip)
