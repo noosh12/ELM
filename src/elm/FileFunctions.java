@@ -64,7 +64,7 @@ public class FileFunctions
 				String vendor=tokenize[50];
 				
 				//if customer has not ticked shipping is same as billing, and has left shipping blank
-				if(shippingName != null && !shippingName.isEmpty()){
+				if(shippingName == null || shippingName.isEmpty()){
 					shippingName = billingName;
 				}
 				//remove apostrophe from postcode from shopify output
