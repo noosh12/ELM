@@ -1,10 +1,15 @@
 package elm;
 
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.HashMap;
+import java.time.LocalDateTime; // Import the LocalDateTime class
+import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 
 public class FileFunctions
 {
@@ -40,7 +45,7 @@ public class FileFunctions
 			System.out.print("Reading...");
 			String fileRead = input.readLine(); // Headers
 			fileRead = input.readLine(); //first real line
-			lastOrder = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[14];
+			lastOrder = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[15];
 			
 			while (fileRead != null)
 			{
@@ -160,9 +165,9 @@ public class FileFunctions
 				String lineItemSKU = "";						//SKU of current item (i.e. GMD-12)
 				String billingName = tokenize[1]+" "+tokenize[2];						//Billing Name provided by customer
 				String shippingName = billingName;						//Shipping Name provided by customer
-				String shippingAddress1 = tokenize[4];					//Shipping Address provided
-				String shippingCity = tokenize[6];						//Shipping city provided (suburb)
-				String shippingPostcode = tokenize[5];
+				String shippingAddress1 = tokenize[3];					//Shipping Address provided
+				String shippingCity = tokenize[5];						//Shipping city provided (suburb)
+				String shippingPostcode = tokenize[4];
 				String shippingPhone = "";
 				String notes=tokenize[7];								//notes provided by customer regarding shipping
 				String vendor="GRTR";
@@ -299,7 +304,7 @@ public class FileFunctions
 
 
 		System.out.print("Printing all meal totals...");
-		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, false, "_meal_totals_FULL.csv");//Prints the totals of each meal
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, false, "_meal_totals_FULL.csv", lastOrder);//Prints the totals of each meal
 		
 		System.out.print("Printing GRTR meal totals...");
 		ArrayList<String> GRTRskuList = new ArrayList<>();
@@ -307,7 +312,7 @@ public class FileFunctions
 		for(String currentName : GRTRnamesList){
 			GRTRskuList.add(GRTRnamesSkus.get(currentName));
 		}
-		PrintMealTotals(GRTRskuQuantities,GRTRskuNames,totalQuantity, GRTRskuList, snacks, false, "_meal_totals_GRTR.csv");//Prints the totals of each meal
+		PrintMealTotals(GRTRskuQuantities,GRTRskuNames,totalQuantity, GRTRskuList, snacks, false, "_meal_totals_GRTR.csv", lastOrder);//Prints the totals of each meal
 		
 		
 		System.out.print("Printing gmd meal totals...");
@@ -315,7 +320,7 @@ public class FileFunctions
 		for(String currentName : namesListGMD){
 			skuList.add(namesSkus.get(currentName));
 		}
-		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, false, "_meal_totals_GMD.csv");//Prints the totals of each meal
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, false, "_meal_totals_GMD.csv", lastOrder);//Prints the totals of each meal
 
 		System.out.print("Calculating gmd ingredient totals...");
 		CalcPrintIngredients(skuQuantities,skuNames, skuList); //Calculate the ingredients required
@@ -325,7 +330,7 @@ public class FileFunctions
 		for(String currentName : namesListSpecials){
 			skuList.add(namesSkus.get(currentName));
 		}
-		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, true, "_meal_totals_SPECIALS.csv");//Prints the totals of each meal
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, true, "_meal_totals_SPECIALS.csv", lastOrder);//Prints the totals of each meal
 		
 		
 		System.out.print("Printing sorted delivery methods...");
@@ -336,7 +341,7 @@ public class FileFunctions
 	 *   Writes the total sold quantities of each menu item
 	 *   to file '_meal_totals.csv'
 	 */
-	public static void PrintMealTotals(HashMap<String, Integer> quantities, HashMap<String, String> skuNames, int total, ArrayList<String> skus, int snacks, boolean skip, String fileName){
+	public static void PrintMealTotals(HashMap<String, Integer> quantities, HashMap<String, String> skuNames, int total, ArrayList<String> skus, int snacks, boolean skip, String fileName, String date){
 
 		ArrayList<String> preferredMealOrderSkus = new ArrayList<>();
 		
@@ -405,7 +410,15 @@ public class FileFunctions
 			int subtotalLarge = 0;
 			int subtotalSmall = 0;
 			
+//			SimpleDateFormat dateFormat = new SimpleDateFormat("E, dd-MM-yyyy");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//			System.out.println(date.split("+")[0]);
+			Date dateFormatted = dateFormat.parse(date.split(" ")[0]+" "+date.split(" ")[1]);
+			System.out.println(dateFormatted);
+			
 			totals.write(fileName);
+			totals.newLine();
+			totals.write(dateFormatted.toString());
 			totals.newLine();
 			totals.newLine();
 
@@ -494,6 +507,9 @@ public class FileFunctions
 		{
 			ioe.printStackTrace();
 			System.exit(1);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
