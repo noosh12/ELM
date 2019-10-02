@@ -4,11 +4,12 @@ public class Ingredient {
 	private String ingredientName;
 	private Double ingredientQuantity=0.0;
 	private Double multiplier = 1.0;
-	
+	private String unit;
 
-	public Ingredient(String ingredientName, double multi) {
+	public Ingredient(String ingredientName, double multi, String unit) {
 		this.ingredientName=ingredientName;
 		this.multiplier=multi;
+		this.unit=unit;
 	}
 	
 	public Ingredient(String ingredientName) {
@@ -24,14 +25,13 @@ public class Ingredient {
 	}
 	
 	public String getFinalQuantity(){
-		if(this.ingredientName.contains("BASA"))
-			return this.ingredientQuantity+","+"fillets";
-		else if(this.ingredientName.contains("OMELETTE"))
-			return this.ingredientQuantity+","+"pieces";
-		else if(this.ingredientName.contains("SAUCE"))
+		if(this.unit.equalsIgnoreCase("kg"))
+			return Double.toString(this.ingredientQuantity/1000)+","+ this.unit;
+		else if (this.ingredientName.toLowerCase().contains("sauce"))
 			return this.ingredientQuantity+","+"mL";
 		else
-			return Double.toString(this.ingredientQuantity/1000)+","+"Kg";
+			return this.ingredientQuantity+","+this.unit;
+		
 	}
 	
 	public String getName(){

@@ -260,7 +260,7 @@ public class FileFunctions
 				while (meal != null)
 				{
 					if(meal.contains(",")){
-						System.out.println(meal);
+//						System.out.println(meal);
 						meal = meal.split(",")[0];
 					}
 					preferredMealOrderSkus.add(namesSkus.get(meal));
@@ -423,17 +423,28 @@ public class FileFunctions
 				lineCount++;
 				double multiplier = 1.0;
 				ingredient = ingredient.toUpperCase();
+				String unit = "Kg";
+				
 				if(ingredient.contains(",")){
 					String[] fullLine = ingredient.split(",");
 					ingredient = fullLine[0];
+					
 					try{
 						multiplier = Double.parseDouble(fullLine[1]);
 					} catch (Exception e){
 						errors.add("Unable to process number from input_ingredient line:"+lineCount+", name: " +ingredient);
 						System.out.println("Unable to process number from input_ingredient line:"+lineCount+", name: " +ingredient);
 					}
+					
+					if(fullLine.length >= 3){ //contains unit
+						if(!fullLine[2].isEmpty() && fullLine[2] != null){ //valid unit
+							unit = fullLine[2];
+						}
+					}
 				}
-				ingredients.put(ingredient, new Ingredient(ingredient, multiplier));
+				
+				
+				ingredients.put(ingredient, new Ingredient(ingredient, multiplier, unit));
 				ingredient = ingredientFile.readLine();	
 			}
 			ingredientFile.close();
