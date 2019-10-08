@@ -45,12 +45,18 @@ public class FileFunctions
 			System.out.print("Reading...");
 			String fileRead = input.readLine(); // Headers
 			fileRead = input.readLine(); //first real line
+			
+			String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+			while(tokenize.length<56){
+				fileRead = fileRead + input.readLine();
+				tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+			}	
 			lastOrder = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[15];
 			
 			while (fileRead != null)
 			{
 				// split input line on commas, except those between quotes ("")
-				String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+				tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 				
 				//Fixing lines that are incorrectly ended prematurely due to line break in fields like 'notes'
 				while(tokenize.length<56){
@@ -63,7 +69,7 @@ public class FileFunctions
 				String discountCode = tokenize[12];						//coupon that was used
 				String shippingMethod = tokenize[14];					//shipping method that was used
 				int lineItemQuantity = Integer.parseInt(tokenize[16]);	//quantity of current item
-				String lineItemName = tokenize[17];						//product name of current item
+				String lineItemName = tokenize[17].toUpperCase();						//product name of current item
 				String lineItemSKU = tokenize[20];						//SKU of current item (i.e. GMD-12)
 				String billingName = tokenize[24];						//Billing Name provided by customer
 				String shippingName = tokenize[34];						//Shipping Name provided by customer
@@ -122,18 +128,13 @@ public class FileFunctions
 		}
 		
 		//GRTR
-		System.out.println();
 		System.out.println("loading file input_grtr.csv ...");
 		try
 		{
-			
-//			HashMap<String, String> GRTRskuNames= new HashMap<String,String>();			//meal names
-//			HashMap<String, String> GRTRnamesSkus= new HashMap<String,String>();
-			
-			
+
 			BufferedReader input = new BufferedReader(new FileReader("input_grtr.csv"));//Buffered Reader object instance with FileReader
 			System.out.print("Reading...");
-			String[] GRTRmealNames = input.readLine().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");; // meal names
+			String[] GRTRmealNames = input.readLine().toUpperCase().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"); // meal names
 			String[] GRTRskus = input.readLine().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");; // meal names
 			int firstMealIndex = 0;
 			
@@ -181,13 +182,8 @@ public class FileFunctions
 						lineItemQuantity = Integer.parseInt(tokenize[i]);
 						lineItemName = GRTRmealNames[i];
 						lineItemSKU = GRTRskus[i];
-						System.out.println("item");
-						System.out.println(lineItemName);
-						System.out.println(lineItemQuantity);
-						
-						System.out.println(GRTRskuQuantities.get(lineItemSKU));
+
 						GRTRskuQuantities.put(lineItemSKU, GRTRskuQuantities.get(lineItemSKU) + lineItemQuantity);
-						System.out.println(GRTRskuQuantities.get(lineItemSKU));
 						
 						orderLine.add(
 								new OrderItem(orderID, discountCode, shippingMethod, lineItemQuantity, lineItemName,
@@ -200,6 +196,7 @@ public class FileFunctions
 			}
 
 			input.close();
+			System.out.println(" Done!");
 			System.out.println();
 		}
 		catch (FileNotFoundException fnfe)
@@ -222,8 +219,6 @@ public class FileFunctions
 			String sku = order.getLineItemSKU(); //sku of current orderLine
 			String name = order.getLineItemName();
 			totalQuantity += order.getLineItemQuantity(); //Total items sold counter
-			//System.out.println(order.getOrderID());
-			//System.out.println(order.getLineItemSKU());
 
 			//Skip to next orderLine object if order is a gift card
 			//This is because gift cards don't contain a sku, and as such, give us problems later on if we process it
@@ -322,8 +317,14 @@ public class FileFunctions
 		}
 		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, false, "_meal_totals_GMD.csv", lastOrder);//Prints the totals of each meal
 
-		System.out.print("Calculating gmd ingredient totals...");
-		CalcPrintIngredients(skuQuantities,skuNames, skuList); //Calculate the ingredients required
+		System.out.print("Calculating gmd & grtr ingredient totals...");
+		GRTRskuList.addAll(skuList);
+		GRTRskuQuantities.putAll(skuQuantities);
+		GRTRskuNames.putAll(skuNames);
+		ArrayList<String> mealsToBeCalculated = new ArrayList<>();
+		mealsToBeCalculated.addAll(namesListGMD);
+		mealsToBeCalculated.addAll(GRTRnamesList);
+		CalcPrintIngredients(GRTRskuQuantities,GRTRskuNames, GRTRskuList, mealsToBeCalculated); //Calculate the ingredients required
 		
 		System.out.print("Printing chef specials meal totals...");
 		skuList.clear();
@@ -364,7 +365,7 @@ public class FileFunctions
 				{
 					if(meal.contains(",")){
 //						System.out.println(meal);
-						meal = meal.split(",")[0];
+						meal = meal.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[0];
 					}
 					preferredMealOrderSkus.add(namesSkus.get(meal));
 					meal = mealOrder.readLine();
@@ -414,7 +415,6 @@ public class FileFunctions
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //			System.out.println(date.split("+")[0]);
 			Date dateFormatted = dateFormat.parse(date.split(" ")[0]+" "+date.split(" ")[1]);
-			System.out.println(dateFormatted);
 			
 			totals.write(fileName);
 			totals.newLine();
@@ -431,8 +431,6 @@ public class FileFunctions
 			
 			totals.write("NAME"+","+"TOTAL"+","+"MEAL");
 			totals.newLine();
-			
-			
 			
 
 			// Write the quantities of each meal to file
@@ -517,7 +515,7 @@ public class FileFunctions
 	 * This method calculates the quantities of each ingredient and prints them to file.
 	 * File will be '_ingredients.csv'
 	 */
-	public static void CalcPrintIngredients(HashMap<String, Integer> quantities, HashMap<String, String> names, ArrayList<String> skus){
+	public static void CalcPrintIngredients(HashMap<String, Integer> quantities, HashMap<String, String> names, ArrayList<String> skus, ArrayList<String> unmatched){
 		
 		HashMap<String, Ingredient> ingredients = new HashMap<>();
 		List<String> errors = new ArrayList<>();
@@ -528,7 +526,7 @@ public class FileFunctions
 		for(String sku: names.keySet()){
 			namesSkus.put(names.get(sku), sku);
 		}
-		
+	
 		try
 		{
 			System.out.println();
@@ -545,8 +543,8 @@ public class FileFunctions
 				String unit = "Kg";
 				
 				if(ingredient.contains(",")){
-					String[] fullLine = ingredient.split(",");
-					ingredient = fullLine[0];
+					String[] fullLine = ingredient.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+					ingredient = fullLine[0].toUpperCase();
 					
 					try{
 						multiplier = Double.parseDouble(fullLine[1]);
@@ -576,7 +574,6 @@ public class FileFunctions
 			System.out.println("error: ioexception!");
 		}
 		
-		
 		try
 		{
 			System.out.println();
@@ -590,7 +587,7 @@ public class FileFunctions
 				lineCount++;
 				mealLine=mealLine.toUpperCase();
 				try{
-					String[] fullLine = mealLine.split(",");
+					String[] fullLine = mealLine.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 					
 					if(namesSkus.containsKey(fullLine[0])){
 						String sku = namesSkus.get(fullLine[0]);
@@ -604,6 +601,10 @@ public class FileFunctions
 							}	
 						}		
 						ingredients.get(fullLine[1]).addQuantity(quantities.get(sku), Double.parseDouble(fullLine[2]));
+						
+						if(unmatched.contains(fullLine[0])){
+							unmatched.remove(fullLine[0]);
+						}
 					}
 				} catch (Exception e){
 					String error = "Unable to process meal from input_meals.csv line:"+lineCount+", name: " +mealLine;
@@ -620,6 +621,12 @@ public class FileFunctions
 		} catch (IOException e) {
 			System.out.println("error: ioexception!");
 		}
+		
+		if(!unmatched.isEmpty()){
+			for(String meal: unmatched){
+				errors.add("No meal ingredients found for: "+meal);
+			}
+		}
 
 		/*
 		 * Totalling Ingredient Quantities
@@ -628,6 +635,7 @@ public class FileFunctions
 		for(String ingredientName : ingredients.keySet()){
 //			System.out.println(ingredientName+"  " +ingredients.get(ingredientName).getQuantity());
 			ingredientNames.add(ingredientName);
+//			System.out.println(ingredientName);
 		}
 		Collections.sort(ingredientNames);
 		
@@ -642,27 +650,14 @@ public class FileFunctions
 			ingredientsFile.write("INGREDIENT"+","+"QUANTITY"+","+"UNIT");
 			ingredientsFile.newLine();
 
-//			for (Ingredient ingri : ingredients)
-//			{
-//				if(ingri.getQuantity() == 0)
-//					continue;
-//				
-//				ingredientsFile.newLine();
-//				ingredientsFile.write(ingri.getName()+","+(float)ingri.getQuantity()/1000);
-////				if(ingredientsRawMultiplier.containsKey(ingri.getName())){
-////					ingredientsFile.write(","+((float)ingri.getQuantity()*ingredientsRawMultiplier.get(ingri.getName()))/1000);
-////				}
-//			}
+
 			for(String ingredientName : ingredientNames){
-				
 				if(ingredients.get(ingredientName).getQuantity() == 0.0)
 					continue;
 				
 				ingredientsFile.newLine();
 				ingredientsFile.write(ingredientName+","+ingredients.get(ingredientName).getFinalQuantity());
-//				if(ingredientsRawMultiplier.containsKey(ingri.getName())){
-//					ingredientsFile.write(","+((float)ingri.getQuantity()*ingredientsRawMultiplier.get(ingri.getName()))/1000);
-//				}
+
 			}
 			
 			ingredientsFile.newLine();
