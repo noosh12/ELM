@@ -180,7 +180,7 @@ public class FileFunctions
 					
 					if(!tokenize[i].equals("0") && tokenize[i] != null && !	tokenize[i].isEmpty()) {
 						lineItemQuantity = Integer.parseInt(tokenize[i]);
-						lineItemName = GRTRmealNames[i];
+						lineItemName = GRTRmealNames[i].toUpperCase();
 						lineItemSKU = GRTRskus[i];
 
 						GRTRskuQuantities.put(lineItemSKU, GRTRskuQuantities.get(lineItemSKU) + lineItemQuantity);
@@ -369,7 +369,7 @@ public class FileFunctions
 //						System.out.println(meal);
 						meal = meal.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[0];
 					}
-					preferredMealOrderSkus.add(namesSkus.get(meal));
+					preferredMealOrderSkus.add(namesSkus.get(meal.toUpperCase()));
 					meal = mealOrder.readLine();
 				}
 				mealOrder.close();
@@ -449,7 +449,7 @@ public class FileFunctions
 				totals.newLine();
 				
 				subtotal+=quantities.get(sku);
-				if(skuNames.get(sku).toUpperCase()	.contains("LARGE"))
+				if(skuNames.get(sku).toUpperCase().contains("LARGE"))
 					subtotalLarge += quantities.get(sku);
 				if(skuNames.get(sku).toUpperCase().contains("SMALL") || skuNames.get(sku).contains("RED CROSS") || skuNames.get(sku).contains("MEALS ON WHEELS") || skuNames.get(sku).toUpperCase().contains("REGULAR"))
 					subtotalSmall += quantities.get(sku);
