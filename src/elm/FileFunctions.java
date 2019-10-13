@@ -346,6 +346,8 @@ public class FileFunctions
 
 		ArrayList<String> preferredMealOrderSkus = new ArrayList<>();
 		
+		boolean kitchen = (fileName.equals("_meal_totals_GMD.csv") || fileName.equals("_meal_totals_GRTR.csv")) ? true : false;
+		
 		if(fileName.equals("_meal_totals_GMD.csv")){
 			//TODO change direction of sku-names
 			//temp fix to be removed once sku-names fullly implemented
@@ -442,12 +444,14 @@ public class FileFunctions
 				itemNames.add(skuNames.get(sku));
 				
 				totals.write(skuNames.get(sku)+ "," +quantities.get(sku)+ ","+sku);
+				if(kitchen)
+					totals.write("," + quantities.get(sku)/12 +"C +" + quantities.get(sku)%12);		
 				totals.newLine();
 				
 				subtotal+=quantities.get(sku);
 				if(skuNames.get(sku).toUpperCase()	.contains("LARGE"))
 					subtotalLarge += quantities.get(sku);
-				if(skuNames.get(sku).toUpperCase().contains("SMALL") || skuNames.get(sku).contains("Red Cross") || skuNames.get(sku).contains("Meals on Wheels") || skuNames.get(sku).toUpperCase().contains("REGULAR"))
+				if(skuNames.get(sku).toUpperCase().contains("SMALL") || skuNames.get(sku).contains("RED CROSS") || skuNames.get(sku).contains("MEALS ON WHEELS") || skuNames.get(sku).toUpperCase().contains("REGULAR"))
 					subtotalSmall += quantities.get(sku);
 				
 				if(skip)
