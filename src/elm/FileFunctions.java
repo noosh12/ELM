@@ -519,6 +519,7 @@ public class FileFunctions
 		
 		HashMap<String, Ingredient> ingredients = new HashMap<>();
 		List<String> errors = new ArrayList<>();
+		HashSet<String> ingredientMeals = new HashSet<>();
 		
 		//TODO change direction of sku-names
 		//temp fix to be removed once sku-names fullly implemented
@@ -639,7 +640,12 @@ public class FileFunctions
 		}
 		Collections.sort(ingredientNames);
 		
-
+		// Finding meals in input_meals that didn't exist on this run
+		ArrayList<String> ignoredIngredientMeals = new ArrayList<>();
+		ignoredIngredientMeals.addAll(ingredientMeals);
+		ignoredIngredientMeals.removeAll(names.values());
+		Collections.sort(ignoredIngredientMeals);
+		
 		// Writing ingredient quantities to file
 		try
 		{
@@ -669,7 +675,17 @@ public class FileFunctions
 					ingredientsFile.newLine();
 					ingredientsFile.write(",,,"+error);
 				}
-				
+			}
+			
+			ingredientsFile.newLine();
+			ingredientsFile.newLine();
+			ingredientsFile.write("MEALS NOT ORDERED:"+","+ignoredIngredientMeals.size());
+			
+			if(!ignoredIngredientMeals.isEmpty()){
+				for(String meal: ignoredIngredientMeals){
+					ingredientsFile.newLine();
+					ingredientsFile.write(",,,"+meal);
+				}
 			}
 
 			ingredientsFile.close();
