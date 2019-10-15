@@ -8,8 +8,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.HashMap;
-import java.time.LocalDateTime; // Import the LocalDateTime class
-import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
+import java.util.HashSet;
 
 public class FileFunctions
 {
@@ -131,7 +130,6 @@ public class FileFunctions
 		System.out.println("loading file input_grtr.csv ...");
 		try
 		{
-
 			BufferedReader input = new BufferedReader(new FileReader("input_grtr.csv"));//Buffered Reader object instance with FileReader
 			System.out.print("Reading...");
 			String[] GRTRmealNames = input.readLine().toUpperCase().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"); // meal names
@@ -252,7 +250,6 @@ public class FileFunctions
 				smalls+=order.getLineItemQuantity();
 			if(order.getVendor().toLowerCase().contains("snack") || order.getVendor().toLowerCase().contains("macro"))
 				snacks+=order.getLineItemQuantity();
-
 			
 			// Tally order quantities in a HashMap on SKU
 			if (skuQuantities.containsKey(sku)){	//if sku already exists in hashMap
@@ -270,7 +267,6 @@ public class FileFunctions
 				if(order.getVendor().contains("Easy Life Meals"))
 					namesListSpecials.add(name);
 			}		
-
 					
 		}
 		System.out.println("Total Meals Count: "+totalQuantity);
