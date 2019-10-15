@@ -27,8 +27,6 @@ public class Ingredient {
 	public String getFinalQuantity(){
 		if(this.unit.equalsIgnoreCase("kg"))
 			return Double.toString(this.ingredientQuantity/1000)+","+ this.unit;
-		else if (this.ingredientName.toLowerCase().contains("sauce"))
-			return this.ingredientQuantity+","+"mL";
 		else
 			return this.ingredientQuantity+","+this.unit;
 		

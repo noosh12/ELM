@@ -540,8 +540,7 @@ public class FileFunctions
 			{
 				lineCount++;
 				double multiplier = 1.0;
-				ingredient = ingredient.toUpperCase();
-				String unit = "Kg";
+				String unit = "kg";
 				
 				if(ingredient.contains(",")){
 					String[] fullLine = ingredient.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
@@ -559,8 +558,9 @@ public class FileFunctions
 							unit = fullLine[2];
 						}
 					}
+				} else {				
+					ingredient = ingredient.toUpperCase();
 				}
-				
 				
 				ingredients.put(ingredient, new Ingredient(ingredient, multiplier, unit));
 				ingredient = ingredientFile.readLine();	
@@ -589,11 +589,12 @@ public class FileFunctions
 				mealLine=mealLine.toUpperCase();
 				try{
 					String[] fullLine = mealLine.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+					ingredientMeals.add(fullLine[0]);
 					
 					if(namesSkus.containsKey(fullLine[0])){
 						String sku = namesSkus.get(fullLine[0]);
 						if(!ingredients.containsKey(fullLine[1])){
-							String error = "Unable to find ingredient: "+fullLine[1];
+							String error = "Unable to find ingredient in input_ingredients.csv: "+fullLine[1];
 							if(!errors.contains(error)){
 								errors.add(error);
 								System.out.println(error);
@@ -608,7 +609,7 @@ public class FileFunctions
 						}
 					}
 				} catch (Exception e){
-					String error = "Unable to process meal from input_meals.csv line:"+lineCount+", name: " +mealLine;
+					String error = "Unable to process meal/ingredient/quantity from input_meals.csv row:"+lineCount+", name: " +mealLine;
 					errors.add(error);
 					System.out.println(error);
 				}
@@ -625,7 +626,8 @@ public class FileFunctions
 		
 		if(!unmatched.isEmpty()){
 			for(String meal: unmatched){
-				errors.add("No meal ingredients found for: "+meal);
+				errors.add("No meal ingredients found for: "+meal +","+meal);
+				System.out.println("No meal ingredients found for: "+meal);
 			}
 		}
 
