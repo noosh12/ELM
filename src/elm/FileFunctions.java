@@ -151,9 +151,14 @@ public class FileFunctions
 			
 			while (fileRead != null)
 			{
+				
 				// split input line on commas, except those between quotes ("")
 				String[] tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 				
+				while(tokenize.length<12){
+					fileRead = fileRead + input.readLine();
+					tokenize = fileRead.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+				}				
 
 				String orderID = "GRTR-" + tokenize[0];							//OrderID
 				String email = "";
