@@ -139,7 +139,7 @@ public class FileFunctions
 			String fileRead = input.readLine(); //first real line
 			
 			for(int i = 0; i<GRTRmealNames.length; i++){
-				if(GRTRmealNames[i] == null || GRTRmealNames[i].isEmpty()){
+				if(GRTRmealNames[i] == null || GRTRmealNames[i].isEmpty() || GRTRmealNames[i].length() < 2){
 					firstMealIndex++;
 					continue;
 				}
