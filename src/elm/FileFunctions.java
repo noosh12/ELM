@@ -414,14 +414,15 @@ public class FileFunctions
 			int subtotalLarge = 0;
 			int subtotalSmall = 0;
 			
-//			SimpleDateFormat dateFormat = new SimpleDateFormat("E, dd-MM-yyyy");
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//			System.out.println(date.split("+")[0]);
-			Date dateFormatted = dateFormat.parse(date.split(" ")[0]+" "+date.split(" ")[1]);
-			
 			totals.write(fileName);
 			totals.newLine();
-			totals.write(dateFormatted.toString());
+			
+			if(date != null && !date.isEmpty()) {
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date dateFormatted = dateFormat.parse(date.split(" ")[0]+" "+date.split(" ")[1]);
+				totals.write(dateFormatted.toString());
+			}
+			
 			totals.newLine();
 			totals.newLine();
 
