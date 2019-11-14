@@ -509,6 +509,19 @@ public class FileFunctions
 				totals.newLine();
 				totals.write("Snacks"+","+snacks+","+String.format("%1$,.2f", snacks*100.0/subtotal)+" %");
 			}
+			
+			
+			if(fileName.contains("GRTR")){
+				totals.newLine();
+				ArrayList<String> alphaSkus = new ArrayList<>();;
+				alphaSkus.addAll(skus);
+				Collections.sort(alphaSkus);
+				
+				for(int i = 0; i < alphaSkus.size(); i++){
+					totals.newLine();
+					totals.write(alphaSkus.get(i));
+				}
+			}
 				
 			totals.close();
 			System.out.println(" Done!");
