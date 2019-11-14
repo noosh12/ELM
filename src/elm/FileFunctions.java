@@ -417,11 +417,17 @@ public class FileFunctions
 			totals.write(fileName);
 			totals.newLine();
 			
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date dateFormatted = new Date();
 			if(date != null && !date.isEmpty()) {
-				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date dateFormatted = dateFormat.parse(date.split(" ")[0]+" "+date.split(" ")[1]);
+//				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				dateFormatted = dateFormat.parse(date.split(" ")[0]+" "+date.split(" ")[1]);
 				totals.write(dateFormatted.toString());
+			} else {
+				totals.write("Generated Date: "+ dateFormatted.toString());
 			}
+			
+			
 			
 			totals.newLine();
 			totals.newLine();
