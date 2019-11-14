@@ -302,6 +302,13 @@ public class FileFunctions
 		System.out.print("Printing all meal totals...");
 		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, false, "_meal_totals_FULL.csv", lastOrder);//Prints the totals of each meal
 		
+		System.out.print("Printing all meal totals...");
+		ArrayList<String> tempSkus = new ArrayList<>();
+		tempSkus.addAll(skuList);
+		Collections.sort(tempSkus);
+		PrintMealTotals(skuQuantities,skuNames,totalQuantity, tempSkus, snacks, false, "_meal_totals_FULL_sku_sorted.csv", lastOrder);//Prints the totals of each meal
+		
+		
 		System.out.print("Printing GRTR meal totals...");
 		ArrayList<String> GRTRskuList = new ArrayList<>();
 		Collections.sort(GRTRnamesList);
@@ -309,6 +316,10 @@ public class FileFunctions
 			GRTRskuList.add(GRTRnamesSkus.get(currentName));
 		}
 		PrintMealTotals(GRTRskuQuantities,GRTRskuNames,totalQuantity, GRTRskuList, snacks, false, "_meal_totals_GRTR.csv", lastOrder);//Prints the totals of each meal
+		
+		System.out.print("Printing GRTR meal totals sorted by sku...");
+		Collections.sort(GRTRskuList);
+		PrintMealTotals(GRTRskuQuantities,GRTRskuNames,totalQuantity, GRTRskuList, snacks, false, "_meal_totals_GRTR_sku_sorted.csv", lastOrder);//Prints the totals of each meal
 		
 		
 		System.out.print("Printing gmd meal totals...");
@@ -508,19 +519,6 @@ public class FileFunctions
 			if(fileName.contains("FULL")){
 				totals.newLine();
 				totals.write("Snacks"+","+snacks+","+String.format("%1$,.2f", snacks*100.0/subtotal)+" %");
-			}
-			
-			
-			if(fileName.contains("GRTR")){
-				totals.newLine();
-				ArrayList<String> alphaSkus = new ArrayList<>();;
-				alphaSkus.addAll(skus);
-				Collections.sort(alphaSkus);
-				
-				for(int i = 0; i < alphaSkus.size(); i++){
-					totals.newLine();
-					totals.write(alphaSkus.get(i));
-				}
 			}
 				
 			totals.close();
