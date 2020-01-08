@@ -748,7 +748,7 @@ public class FileFunctions
 			BufferedWriter shipping = new BufferedWriter(new FileWriter("_shipping.csv", false));
 			BufferedWriter notes = new BufferedWriter(new FileWriter("_delivery_notes.csv", false));
 			BufferedWriter deliveries = new BufferedWriter(new FileWriter("_deliveries.csv", false));
-			BufferedWriter pickupTables = new BufferedWriter(new FileWriter("_pickup_tables.csv", false));
+			BufferedWriter characters = new BufferedWriter(new FileWriter("_initials.csv", false));
 			
 			shipping.write("SHIPPING METHODS: " + ordersByShippingMethod.keySet().size());
 			shipping.newLine();	shipping.newLine();	shipping.newLine();	shipping.newLine();	shipping.newLine();
@@ -762,8 +762,15 @@ public class FileFunctions
 			deliveries.newLine();
 			
 			ArrayList<Character> chars = new ArrayList<>();
-			HashMap<Character, Integer> charCounts = new HashMap<>();
-			int pickupTotal = 0;
+			HashMap<Character, Integer> charCountPickups = new HashMap<>();
+			HashMap<Character, Integer> charCountDeliveries = new HashMap<>();
+			
+			for (int i = 0; i < 26; i++){
+				char letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(i);
+	            chars.add(letter);
+	            charCountPickups.put(letter, 0);
+	            charCountDeliveries.put(letter, 0);
+	        }
 
 			//Looping through all shipping methods and within that, looping through all orders while printing
 			for(String shippingMethod : ordersByShippingMethod.keySet()){
@@ -785,26 +792,24 @@ public class FileFunctions
 						
 						deliveries.write(order.getFullShippingString());
 						deliveries.newLine();
+						
+						String lastName = (order.getShippingName()).toUpperCase().replaceAll("^.*?(\\w+)\\W*$", "$1");
+						if(lastName != null && !lastName.isEmpty()){
+							char letter = lastName.charAt(0);
+							if(chars.contains(letter)){
+								charCountDeliveries.put(letter, charCountDeliveries.get(letter) + 1);
+							}
+						}
 					}
 					
 					if(shippingMethod.toLowerCase().contains("pick up")){
-						pickupTotal++;
-						String pickupName = (order.getShippingName()).toUpperCase();
-						int index = 0;
-						char surnameInitial = '_';
-						if(pickupName != null && !pickupName.isEmpty() && pickupName.contains(" ") &&  pickupName.lastIndexOf(' ') != pickupName.length()-1){
-							index = pickupName.lastIndexOf(' ') +1;
-//							if(index+1 == pickupName.length() && pickupName.length() > 1)
-//								index--;
-							surnameInitial = pickupName.charAt(index);
+						String lastName = (order.getShippingName()).toUpperCase().replaceAll("^.*?(\\w+)\\W*$", "$1");
+						if(lastName != null && !lastName.isEmpty()){
+							char letter = lastName.charAt(0);
+							if(chars.contains(letter)){
+								charCountPickups.put(letter, charCountPickups.get(letter) + 1);
+							}
 						}
-						
-						if(!chars.contains(surnameInitial)){
-							chars.add(surnameInitial);
-							charCounts.put(surnameInitial, 0);
-						}
-						charCounts.put(surnameInitial, charCounts.get(surnameInitial)+1);
-//						System.out.println(pickupName + " -- " + surnameInitial);
 					}
 
 				}
@@ -812,36 +817,17 @@ public class FileFunctions
 				shipping.write("     TOTAL: " + ordersByShippingMethod.get(shippingMethod).size());
 				shipping.newLine();	shipping.newLine();	shipping.newLine();
 			}
-			Collections.sort(chars);
+	
+			characters.write("CHARACTER"+","+"PICKUPS"+","+"DELIVERIES");
+			characters.newLine();
 			
-			String tableString = "";
-			int tables = 7;
-			int boxesPerTable = pickupTotal / tables;
-//			System.out.println(boxesPerTable);
-			int currentTableCount = 0;
-			
-			pickupTables.write("Total Pickups"+","+pickupTotal);
-			pickupTables.newLine();
-			pickupTables.write("Min per table"+","+boxesPerTable);
-			pickupTables.newLine();
-			pickupTables.newLine();
-			pickupTables.write("CHARACTERS"+","+"TOTAL");
-			pickupTables.newLine();
-			
-			for (char character: chars){ 
-//				System.out.println(character);
-				currentTableCount += charCounts.get(character);
-				tableString += character;
-				
-				if(currentTableCount >= boxesPerTable){
-					pickupTables.write(tableString + "," + currentTableCount);
-					pickupTables.newLine();
-					currentTableCount = 0;
-					tableString = "";
-				}
-				
+			for(char character: chars) {
+				characters.write(character + "," + charCountPickups.get(character) + "," + charCountDeliveries.get(character));
+				characters.newLine();
 			}
-			pickupTables.close();
+			
+
+			characters.close();
 
 			deliveries.close();
 			shipping.close();
