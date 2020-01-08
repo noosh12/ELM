@@ -1,6 +1,7 @@
 package elm;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -544,6 +545,8 @@ public class FileFunctions
 		List<String> errors = new ArrayList<>();
 		HashSet<String> ingredientMeals = new HashSet<>();
 		
+		DecimalFormat df = new DecimalFormat("#.000");
+		
 		//TODO change direction of sku-names
 		//temp fix to be removed once sku-names fullly implemented
 		HashMap<String, String> namesSkus = new HashMap<>();
@@ -606,6 +609,10 @@ public class FileFunctions
 			String mealLine = mealIngredientFile.readLine(); 
 			int lineCount = 0;
 			
+			BufferedWriter mealBreakdown = new BufferedWriter(new FileWriter("_meal_breakdown.csv", false));
+			mealBreakdown.write("MEAL"+","+"INGREDIENT"+","+"Kg/L");
+			mealBreakdown.newLine();
+			
 			while (mealLine != null)
 			{
 				lineCount++;
@@ -630,6 +637,10 @@ public class FileFunctions
 						if(unmatched.contains(fullLine[0])){
 							unmatched.remove(fullLine[0]);
 						}
+						
+						mealBreakdown.write(fullLine[0] + "," +  fullLine[1] + "," + 
+								df.format(Double.parseDouble(fullLine[2]) * quantities.get(sku) / 1000.0));
+						mealBreakdown.newLine();
 					}
 				} catch (Exception e){
 					String error = "Unable to process meal/ingredient/quantity from input_meals.csv row:"+lineCount+", name: " +mealLine;
@@ -639,12 +650,14 @@ public class FileFunctions
 				mealLine = mealIngredientFile.readLine();
 			}
 			mealIngredientFile.close();
+			mealBreakdown.close();
 		}
 		catch (FileNotFoundException fnfe)
 		{
 			System.out.println("error: file not found!");
 		} catch (IOException e) {
 			System.out.println("error: ioexception!");
+			System.exit(1);
 		}
 		
 		if(!unmatched.isEmpty()){
