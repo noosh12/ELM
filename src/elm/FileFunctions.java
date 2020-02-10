@@ -105,7 +105,7 @@ public class FileFunctions
 				//build orderLine object from chosen extracted values
 				orderLine.add(
 					new OrderItem(orderID, discountCode, shippingMethod, lineItemQuantity, lineItemName,
-						lineItemSKU, billingName, shippingAddress1, shippingCity, shippingPostcode, notes, shippingPhone, email, vendor)
+						lineItemSKU, shippingName, shippingAddress1, shippingCity, shippingPostcode, notes, shippingPhone, email, vendor)
 				);
 
 				fileRead = input.readLine();
