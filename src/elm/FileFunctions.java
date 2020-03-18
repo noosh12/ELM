@@ -8,6 +8,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.xslf.usermodel.SlideLayout;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;  
+import org.apache.poi.xslf.usermodel.XSLFPictureData;  
+import org.apache.poi.xslf.usermodel.XSLFPictureShape;  
+import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
+import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
+import org.apache.poi.xslf.usermodel.XSLFTextShape;
+
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -450,11 +461,13 @@ public class FileFunctions
 				totals.newLine();
 				totals.newLine();
 			}
-			
-			totals.write("NAME"+","+"TOTAL"+","+"MEAL");
+			if(kitchen)
+				totals.write("ID" + "," + "NAME"+","+"TOTAL"+","+"MEAL");
+			else
+				totals.write("NAME"+","+"TOTAL"+","+"MEAL");
 			totals.newLine();
 			
-
+			int count = 1;
 			// Write the quantities of each meal to file
 			for(String sku : skus){
 //				String sku = namesSku.get(name);
@@ -463,9 +476,11 @@ public class FileFunctions
 				String name = skuNames.get(sku);
 				itemNames.add(skuNames.get(sku));
 				
+				if(kitchen)
+					totals.write("#"+count++ +",");
 				totals.write(skuNames.get(sku)+ "," +quantities.get(sku)+ ","+sku);
 				if(kitchen)
-					totals.write("," + quantities.get(sku)/12 +"C +" + quantities.get(sku)%12);		
+					totals.write(","+quantities.get(sku)/12 +"C +" + quantities.get(sku)%12);		
 				totals.newLine();
 				
 				subtotal+=quantities.get(sku);
@@ -545,7 +560,10 @@ public class FileFunctions
 		List<String> errors = new ArrayList<>();
 		HashSet<String> ingredientMeals = new HashSet<>();
 		
-		DecimalFormat df = new DecimalFormat("#.000");
+		DecimalFormat df = new DecimalFormat("#.0");
+		
+		HashMap<String, HashMap<String, String>> mealIngredientTotals = new HashMap<>();
+		
 		
 		//TODO change direction of sku-names
 		//temp fix to be removed once sku-names fullly implemented
@@ -619,12 +637,16 @@ public class FileFunctions
 				mealLine=mealLine.toUpperCase();
 				try{
 					String[] fullLine = mealLine.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-					ingredientMeals.add(fullLine[0]);
+					String mealName = fullLine[0];
+					String ingredientName = fullLine[1];
+					String quantity = fullLine[2];
 					
-					if(namesSkus.containsKey(fullLine[0])){
-						String sku = namesSkus.get(fullLine[0]);
+					ingredientMeals.add(mealName);
+					
+					if(namesSkus.containsKey(mealName)){
+						String sku = namesSkus.get(mealName);
 						if(!ingredients.containsKey(fullLine[1])){
-							String error = "Unable to find ingredient in input_ingredients.csv: "+fullLine[1];
+							String error = "Unable to find ingredient in input_ingredients.csv: "+ingredientName;
 							if(!errors.contains(error)){
 								errors.add(error);
 								System.out.println(error);
@@ -632,15 +654,21 @@ public class FileFunctions
 								continue;
 							}	
 						}		
-						ingredients.get(fullLine[1]).addQuantity(quantities.get(sku), Double.parseDouble(fullLine[2]));
+						ingredients.get(ingredientName).addQuantity(quantities.get(sku), Double.parseDouble(quantity));
 						
-						if(unmatched.contains(fullLine[0])){
-							unmatched.remove(fullLine[0]);
+						if(unmatched.contains(mealName)){
+							unmatched.remove(mealName);
 						}
 						
-						mealBreakdown.write(fullLine[0] + "," +  fullLine[1] + "," + 
-								df.format(Double.parseDouble(fullLine[2]) * quantities.get(sku) / 1000.0));
+						String formattedQuantity = df.format(Double.parseDouble(quantity) * quantities.get(sku) / 1000.0);
+						
+						mealBreakdown.write(mealName + "," +  ingredientName + "," + quantity);
 						mealBreakdown.newLine();
+						
+						if(!mealIngredientTotals.containsKey(mealName)){
+							mealIngredientTotals.put(mealName, new HashMap<String, String>());
+						}
+						mealIngredientTotals.get(mealName).put(ingredientName, quantity);
 					}
 				} catch (Exception e){
 					String error = "Unable to process meal/ingredient/quantity from input_meals.csv row:"+lineCount+", name: " +mealLine;
@@ -734,6 +762,84 @@ public class FileFunctions
 			ioe.printStackTrace();
 			System.exit(1);
 		}
+		
+		
+//		System.out.println(quantities);
+		
+		ArrayList<String> preferredMealOrder = new ArrayList<>();
+		try
+		{
+			BufferedReader mealOrder = new BufferedReader(new FileReader("input_meal_order.csv"));
+			String meal = mealOrder.readLine(); 
+			while (meal != null)
+			{
+				if(meal.contains(",")){
+					meal = meal.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[0];
+				}
+				preferredMealOrder.add(meal.toUpperCase());
+				meal = mealOrder.readLine();
+			}
+			mealOrder.close();
+		}
+		catch (FileNotFoundException fnfe)
+		{
+			System.out.println("error: file not found!");
+		} catch (IOException e) {
+			System.out.println("error: ioexception!");
+		}
+		
+//		for(String meal : preferredMealOrder){
+//			System.out.println("meal: " + meal);
+//			if(mealIngredientTotals.containsKey(meal)){
+//				for(String ingredient : mealIngredientTotals.get(meal).keySet()){
+//					System.out.print(meal+" - "+ingredient+" - "+mealIngredientTotals.get(meal).get(ingredient));
+//					System.out.println(" - "+quantities.get(namesSkus.get(meal)));
+//				}
+//			}
+//		}
+		
+		XMLSlideShow ppt = new XMLSlideShow();  
+        try (OutputStream os = new FileOutputStream("_KITCHEN_SLIDESHOW.pptx")) {  
+            XSLFSlideMaster defaultMaster = ppt.getSlideMasters().get(0);  
+            XSLFSlideLayout tc = defaultMaster.getLayout(SlideLayout.TITLE_AND_CONTENT);  
+            int count = 1;
+            for(String meal : preferredMealOrder){
+    			System.out.println("meal: " + meal);
+    			
+    			if(quantities.get(namesSkus.get(meal)) == null) {continue;}
+    			
+    			XSLFSlide slide = ppt.createSlide(tc);  
+                XSLFTextShape title = slide.getPlaceholder(0);  
+                title.setText("#"+count++ + ". " +meal);  
+                XSLFTextShape body = slide.getPlaceholder(1);  
+                
+                
+                body.clearText();  
+                body.addNewTextParagraph().addNewTextRun().setText("Quantity: " + quantities.get(namesSkus.get(meal))
+                	+"\n");
+    			
+    			if(mealIngredientTotals.containsKey(meal)){
+    				for(String ingredient : mealIngredientTotals.get(meal).keySet()){
+    					String fullQuantity = df.format(Double.parseDouble(mealIngredientTotals.get(meal).get(ingredient)) 
+    								* quantities.get(namesSkus.get(meal)) / 1000.0);
+    					
+    					String text = ingredient+" - "+mealIngredientTotals.get(meal).get(ingredient);
+    					text += (ingredient.contains("SAUCE")) ? "mL" : "g";
+    					text += "  (" + fullQuantity;
+    					text += (ingredient.contains("SAUCE")) ? "L)" : " Kg)";
+    					
+    					
+    					body.addNewTextParagraph().addNewTextRun().setText(text); 
+    				}
+    			}
+    		}
+            
+            
+            ppt.write(os);  
+        }catch(Exception e) {  
+            System.out.println(e);  
+        }  
+
 	}
 
 	/*
