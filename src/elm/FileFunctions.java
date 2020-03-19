@@ -1,6 +1,10 @@
 package elm;
 
+import java.awt.Rectangle;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,7 +21,10 @@ import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
 import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
+import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
+
+import org.apache.commons.lang3.SystemUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -801,7 +808,7 @@ public class FileFunctions
 		XMLSlideShow ppt = new XMLSlideShow();  
         try (OutputStream os = new FileOutputStream("_KITCHEN_SLIDESHOW.pptx")) {  
             XSLFSlideMaster defaultMaster = ppt.getSlideMasters().get(0);  
-            XSLFSlideLayout tc = defaultMaster.getLayout(SlideLayout.TITLE_AND_CONTENT);  
+            XSLFSlideLayout tc = defaultMaster.getLayout(SlideLayout.TWO_OBJ);  
             int count = 1;
             for(String meal : preferredMealOrder){
     			System.out.println("meal: " + meal);
@@ -811,13 +818,23 @@ public class FileFunctions
     			XSLFSlide slide = ppt.createSlide(tc);  
                 XSLFTextShape title = slide.getPlaceholder(0);  
                 title.setText("#"+count++ + ". " +meal);  
-                XSLFTextShape body = slide.getPlaceholder(1);  
-                
-                
+                XSLFTextShape body = slide.getPlaceholder(1); 
                 body.clearText();  
-                body.addNewTextParagraph().addNewTextRun().setText("Quantity: " + quantities.get(namesSkus.get(meal))
-                	+"\n");
+                XSLFTextShape picSide = slide.getPlaceholder(2); 
+                picSide.clearText();
+//                XSLFTextRun lineBreak = picSide.addNewTextParagraph().addNewTextRun();
+//                lineBreak.setText("");
+            
+                XSLFTextRun quantityLine = body.addNewTextParagraph().addNewTextRun();
+                int quan = quantities.get(namesSkus.get(meal));
+                quantityLine.setText("Quantity: "+quan+" ("+quan/12+"C +"+quan%12+")");
+                quantityLine.setFontSize(24.0);
+                quantityLine.setBold(true);
     			
+//                XSLFTextRun lineBreak = body.addNewTextParagraph().addNewTextRun();
+//                lineBreak.setText("");
+//                lineBreak.setFontSize(8.0);
+                
     			if(mealIngredientTotals.containsKey(meal)){
     				for(String ingredient : mealIngredientTotals.get(meal).keySet()){
     					String fullQuantity = df.format(Double.parseDouble(mealIngredientTotals.get(meal).get(ingredient)) 
@@ -828,10 +845,36 @@ public class FileFunctions
     					text += "  (" + fullQuantity;
     					text += (ingredient.contains("SAUCE")) ? "L)" : " Kg)";
     					
-    					
-    					body.addNewTextParagraph().addNewTextRun().setText(text); 
+    					XSLFTextRun textRun = body.addNewTextParagraph().addNewTextRun();
+    					textRun.setText(text);
+    					textRun.setFontSize(22.0);
+//    					body.addNewTextParagraph().addNewTextRun().setText(text); 
     				}
+//    				body.resizeToFitText();
     			}
+    			//add picture
+    			String div = (SystemUtils.IS_OS_WINDOWS) ? "\\images\\" : "/images/";
+				Path path = Paths.get(System.getProperty("user.dir") + div + meal.replace('/', '_')+".png");
+				System.out.println(path);
+
+				if(Files.exists(path)){
+					byte[] pictureData = IOUtils.toByteArray(new FileInputStream(path.toString()));  
+		            XSLFPictureData pd = ppt.addPicture(pictureData, XSLFPictureData.PictureType.PNG);  
+//		            XSLFTextShape picPlaceholder = slide.getPlaceholder(2);
+//		            slide.createPicture(pd);
+		            XSLFPictureShape pic = slide.createPicture(pd);
+		            pic.setAnchor(new Rectangle(375,120,300,400));
+		            
+//		            XSLFTextShape pic = slide.getPlaceholder(3);
+//		            pic.setShapeType();
+//		            XSLFTextShape pic = slide.getPlaceholder(2);
+//		            slide.addChart(pd);
+		            
+//		            slide.
+
+//		            blah.clearText();
+//		            picPlaceholder.
+				}
     		}
             
             
