@@ -87,7 +87,7 @@ public class OrderItem {
 	}
 	
 	public String getFullShippingString(){
-		return orderID + "," + shippingName + "," + shippingAddress1 + "," + shippingCity + "," + shippingPostcode + "," + shippingMethod  + ","  + shippingPhone  + "," + notes;
+		return orderID + "," + shippingName + "," + shippingAddress1 + "," + shippingCity + "," + shippingPostcode + "," + shippingMethod  + ","  + shippingPhone  + ","  + email  + "," + notes + ", 3";
 	}
 
 }

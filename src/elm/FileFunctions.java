@@ -907,7 +907,7 @@ public class FileFunctions
 			notes.write("EMAIL,NOTE,METHOD");
 			notes.newLine();notes.newLine();notes.newLine();
 			
-			deliveries.write("Order ID"+","+"Shipping Name"+","+"Shipping Street"+","+"Shipping City"+","+"Postcode"+","+"Shipping Method"+","+"Mobile"+","+"Notes");
+			deliveries.write("Order ID"+","+"Shipping Name"+","+"Shipping Street"+","+"Shipping City"+","+"Postcode"+","+"Shipping Method"+","+"Mobile"+","+"Email"+","+"Notes"+","+"Service Time");
 			deliveries.newLine();
 			
 			ArrayList<Character> chars = new ArrayList<>();
