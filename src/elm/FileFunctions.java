@@ -854,12 +854,12 @@ public class FileFunctions
     			}
     			//add picture
     			String div = (SystemUtils.IS_OS_WINDOWS) ? "\\images\\" : "/images/";
-				Path path = Paths.get(System.getProperty("user.dir") + div + meal.replace('/', '_')+".png");
+				Path path = Paths.get(System.getProperty("user.dir") + div + meal.replace('/', '_')+".jpg");
 				System.out.println(path);
 
 				if(Files.exists(path)){
 					byte[] pictureData = IOUtils.toByteArray(new FileInputStream(path.toString()));  
-		            XSLFPictureData pd = ppt.addPicture(pictureData, XSLFPictureData.PictureType.PNG);  
+		            XSLFPictureData pd = ppt.addPicture(pictureData, XSLFPictureData.PictureType.JPEG);  
 //		            XSLFTextShape picPlaceholder = slide.getPlaceholder(2);
 //		            slide.createPicture(pd);
 		            XSLFPictureShape pic = slide.createPicture(pd);
