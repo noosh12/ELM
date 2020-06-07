@@ -771,22 +771,27 @@ public class FileFunctions
 		}
 		
 		
-//		System.out.println(quantities);
-		
 		ArrayList<String> preferredMealOrder = new ArrayList<>();
 		try
 		{
-			BufferedReader mealOrder = new BufferedReader(new FileReader("input_meal_order.csv"));
-			String meal = mealOrder.readLine(); 
-			while (meal != null)
+			BufferedReader mealLine = new BufferedReader(new FileReader("_meal_totals_GMD.csv"));
+			mealLine.readLine(); mealLine.readLine(); mealLine.readLine(); mealLine.readLine();
+			String meal = mealLine.readLine();
+			
+			while (meal != null && meal.length() > 10)
 			{
-				if(meal.contains(",")){
-					meal = meal.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[0];
+				System.out.println(meal);
+				meal = meal.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")[1];
+				
+				if(meal.length() < 3){
+					break;
 				}
+				
 				preferredMealOrder.add(meal.toUpperCase());
-				meal = mealOrder.readLine();
+				System.out.println(meal.toUpperCase());
+				meal = mealLine.readLine();
 			}
-			mealOrder.close();
+			mealLine.close();
 		}
 		catch (FileNotFoundException fnfe)
 		{
@@ -795,21 +800,13 @@ public class FileFunctions
 			System.out.println("error: ioexception!");
 		}
 		
-//		for(String meal : preferredMealOrder){
-//			System.out.println("meal: " + meal);
-//			if(mealIngredientTotals.containsKey(meal)){
-//				for(String ingredient : mealIngredientTotals.get(meal).keySet()){
-//					System.out.print(meal+" - "+ingredient+" - "+mealIngredientTotals.get(meal).get(ingredient));
-//					System.out.println(" - "+quantities.get(namesSkus.get(meal)));
-//				}
-//			}
-//		}
+		
 		
 		XMLSlideShow ppt = new XMLSlideShow();  
         try (OutputStream os = new FileOutputStream("_KITCHEN_SLIDESHOW.pptx")) {  
             XSLFSlideMaster defaultMaster = ppt.getSlideMasters().get(0);  
             XSLFSlideLayout tc = defaultMaster.getLayout(SlideLayout.TWO_OBJ);  
-            int count = 1;
+            int count = 1;	
             for(String meal : preferredMealOrder){
     			System.out.println("meal: " + meal);
     			
