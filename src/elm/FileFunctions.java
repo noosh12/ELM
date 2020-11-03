@@ -334,11 +334,11 @@ public class FileFunctions
 		for(String currentName : GRTRnamesList){
 			GRTRskuList.add(GRTRnamesSkus.get(currentName));
 		}
-		PrintMealTotals(GRTRskuQuantities,GRTRskuNames,totalQuantity, GRTRskuList, snacks, false, "_meal_totals_GRTR.csv", lastOrder);//Prints the totals of each meal
+//		PrintMealTotals(GRTRskuQuantities,GRTRskuNames,totalQuantity, GRTRskuList, snacks, false, "_meal_totals_GRTR.csv", lastOrder);//Prints the totals of each meal
 		
 		System.out.print("Printing GRTR meal totals sorted by sku...");
 		Collections.sort(GRTRskuList);
-		PrintMealTotals(GRTRskuQuantities,GRTRskuNames,totalQuantity, GRTRskuList, snacks, false, "_meal_totals_GRTR_sku_sorted.csv", lastOrder);//Prints the totals of each meal
+//		PrintMealTotals(GRTRskuQuantities,GRTRskuNames,totalQuantity, GRTRskuList, snacks, false, "_meal_totals_GRTR_sku_sorted.csv", lastOrder);//Prints the totals of each meal
 		
 		
 		System.out.print("Printing gmd meal totals...");
@@ -357,12 +357,12 @@ public class FileFunctions
 		mealsToBeCalculated.addAll(GRTRnamesList);
 		CalcPrintIngredients(GRTRskuQuantities,GRTRskuNames, GRTRskuList, mealsToBeCalculated); //Calculate the ingredients required
 		
-		System.out.print("Printing chef specials meal totals...");
-		skuList.clear();
-		for(String currentName : namesListSpecials){
-			skuList.add(namesSkus.get(currentName));
-		}
-		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, true, "_meal_totals_SPECIALS.csv", lastOrder);//Prints the totals of each meal
+//		System.out.print("Printing chef specials meal totals...");
+//		skuList.clear();
+//		for(String currentName : namesListSpecials){
+//			skuList.add(namesSkus.get(currentName));
+//		}
+//		PrintMealTotals(skuQuantities,skuNames,totalQuantity, skuList, snacks, true, "_meal_totals_SPECIALS.csv", lastOrder);//Prints the totals of each meal
 		
 		
 		System.out.print("Printing sorted delivery methods...");
@@ -634,9 +634,12 @@ public class FileFunctions
 			String mealLine = mealIngredientFile.readLine(); 
 			int lineCount = 0;
 			
-			BufferedWriter mealBreakdown = new BufferedWriter(new FileWriter("_meal_breakdown.csv", false));
-			mealBreakdown.write("MEAL"+","+"INGREDIENT"+","+"Kg/L");
+			BufferedWriter mealBreakdown = new BufferedWriter(new FileWriter("_meal_breakdown_individual.csv", false));
+			BufferedWriter mealBreakdownTotal = new BufferedWriter(new FileWriter("_meal_breakdown_total.csv", false));
+			mealBreakdown.write("MEAL"+","+"INGREDIENT"+","+"Individual g/mL");
+			mealBreakdownTotal.write("MEAL"+","+"INGREDIENT"+","+"Total Kg/L");
 			mealBreakdown.newLine();
+			mealBreakdownTotal.newLine();
 			
 			while (mealLine != null)
 			{
@@ -671,6 +674,8 @@ public class FileFunctions
 						
 						mealBreakdown.write(mealName + "," +  ingredientName + "," + quantity);
 						mealBreakdown.newLine();
+						mealBreakdownTotal.write(mealName + "," +  ingredientName + "," + formattedQuantity);
+						mealBreakdownTotal.newLine();
 						
 						if(!mealIngredientTotals.containsKey(mealName)){
 							mealIngredientTotals.put(mealName, new HashMap<String, String>());
@@ -686,6 +691,7 @@ public class FileFunctions
 			}
 			mealIngredientFile.close();
 			mealBreakdown.close();
+			mealBreakdownTotal.close();
 		}
 		catch (FileNotFoundException fnfe)
 		{
